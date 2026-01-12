@@ -168,13 +168,27 @@
         z-index: 1;
         }
 
-        /* 关键：不支持 backdrop-filter 时，给一个更“实”的半透明背景，避免透得奇怪 */
+        /* 关键：不支持 backdrop-filter 时，给一个更"实"的半透明背景，避免透得奇怪 */
         @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
         #mobileMenu::before{
             background: rgba(255, 255, 255, 0.92); /* 更不透 */
         }
         }
 
+        /* 黄绿闪烁状态指示灯 */
+        .status-blink {
+            animation: statusBlink 1.5s ease-in-out infinite;
+        }
+        @keyframes statusBlink {
+            0%, 100% {
+                background-color: #facc15; /* 黄色 */
+                box-shadow: 0 0 8px #facc15;
+            }
+            50% {
+                background-color: #22c55e; /* 绿色 */
+                box-shadow: 0 0 8px #22c55e;
+            }
+        }
 
     </style>
 </head>
@@ -262,6 +276,14 @@
                                 <a href="https://github.com/xmens666/web-dyyx/releases/download/v1.3.0/dongyingyouxia_v1.3.0.apk" download class="bg-gray-800 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl shadow-lg hover:bg-gray-900 transition flex items-center justify-center text-xs sm:text-base btn-press">
                                     <i class="fab fa-android mr-1 sm:mr-2"></i> Android
                                 </a>
+                            </div>
+                            <!-- 状态提示 -->
+                            <div class="mt-3 sm:mt-4 fade-in-up delay-500">
+                                <p class="text-xs sm:text-sm text-gray-600 flex items-center justify-center sm:justify-start">
+                                    <span class="status-blink w-2.5 h-2.5 rounded-full mr-2"></span>
+                                    <span>当前状态：上架审核中</span>
+                                </p>
+                                <p class="text-[10px] sm:text-xs text-gray-400 mt-1 text-center sm:text-left">当前仅支持安卓手机测试使用</p>
                             </div>
                         </div>
                     </div>
