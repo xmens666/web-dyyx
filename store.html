@@ -224,7 +224,8 @@
                 card.className = 'card-hover bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 fade-in';
                 card.style.animationDelay = `${index * 0.05}s`;
 
-                const logo = store.logo_url || DEFAULT_STORE_LOGO;
+                // 封面图：优先使用 cover_image，其次 images 数组第一张，最后 logo
+                const coverImage = store.cover_image || (store.images && store.images.length > 0 ? store.images[0] : null) || store.logo_url || DEFAULT_STORE_LOGO;
                 const ownerName = store.users?.nickname || '店主';
                 const ownerAvatar = store.users?.avatar_url || DEFAULT_AVATAR;
 
@@ -236,25 +237,25 @@
                 // 营业状态
                 const isOpen = store.open_status === 'open';
                 const openStatusText = isOpen ? '营业中' : '休息中';
-                const openStatusClass = isOpen ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-500';
+                const openStatusClass = isOpen ? 'bg-green-500' : 'bg-gray-500';
 
                 // 认证标签
-                const verifiedBadge = store.verified ? '<span class="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full"><i class="fas fa-check-circle mr-1"></i>已认证</span>' : '';
+                const verifiedBadge = store.verified ? '<span class="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full"><i class="fas fa-check-circle mr-1"></i>认证</span>' : '';
                 const businessLicenseBadge = store.business_license_verified ? '<span class="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full"><i class="fas fa-certificate mr-1"></i>营业执照</span>' : '';
 
                 // 地区显示
                 const location = store.prefecture || store.city || store.region || '';
 
                 card.innerHTML = `
-                    <div class="h-32 sm:h-40 bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center relative overflow-hidden">
-                        <div class="absolute inset-0 bg-black/10"></div>
+                    <div class="aspect-video bg-gray-100 relative">
+                        <img src="${coverImage}" alt="${store.name}"
+                             class="w-full h-full object-cover"
+                             onerror="this.src='${DEFAULT_STORE_LOGO}'">
                         <!-- 营业状态 -->
-                        <div class="absolute top-2 right-2 ${openStatusClass} px-2 py-1 rounded-full text-xs font-medium">
+                        <span class="absolute top-2 right-2 ${openStatusClass} text-white px-2 py-1 rounded-full text-xs font-medium">
                             ${openStatusText}
-                        </div>
-                        <img src="${logo}" alt="${store.name}"
-                             class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover border-4 border-white shadow-lg relative z-10"
-                             onerror="this.src=DEFAULT_STORE_LOGO">
+                        </span>
+                        ${verifiedBadge}
                     </div>
                     <div class="p-4">
                         <div class="flex items-start justify-between mb-2">
@@ -268,7 +269,6 @@
 
                         <!-- 认证标签 -->
                         <div class="flex flex-wrap gap-1 mb-3 min-h-[24px]">
-                            ${verifiedBadge}
                             ${businessLicenseBadge}
                         </div>
 
