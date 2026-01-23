@@ -20,6 +20,7 @@
         .card-hover { transition: all 0.3s ease; }
         .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
         .gradient-header { background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #A855F7 100%); }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     </style>
 </head>
 
@@ -30,7 +31,8 @@
             <a href="index.html" class="flex items-center space-x-2">
                 <span class="text-lg font-bold text-gray-800">🏯 东瀛游侠</span>
             </a>
-            <a href="index.html#contact" class="bg-indigo-500 text-white px-4 py-2 rounded-full text-sm hover:bg-indigo-600 transition">
+            <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
+               class="bg-indigo-500 text-white px-4 py-2 rounded-full text-sm hover:bg-indigo-600 transition">
                 下载APP
             </a>
         </div>
@@ -173,24 +175,66 @@
                 const ownerName = store.users?.nickname || '店主';
                 const ownerAvatar = store.users?.avatar_url || DEFAULT_AVATAR;
 
+                // 评分和数据
+                const rating = store.rating ? parseFloat(store.rating).toFixed(1) : '5.0';
+                const monthlyOrders = store.monthly_orders || 0;
+                const reviewCount = store.review_count || 0;
+
+                // 营业状态
+                const isOpen = store.open_status === 'open';
+                const openStatusText = isOpen ? '营业中' : '休息中';
+                const openStatusClass = isOpen ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-500';
+
+                // 认证标签
+                const verifiedBadge = store.verified ? '<span class="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full"><i class="fas fa-check-circle mr-1"></i>已认证</span>' : '';
+                const businessLicenseBadge = store.business_license_verified ? '<span class="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full"><i class="fas fa-certificate mr-1"></i>营业执照</span>' : '';
+
+                // 地区显示
+                const location = store.prefecture || store.city || store.region || '';
+
                 card.innerHTML = `
                     <div class="h-32 sm:h-40 bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center relative overflow-hidden">
                         <div class="absolute inset-0 bg-black/10"></div>
+                        <!-- 营业状态 -->
+                        <div class="absolute top-2 right-2 ${openStatusClass} px-2 py-1 rounded-full text-xs font-medium">
+                            ${openStatusText}
+                        </div>
                         <img src="${logo}" alt="${store.name}"
                              class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover border-4 border-white shadow-lg relative z-10"
-                             onerror="this.src='${DEFAULT_STORE_LOGO}'">
+                             onerror="this.src=DEFAULT_STORE_LOGO">
                     </div>
                     <div class="p-4">
-                        <h3 class="font-bold text-gray-800 mb-2 truncate">${store.name}</h3>
+                        <div class="flex items-start justify-between mb-2">
+                            <h3 class="font-bold text-gray-800 truncate flex-1">${store.name}</h3>
+                            <div class="flex items-center text-yellow-500 ml-2">
+                                <i class="fas fa-star text-xs"></i>
+                                <span class="text-sm font-medium ml-1">${rating}</span>
+                            </div>
+                        </div>
                         <p class="text-gray-500 text-sm line-clamp-2 mb-3 min-h-[40px]">${store.description || '暂无简介'}</p>
-                        <div class="flex items-center justify-between">
+
+                        <!-- 认证标签 -->
+                        <div class="flex flex-wrap gap-1 mb-3 min-h-[24px]">
+                            ${verifiedBadge}
+                            ${businessLicenseBadge}
+                        </div>
+
+                        <!-- 数据统计 -->
+                        <div class="flex items-center text-xs text-gray-400 mb-3 gap-3">
+                            <span><i class="fas fa-shopping-cart mr-1"></i>月销 ${monthlyOrders}</span>
+                            <span><i class="fas fa-comment mr-1"></i>评价 ${reviewCount}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between border-t border-gray-100 pt-3">
                             <div class="flex items-center">
                                 <img src="${ownerAvatar}" alt="${ownerName}"
                                      class="w-6 h-6 rounded-full object-cover mr-2"
-                                     onerror="this.src='${DEFAULT_AVATAR}'">
+                                     onerror="this.src=DEFAULT_AVATAR">
                                 <span class="text-xs text-gray-500">${ownerName}</span>
                             </div>
-                            <span class="text-xs text-indigo-500 bg-indigo-50 px-2 py-1 rounded-full">${getCategoryName(store.category)}</span>
+                            <span class="text-xs text-indigo-500 bg-indigo-50 px-2 py-1 rounded-full">
+                                <i class="fas fa-map-marker-alt mr-1"></i>${location || '全国'}
+                            </span>
                         </div>
                     </div>
                 `;
@@ -201,19 +245,6 @@
 
         function loadMoreStores() {
             loadStores();
-        }
-
-        function getCategoryName(category) {
-            const categories = {
-                'food': '食品',
-                'daily': '日用品',
-                'electronics': '数码',
-                'fashion': '服饰',
-                'beauty': '美妆',
-                'home': '家居',
-                'other': '其他'
-            };
-            return categories[category] || category || '综合';
         }
     </script>
 </body>
