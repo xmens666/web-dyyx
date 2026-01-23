@@ -91,3 +91,80 @@ const DEFAULT_STORE_LOGO = 'https://via.placeholder.com/200x200?text=Store';
 function generatePublicUrl(type, id) {
     return `${BASE_URL}/${type}.html?id=${id}`;
 }
+
+// ==================== 侠客市集（二手商品）====================
+
+// 获取二手商品详情
+async function getMarketplaceItemById(itemId) {
+    const data = await supabaseQuery('marketplace_items', `?id=eq.${itemId}&select=*,users!marketplace_items_user_id_fkey(id,nickname,avatar_url)`);
+    return data[0] || null;
+}
+
+// 获取用户发布的二手商品数量
+async function getUserMarketplaceItemCount(userId) {
+    const data = await supabaseQuery('marketplace_items', `?user_id=eq.${userId}&select=id`);
+    return data?.length || 0;
+}
+
+// ==================== 江湖食肆（餐厅）====================
+
+// 获取餐厅详情
+async function getRestaurantById(restaurantId) {
+    const data = await supabaseQuery('restaurants', `?id=eq.${restaurantId}&select=*,users!restaurants_user_id_fkey(id,nickname,avatar_url)`);
+    return data[0] || null;
+}
+
+// ==================== 客栈驿站（房源）====================
+
+// 获取房源详情
+async function getAccommodationById(accommodationId) {
+    const data = await supabaseQuery('accommodations', `?id=eq.${accommodationId}&select=*,users!accommodations_user_id_fkey(id,nickname,avatar_url)`);
+    return data[0] || null;
+}
+
+// ==================== 江湖问答 ====================
+
+// 获取问题详情
+async function getQuestionById(questionId) {
+    const data = await supabaseQuery('questions', `?id=eq.${questionId}&select=*,users!questions_user_id_fkey(id,nickname,avatar_url)`);
+    return data[0] || null;
+}
+
+// 获取问题的回答列表
+async function getQuestionAnswers(questionId) {
+    const data = await supabaseQuery('answers', `?question_id=eq.${questionId}&select=*,users!answers_user_id_fkey(id,nickname,avatar_url)&order=is_accepted.desc,like_count.desc,created_at.asc`);
+    return data || [];
+}
+
+// ==================== 英雄结义（俱乐部+同乡会）====================
+
+// 获取俱乐部详情
+async function getClubById(clubId) {
+    const data = await supabaseQuery('clubs', `?id=eq.${clubId}&select=*,users!clubs_creator_id_fkey(id,nickname,avatar_url)`);
+    return data[0] || null;
+}
+
+// 获取同乡会详情
+async function getHometownById(hometownId) {
+    const data = await supabaseQuery('hometown_associations', `?id=eq.${hometownId}&select=*,users!hometown_associations_creator_id_fkey(id,nickname,avatar_url)`);
+    return data[0] || null;
+}
+
+// ==================== 公开链接生成工具 ====================
+
+// 根据模块类型生成公开链接
+function generateModulePublicUrl(module, id, subType) {
+    const urlMap = {
+        'store': `${BASE_URL}/store.html?id=${id}`,
+        'product': `${BASE_URL}/product.html?id=${id}`,
+        'service': `${BASE_URL}/service.html?id=${id}`,
+        'seller': `${BASE_URL}/seller.html?id=${id}`,
+        'marketplace': `${BASE_URL}/marketplace.html?id=${id}`,
+        'restaurant': `${BASE_URL}/restaurant.html?id=${id}`,
+        'accommodation': `${BASE_URL}/accommodation.html?id=${id}`,
+        'question': `${BASE_URL}/question.html?id=${id}`,
+        'club': `${BASE_URL}/community.html?type=club&id=${id}`,
+        'hometown': `${BASE_URL}/community.html?type=hometown&id=${id}`
+    };
+    return urlMap[module] || `${BASE_URL}/${module}.html?id=${id}`;
+}

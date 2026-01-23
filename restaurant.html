@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>餐厅详情 - 东瀛游侠</title>
+    <meta name="description" content="东瀛游侠江湖食肆 - 在日华人餐饮推荐平台">
+    <!-- PWA & 图标 -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#006633">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <!-- 样式 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <style>
+        .loading-spinner { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .gradient-restaurant { background: linear-gradient(135deg, #F97316 0%, #EA580C 50%, #DC2626 100%); }
+        .star { color: #FBBF24; }
+        .star-empty { color: #D1D5DB; }
+        .menu-card { transition: all 0.3s ease; }
+        .menu-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="fixed w-full bg-white/95 backdrop-blur-md shadow-sm z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2">
+                <span class="text-lg font-bold text-gray-800">🏯 东瀛游侠</span>
+            </a>
+            <a href="index.html#contact" class="bg-orange-500 text-white px-4 py-2 rounded-full text-sm hover:bg-orange-600 transition">
+                下载APP
+            </a>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="pt-16 pb-24">
+        <!-- 加载状态 -->
+        <div id="loading" class="flex flex-col items-center justify-center min-h-[60vh]">
+            <div class="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full loading-spinner"></div>
+            <p class="mt-4 text-gray-500">正在加载餐厅信息...</p>
+        </div>
+
+        <!-- 错误状态 -->
+        <div id="error" class="hidden flex flex-col items-center justify-center min-h-[60vh] px-4">
+            <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                <i class="fas fa-exclamation-triangle text-red-500 text-3xl"></i>
+            </div>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">餐厅不存在</h2>
+            <p class="text-gray-500 mb-6 text-center">该餐厅可能已下架或链接无效</p>
+            <a href="index.html" class="bg-orange-500 text-white px-6 py-2 rounded-full hover:bg-orange-600 transition">
+                返回首页
+            </a>
+        </div>
+
+        <!-- 餐厅内容 -->
+        <div id="content" class="hidden fade-in">
+            <!-- 餐厅头部 -->
+            <div class="gradient-restaurant text-white">
+                <div class="container mx-auto px-4 py-8 sm:py-12">
+                    <div class="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
+                        <!-- 餐厅封面 -->
+                        <div class="w-full sm:w-56 flex-shrink-0">
+                            <img id="restaurantCover" src="" alt="餐厅图片"
+                                 class="w-full aspect-video sm:aspect-square rounded-xl object-cover shadow-lg">
+                        </div>
+                        <div class="flex-1">
+                            <h1 id="restaurantName" class="text-2xl sm:text-3xl font-bold mb-2"></h1>
+                            <div id="cuisineTag" class="inline-block bg-white/20 px-3 py-1 rounded-full text-sm mb-3"></div>
+
+                            <!-- 评分 -->
+                            <div class="flex items-center gap-2 mb-3">
+                                <div id="starRating" class="flex"></div>
+                                <span id="ratingScore" class="text-white/90 font-bold"></span>
+                                <span id="reviewCount" class="text-white/70 text-sm"></span>
+                            </div>
+
+                            <!-- 基本信息 -->
+                            <div class="flex flex-wrap gap-4 text-sm text-white/80">
+                                <span id="priceRange"><i class="fas fa-yen-sign mr-1"></i></span>
+                                <span id="businessHours"><i class="fas fa-clock mr-1"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container mx-auto px-4 py-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- 左侧：餐厅详情 -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- 餐厅简介 -->
+                        <div class="bg-white rounded-xl p-6 shadow-sm">
+                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-utensils text-orange-500 mr-2"></i>
+                                餐厅简介
+                            </h2>
+                            <p id="restaurantDescription" class="text-gray-700 whitespace-pre-wrap"></p>
+                        </div>
+
+                        <!-- 特色菜品 -->
+                        <div id="menuSection" class="bg-white rounded-xl p-6 shadow-sm hidden">
+                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-fire text-red-500 mr-2"></i>
+                                特色推荐
+                            </h2>
+                            <div id="menuList" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                <!-- 菜品将动态插入 -->
+                            </div>
+                        </div>
+
+                        <!-- 餐厅环境 -->
+                        <div id="photosSection" class="bg-white rounded-xl p-6 shadow-sm hidden">
+                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-images text-purple-500 mr-2"></i>
+                                环境展示
+                            </h2>
+                            <div id="photoGallery" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                <!-- 照片将动态插入 -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右侧：联系信息 -->
+                    <div class="space-y-6">
+                        <!-- 位置信息 -->
+                        <div class="bg-white rounded-xl p-6 shadow-sm">
+                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-map-marker-alt text-red-500 mr-2"></i>
+                                位置信息
+                            </h2>
+                            <p id="restaurantAddress" class="text-gray-700 mb-3"></p>
+                            <p id="nearStation" class="text-gray-500 text-sm mb-4"></p>
+                            <a id="mapLink" href="#" target="_blank"
+                               class="block text-center bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition">
+                                <i class="fas fa-external-link-alt mr-2"></i>在地图中查看
+                            </a>
+                        </div>
+
+                        <!-- 联系方式 -->
+                        <div class="bg-white rounded-xl p-6 shadow-sm">
+                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-phone-alt text-green-500 mr-2"></i>
+                                联系方式
+                            </h2>
+                            <div class="space-y-3">
+                                <p id="restaurantPhone" class="text-gray-700">
+                                    <i class="fas fa-phone mr-2 text-gray-400"></i>
+                                </p>
+                                <div id="socialLinks" class="space-y-2">
+                                    <!-- 社交链接将动态插入 -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 下载APP -->
+                        <div class="bg-gradient-to-br from-orange-500 to-red-600 rounded-xl p-6 text-white">
+                            <div class="text-center">
+                                <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-mobile-alt text-2xl"></i>
+                                </div>
+                                <h3 class="font-bold text-lg mb-2">更多餐厅推荐</h3>
+                                <p class="text-white/80 text-sm mb-4">下载APP发现更多美食，查看真实点评</p>
+                                <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
+                                   class="block bg-white text-orange-600 py-3 rounded-xl font-bold hover:bg-orange-50 transition">
+                                    <i class="fab fa-android mr-2"></i> 下载APP
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- 营业信息 -->
+                        <div class="bg-yellow-50 rounded-xl p-4 border border-yellow-100">
+                            <h4 class="font-medium text-yellow-800 mb-2 flex items-center">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                营业信息
+                            </h4>
+                            <ul id="businessInfo" class="text-yellow-700 text-sm space-y-1">
+                                <!-- 营业信息将动态插入 -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部固定栏 -->
+    <div id="bottomBar" class="hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40">
+        <div class="container mx-auto flex items-center justify-between gap-3">
+            <a href="" id="callButton" class="flex flex-col items-center text-gray-600 hover:text-orange-600 px-3">
+                <i class="fas fa-phone text-lg"></i>
+                <span class="text-xs mt-1">电话</span>
+            </a>
+            <a href="" id="navigateButton" class="flex flex-col items-center text-gray-600 hover:text-orange-600 px-3">
+                <i class="fas fa-location-arrow text-lg"></i>
+                <span class="text-xs mt-1">导航</span>
+            </a>
+            <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
+               class="flex-1 bg-gradient-to-r from-orange-500 to-red-600 text-white text-center py-3 rounded-xl font-bold hover:opacity-90 transition">
+                <i class="fab fa-android mr-2"></i> 下载APP查看更多
+            </a>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400 text-sm mb-2">东瀛游侠 - 在日华人的生活服务平台</p>
+            <p class="text-gray-500 text-xs">&copy; 2026 株式会社昇陽商事</p>
+        </div>
+    </footer>
+
+    <!-- API配置 -->
+    <script src="api-config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const restaurantId = getUrlParam('id');
+
+            if (!restaurantId) {
+                showError();
+                return;
+            }
+
+            try {
+                const restaurant = await getRestaurantById(restaurantId);
+
+                if (!restaurant) {
+                    showError();
+                    return;
+                }
+
+                renderRestaurant(restaurant);
+
+            } catch (err) {
+                console.error('加载餐厅失败:', err);
+                showError();
+            }
+        });
+
+        function showError() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('error').classList.remove('hidden');
+        }
+
+        function renderRestaurant(restaurant) {
+            // 更新页面标题
+            document.title = `${restaurant.name} - 江湖食肆`;
+
+            // 封面图
+            const coverImage = restaurant.images && restaurant.images.length > 0
+                ? restaurant.images[0]
+                : (restaurant.cover_image || DEFAULT_PRODUCT_IMAGE);
+            document.getElementById('restaurantCover').src = coverImage;
+
+            // 基本信息
+            document.getElementById('restaurantName').textContent = restaurant.name;
+            document.getElementById('cuisineTag').textContent = getCuisineName(restaurant.cuisine);
+
+            // 评分
+            const rating = restaurant.rating || 0;
+            const starRating = document.getElementById('starRating');
+            starRating.innerHTML = renderStars(rating);
+            document.getElementById('ratingScore').textContent = rating.toFixed(1);
+            document.getElementById('reviewCount').textContent = `(${restaurant.review_count || 0}条点评)`;
+
+            // 价格和营业时间
+            document.getElementById('priceRange').innerHTML = `<i class="fas fa-yen-sign mr-1"></i>${getPriceRange(restaurant.price_range)}`;
+            document.getElementById('businessHours').innerHTML = `<i class="fas fa-clock mr-1"></i>${restaurant.business_hours || '详情请咨询'}`;
+
+            // 简介
+            document.getElementById('restaurantDescription').textContent = restaurant.description || '暂无简介';
+
+            // 位置
+            document.getElementById('restaurantAddress').textContent = restaurant.address || '地址未公开';
+            document.getElementById('nearStation').innerHTML = restaurant.nearest_station
+                ? `<i class="fas fa-train mr-1"></i>最近车站: ${restaurant.nearest_station}`
+                : '';
+
+            // 地图链接
+            if (restaurant.address) {
+                document.getElementById('mapLink').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.address)}`;
+                document.getElementById('navigateButton').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.address)}`;
+            }
+
+            // 电话
+            const phone = restaurant.phone || restaurant.contact_phone;
+            document.getElementById('restaurantPhone').innerHTML = phone
+                ? `<i class="fas fa-phone mr-2 text-gray-400"></i><a href="tel:${phone}" class="text-blue-600">${phone}</a>`
+                : '<i class="fas fa-phone mr-2 text-gray-400"></i>暂无电话';
+            document.getElementById('callButton').href = phone ? `tel:${phone}` : '#';
+
+            // 社交链接
+            const socialLinks = document.getElementById('socialLinks');
+            let socialHtml = '';
+            if (restaurant.line_id) {
+                socialHtml += `<p class="text-gray-700"><i class="fab fa-line mr-2 text-green-500"></i>LINE: ${restaurant.line_id}</p>`;
+            }
+            if (restaurant.wechat_id) {
+                socialHtml += `<p class="text-gray-700"><i class="fab fa-weixin mr-2 text-green-600"></i>微信: ${restaurant.wechat_id}</p>`;
+            }
+            socialLinks.innerHTML = socialHtml || '<p class="text-gray-400 text-sm">暂无社交账号</p>';
+
+            // 特色菜品
+            if (restaurant.specialties && restaurant.specialties.length > 0) {
+                document.getElementById('menuSection').classList.remove('hidden');
+                document.getElementById('menuList').innerHTML = restaurant.specialties.map(item => `
+                    <div class="menu-card bg-gray-50 rounded-lg p-3 text-center">
+                        <p class="font-medium text-gray-800">${item}</p>
+                    </div>
+                `).join('');
+            }
+
+            // 环境照片
+            if (restaurant.images && restaurant.images.length > 1) {
+                document.getElementById('photosSection').classList.remove('hidden');
+                document.getElementById('photoGallery').innerHTML = restaurant.images.slice(1).map(img => `
+                    <img src="${img}" alt="餐厅环境"
+                         class="rounded-lg aspect-square object-cover cursor-pointer hover:opacity-90 transition"
+                         onclick="window.open('${img}', '_blank')">
+                `).join('');
+            }
+
+            // 营业信息
+            const businessInfo = document.getElementById('businessInfo');
+            let infoHtml = '';
+            if (restaurant.business_hours) infoHtml += `<li>• 营业时间: ${restaurant.business_hours}</li>`;
+            if (restaurant.closed_days) infoHtml += `<li>• 定休日: ${restaurant.closed_days}</li>`;
+            if (restaurant.seats) infoHtml += `<li>• 座位数: ${restaurant.seats}席</li>`;
+            if (restaurant.parking) infoHtml += `<li>• 停车场: ${restaurant.parking}</li>`;
+            if (restaurant.reservation) infoHtml += `<li>• 预约: ${restaurant.reservation ? '可预约' : '无需预约'}</li>`;
+            businessInfo.innerHTML = infoHtml || '<li>• 详情请咨询餐厅</li>';
+
+            // 显示内容
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('content').classList.remove('hidden');
+            document.getElementById('bottomBar').classList.remove('hidden');
+        }
+
+        function renderStars(rating) {
+            const fullStars = Math.floor(rating);
+            const halfStar = rating % 1 >= 0.5;
+            const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+            let html = '';
+            for (let i = 0; i < fullStars; i++) {
+                html += '<i class="fas fa-star star"></i>';
+            }
+            if (halfStar) {
+                html += '<i class="fas fa-star-half-alt star"></i>';
+            }
+            for (let i = 0; i < emptyStars; i++) {
+                html += '<i class="far fa-star star-empty"></i>';
+            }
+            return html;
+        }
+
+        function getCuisineName(cuisine) {
+            const cuisines = {
+                'chinese': '中华料理',
+                'japanese': '日本料理',
+                'korean': '韩国料理',
+                'western': '西餐',
+                'italian': '意大利菜',
+                'french': '法国菜',
+                'thai': '泰国菜',
+                'vietnamese': '越南菜',
+                'indian': '印度菜',
+                'cafe': '咖啡厅',
+                'bar': '酒吧',
+                'ramen': '拉面',
+                'sushi': '寿司',
+                'yakiniku': '烤肉',
+                'izakaya': '居酒屋',
+                'fast_food': '快餐',
+                'other': '其他'
+            };
+            return cuisines[cuisine] || cuisine || '美食';
+        }
+
+        function getPriceRange(range) {
+            const ranges = {
+                'budget': '¥1,000以下',
+                'moderate': '¥1,000~3,000',
+                'expensive': '¥3,000~5,000',
+                'luxury': '¥5,000以上'
+            };
+            return ranges[range] || range || '价格面议';
+        }
+    </script>
+</body>
+
+</html>
