@@ -444,15 +444,30 @@
             // 座位信息
             renderSeatingInfo(restaurant);
 
-            // 特色菜品
+            // 特色菜品 - 兼容字符串和对象格式
             if (restaurant.specialties && restaurant.specialties.length > 0) {
                 document.getElementById('menuSection').classList.remove('hidden');
-                document.getElementById('menuList').innerHTML = restaurant.specialties.map(item => `
-                    <div class="menu-card bg-orange-50 rounded-lg p-4 text-center border border-orange-100">
-                        <i class="fas fa-utensils text-orange-400 mb-2"></i>
-                        <p class="font-medium text-gray-800">${item}</p>
-                    </div>
-                `).join('');
+                document.getElementById('menuList').innerHTML = restaurant.specialties.map(item => {
+                    // 兼容旧格式（字符串）和新格式（对象 {name, image_url}）
+                    const name = typeof item === 'string' ? item : (item.name || '');
+                    const imageUrl = typeof item === 'object' && item.image_url ? item.image_url : null;
+
+                    if (imageUrl) {
+                        return `
+                            <div class="menu-card bg-orange-50 rounded-lg overflow-hidden border border-orange-100">
+                                <img src="${imageUrl}" alt="${name}" class="w-full aspect-square object-cover" onerror="this.style.display='none'">
+                                <p class="font-medium text-gray-800 p-3 text-center">${name}</p>
+                            </div>
+                        `;
+                    } else {
+                        return `
+                            <div class="menu-card bg-orange-50 rounded-lg p-4 text-center border border-orange-100">
+                                <i class="fas fa-utensils text-orange-400 mb-2"></i>
+                                <p class="font-medium text-gray-800">${name}</p>
+                            </div>
+                        `;
+                    }
+                }).join('');
             }
 
             // 环境照片
