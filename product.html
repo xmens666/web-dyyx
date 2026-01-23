@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品详情 - 东瀛游侠</title>
+    <meta name="description" content="东瀛游侠 - 在日华人的生活服务平台">
+    <!-- PWA & 图标 -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#006633">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <!-- 样式 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <style>
+        .loading-spinner { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .image-gallery img { cursor: pointer; transition: all 0.2s; }
+        .image-gallery img:hover { opacity: 0.8; }
+        .image-gallery img.active { ring: 2px solid #3B82F6; }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="fixed w-full bg-white/95 backdrop-blur-md shadow-sm z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2">
+                <span class="text-lg font-bold text-gray-800">🏯 东瀛游侠</span>
+            </a>
+            <a href="index.html#contact" class="bg-blue-600 text-white px-4 py-2 rounded-full text-sm hover:bg-blue-700 transition">
+                下载APP
+            </a>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="pt-16 pb-24">
+        <!-- 加载状态 -->
+        <div id="loading" class="flex flex-col items-center justify-center min-h-[60vh]">
+            <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full loading-spinner"></div>
+            <p class="mt-4 text-gray-500">正在加载商品信息...</p>
+        </div>
+
+        <!-- 错误状态 -->
+        <div id="error" class="hidden flex flex-col items-center justify-center min-h-[60vh] px-4">
+            <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                <i class="fas fa-exclamation-triangle text-red-500 text-3xl"></i>
+            </div>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">商品不存在</h2>
+            <p class="text-gray-500 mb-6 text-center">该商品可能已下架或链接无效</p>
+            <a href="index.html" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">
+                返回首页
+            </a>
+        </div>
+
+        <!-- 商品内容 -->
+        <div id="content" class="hidden fade-in">
+            <div class="container mx-auto px-4 py-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- 左侧：图片区域 -->
+                    <div>
+                        <!-- 主图 -->
+                        <div class="bg-white rounded-2xl overflow-hidden shadow-sm mb-4">
+                            <img id="mainImage" src="" alt="商品图片"
+                                 class="w-full aspect-square object-contain bg-gray-50">
+                        </div>
+                        <!-- 缩略图 -->
+                        <div id="thumbnails" class="image-gallery grid grid-cols-5 gap-2">
+                            <!-- 缩略图将动态插入 -->
+                        </div>
+                    </div>
+
+                    <!-- 右侧：商品信息 -->
+                    <div>
+                        <!-- 商品标题 -->
+                        <h1 id="productName" class="text-2xl sm:text-3xl font-bold text-gray-900 mb-4"></h1>
+
+                        <!-- 价格区域 -->
+                        <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-4 mb-6">
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-3xl sm:text-4xl font-bold text-red-500" id="productPrice"></span>
+                                <span id="originalPrice" class="text-gray-400 text-lg line-through hidden"></span>
+                            </div>
+                            <p id="priceNote" class="text-gray-500 text-sm mt-1"></p>
+                        </div>
+
+                        <!-- 商品属性 -->
+                        <div class="space-y-4 mb-6">
+                            <div class="flex items-center">
+                                <span class="text-gray-500 w-20">库存</span>
+                                <span id="productStock" class="text-gray-800"></span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="text-gray-500 w-20">配送</span>
+                                <span id="productShipping" class="text-gray-800"></span>
+                            </div>
+                        </div>
+
+                        <!-- 店铺信息 -->
+                        <div id="storeInfo" class="bg-white rounded-xl p-4 border border-gray-100 mb-6">
+                            <a href="" id="storeLink" class="flex items-center gap-3">
+                                <img id="storeLogoSmall" src="" alt="店铺"
+                                     class="w-12 h-12 rounded-lg object-cover border border-gray-100">
+                                <div class="flex-1">
+                                    <h4 id="storeNameSmall" class="font-medium text-gray-800"></h4>
+                                    <p class="text-gray-500 text-sm">点击查看店铺</p>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </a>
+                        </div>
+
+                        <!-- 下载APP购买提示 -->
+                        <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-mobile-alt text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-800 mb-1">在APP内购买</h4>
+                                    <p class="text-gray-600 text-sm mb-3">下载东瀛游侠APP，在线下单，享受更多优惠</p>
+                                    <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
+                                       class="inline-flex items-center bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600 transition">
+                                        <i class="fab fa-android mr-2"></i> 立即下载
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 商品详情 -->
+                <div class="mt-8">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                        商品详情
+                    </h2>
+                    <div id="productDescription" class="bg-white rounded-xl p-6 shadow-sm prose max-w-none">
+                        <!-- 商品描述将动态插入 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部固定购买栏 -->
+    <div id="bottomBar" class="hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40">
+        <div class="container mx-auto flex items-center justify-between gap-4">
+            <a href="" id="bottomStoreLink" class="flex flex-col items-center text-gray-600 hover:text-blue-600">
+                <i class="fas fa-store text-lg"></i>
+                <span class="text-xs mt-1">店铺</span>
+            </a>
+            <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
+               class="flex-1 bg-gradient-to-r from-orange-500 to-red-500 text-white text-center py-3 rounded-xl font-bold hover:opacity-90 transition">
+                <i class="fab fa-android mr-2"></i> 下载APP购买
+            </a>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400 text-sm mb-2">东瀛游侠 - 在日华人的生活服务平台</p>
+            <p class="text-gray-500 text-xs">&copy; 2026 株式会社昇陽商事</p>
+        </div>
+    </footer>
+
+    <!-- API配置 -->
+    <script src="api-config.js"></script>
+    <script>
+        let currentImageIndex = 0;
+        let productImages = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const productId = getUrlParam('id');
+
+            if (!productId) {
+                showError();
+                return;
+            }
+
+            try {
+                const product = await getProductById(productId);
+
+                if (!product) {
+                    showError();
+                    return;
+                }
+
+                renderProduct(product);
+
+            } catch (err) {
+                console.error('加载商品失败:', err);
+                showError();
+            }
+        });
+
+        function showError() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('error').classList.remove('hidden');
+        }
+
+        function renderProduct(product) {
+            // 更新页面标题
+            document.title = `${product.name} - 东瀛游侠`;
+
+            // 处理图片
+            productImages = [];
+            if (product.images && product.images.length > 0) {
+                productImages = product.images;
+            } else if (product.cover_image) {
+                productImages = [product.cover_image];
+            } else {
+                productImages = [DEFAULT_PRODUCT_IMAGE];
+            }
+
+            // 主图
+            document.getElementById('mainImage').src = productImages[0];
+
+            // 缩略图
+            const thumbnails = document.getElementById('thumbnails');
+            if (productImages.length > 1) {
+                thumbnails.innerHTML = productImages.map((img, index) => `
+                    <img src="${img}" alt="缩略图${index + 1}"
+                         class="aspect-square object-cover rounded-lg border-2 ${index === 0 ? 'border-blue-500' : 'border-transparent'}"
+                         onclick="switchImage(${index})"
+                         onerror="this.src='${DEFAULT_PRODUCT_IMAGE}'">
+                `).join('');
+            }
+
+            // 商品信息
+            document.getElementById('productName').textContent = product.name;
+            document.getElementById('productPrice').textContent = formatPrice(product.price);
+
+            if (product.original_price && product.original_price > product.price) {
+                const originalPriceEl = document.getElementById('originalPrice');
+                originalPriceEl.textContent = formatPrice(product.original_price);
+                originalPriceEl.classList.remove('hidden');
+
+                const discount = Math.round((1 - product.price / product.original_price) * 100);
+                document.getElementById('priceNote').textContent = `已优惠 ${discount}%`;
+            }
+
+            // 库存
+            document.getElementById('productStock').textContent = product.stock !== null
+                ? (product.stock > 0 ? `${product.stock} 件` : '已售罄')
+                : '充足';
+
+            // 配送
+            document.getElementById('productShipping').textContent = product.shipping_fee
+                ? `运费 ${formatPrice(product.shipping_fee)}`
+                : '包邮';
+
+            // 店铺信息
+            if (product.stores) {
+                const store = product.stores;
+                document.getElementById('storeLink').href = `store.html?id=${store.id}`;
+                document.getElementById('storeLogoSmall').src = store.logo_url || DEFAULT_STORE_LOGO;
+                document.getElementById('storeNameSmall').textContent = store.name;
+                document.getElementById('bottomStoreLink').href = `store.html?id=${store.id}`;
+            }
+
+            // 商品描述
+            const descriptionEl = document.getElementById('productDescription');
+            if (product.description) {
+                descriptionEl.innerHTML = `<p class="text-gray-700 whitespace-pre-wrap">${product.description}</p>`;
+            } else {
+                descriptionEl.innerHTML = '<p class="text-gray-400">暂无详细描述</p>';
+            }
+
+            // 显示内容
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('content').classList.remove('hidden');
+            document.getElementById('bottomBar').classList.remove('hidden');
+        }
+
+        function switchImage(index) {
+            currentImageIndex = index;
+            document.getElementById('mainImage').src = productImages[index];
+
+            // 更新缩略图高亮
+            const thumbs = document.querySelectorAll('#thumbnails img');
+            thumbs.forEach((thumb, i) => {
+                if (i === index) {
+                    thumb.classList.remove('border-transparent');
+                    thumb.classList.add('border-blue-500');
+                } else {
+                    thumb.classList.remove('border-blue-500');
+                    thumb.classList.add('border-transparent');
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

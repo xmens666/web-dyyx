@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卖家主页 - 东瀛游侠</title>
+    <meta name="description" content="东瀛游侠 - 在日华人的生活服务平台">
+    <!-- PWA & 图标 -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#006633">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <!-- 样式 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <style>
+        .loading-spinner { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .gradient-seller { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+        .tab-active { border-bottom: 3px solid #F59E0B; color: #D97706; font-weight: bold; }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="fixed w-full bg-white/95 backdrop-blur-md shadow-sm z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2">
+                <span class="text-lg font-bold text-gray-800">🏯 东瀛游侠</span>
+            </a>
+            <a href="index.html#contact" class="bg-blue-600 text-white px-4 py-2 rounded-full text-sm hover:bg-blue-700 transition">
+                下载APP
+            </a>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="pt-16">
+        <!-- 加载状态 -->
+        <div id="loading" class="flex flex-col items-center justify-center min-h-[60vh]">
+            <div class="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full loading-spinner"></div>
+            <p class="mt-4 text-gray-500">正在加载卖家信息...</p>
+        </div>
+
+        <!-- 错误状态 -->
+        <div id="error" class="hidden flex flex-col items-center justify-center min-h-[60vh] px-4">
+            <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                <i class="fas fa-exclamation-triangle text-red-500 text-3xl"></i>
+            </div>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">用户不存在</h2>
+            <p class="text-gray-500 mb-6 text-center">该用户可能已注销或链接无效</p>
+            <a href="index.html" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">
+                返回首页
+            </a>
+        </div>
+
+        <!-- 卖家内容 -->
+        <div id="content" class="hidden fade-in">
+            <!-- 卖家头部 -->
+            <div class="gradient-seller text-white">
+                <div class="container mx-auto px-4 py-8 sm:py-12">
+                    <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+                        <img id="sellerAvatar" src="" alt="头像"
+                             class="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-white/30 shadow-lg">
+                        <div class="text-center sm:text-left flex-1">
+                            <h1 id="sellerName" class="text-2xl sm:text-3xl font-bold mb-2"></h1>
+                            <p id="sellerBio" class="text-white/80 text-sm sm:text-base mb-3 max-w-xl"></p>
+                            <div class="flex flex-wrap justify-center sm:justify-start gap-4 text-sm">
+                                <span id="storeCount" class="bg-white/20 px-3 py-1 rounded-full"></span>
+                                <span id="serviceCount" class="bg-white/20 px-3 py-1 rounded-full"></span>
+                                <span id="joinDate" class="bg-white/20 px-3 py-1 rounded-full"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 切换 -->
+            <div class="bg-white border-b border-gray-200 sticky top-14 z-30">
+                <div class="container mx-auto px-4">
+                    <div class="flex">
+                        <button onclick="switchTab('stores')" id="tabStores"
+                                class="flex-1 py-4 text-center text-gray-600 hover:text-orange-600 transition tab-active">
+                            <i class="fas fa-store mr-2"></i>店铺
+                        </button>
+                        <button onclick="switchTab('services')" id="tabServices"
+                                class="flex-1 py-4 text-center text-gray-600 hover:text-orange-600 transition">
+                            <i class="fas fa-tools mr-2"></i>服务
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 内容区域 -->
+            <div class="container mx-auto px-4 py-6">
+                <!-- 店铺列表 -->
+                <div id="storesSection">
+                    <div id="storeList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- 店铺卡片将动态插入 -->
+                    </div>
+                    <div id="noStores" class="hidden text-center py-12">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-store-slash text-gray-400 text-2xl"></i>
+                        </div>
+                        <p class="text-gray-500">暂无店铺</p>
+                    </div>
+                </div>
+
+                <!-- 服务列表 -->
+                <div id="servicesSection" class="hidden">
+                    <div id="serviceList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- 服务卡片将动态插入 -->
+                    </div>
+                    <div id="noServices" class="hidden text-center py-12">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-tools text-gray-400 text-2xl"></i>
+                        </div>
+                        <p class="text-gray-500">暂无服务</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 下载APP提示 -->
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-8 sm:py-12">
+                <div class="container mx-auto px-4 text-center">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-3">想要更多服务？下载东瀛游侠APP</h3>
+                    <p class="text-white/80 mb-6 text-sm sm:text-base">在APP内可以直接联系卖家、下单购买、预约服务</p>
+                    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                        <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
+                           class="bg-white text-blue-600 px-6 py-3 rounded-xl font-bold hover:bg-blue-50 transition flex items-center justify-center">
+                            <i class="fab fa-android mr-2"></i> Android 下载
+                        </a>
+                        <button onclick="alert('iOS版本正在审核中，敬请期待...')"
+                                class="bg-white/20 text-white px-6 py-3 rounded-xl font-bold hover:bg-white/30 transition flex items-center justify-center">
+                            <i class="fab fa-apple mr-2"></i> iOS 下载
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400 text-sm mb-2">东瀛游侠 - 在日华人的生活服务平台</p>
+            <p class="text-gray-500 text-xs">&copy; 2026 株式会社昇陽商事</p>
+        </div>
+    </footer>
+
+    <!-- API配置 -->
+    <script src="api-config.js"></script>
+    <script>
+        let sellerData = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const userId = getUrlParam('id');
+
+            if (!userId) {
+                showError();
+                return;
+            }
+
+            try {
+                sellerData = await getSellerInfo(userId);
+
+                if (!sellerData.user) {
+                    showError();
+                    return;
+                }
+
+                renderSeller(sellerData);
+
+            } catch (err) {
+                console.error('加载卖家信息失败:', err);
+                showError();
+            }
+        });
+
+        function showError() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('error').classList.remove('hidden');
+        }
+
+        function renderSeller(data) {
+            const { user, stores, services } = data;
+
+            // 更新页面标题
+            document.title = `${user.nickname || '卖家'} - 东瀛游侠`;
+
+            // 头部信息
+            document.getElementById('sellerAvatar').src = user.avatar_url || DEFAULT_AVATAR;
+            document.getElementById('sellerName').textContent = user.nickname || '卖家';
+            document.getElementById('sellerBio').textContent = user.bio || '这个人很懒，什么都没写';
+            document.getElementById('storeCount').innerHTML = `<i class="fas fa-store mr-1"></i>${stores.length} 家店铺`;
+            document.getElementById('serviceCount').innerHTML = `<i class="fas fa-tools mr-1"></i>${services.length} 项服务`;
+            document.getElementById('joinDate').innerHTML = `<i class="fas fa-calendar mr-1"></i>加入于 ${formatDate(user.created_at)}`;
+
+            // 渲染店铺列表
+            const storeList = document.getElementById('storeList');
+            if (stores.length === 0) {
+                document.getElementById('noStores').classList.remove('hidden');
+            } else {
+                storeList.innerHTML = stores.map(store => `
+                    <a href="store.html?id=${store.id}" class="card-hover bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
+                        <div class="h-32 bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+                            <img src="${store.logo_url || DEFAULT_STORE_LOGO}" alt="${store.name}"
+                                 class="w-20 h-20 rounded-xl object-cover border-2 border-white shadow-lg"
+                                 onerror="this.src='${DEFAULT_STORE_LOGO}'">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-gray-800 mb-1">${store.name}</h3>
+                            <p class="text-gray-500 text-sm line-clamp-2">${store.description || '暂无介绍'}</p>
+                            <div class="mt-3 flex items-center text-sm text-gray-400">
+                                <i class="fas fa-tag mr-1"></i>
+                                <span>${getCategoryName(store.category)}</span>
+                            </div>
+                        </div>
+                    </a>
+                `).join('');
+            }
+
+            // 渲染服务列表
+            const serviceList = document.getElementById('serviceList');
+            if (services.length === 0) {
+                document.getElementById('noServices').classList.remove('hidden');
+            } else {
+                serviceList.innerHTML = services.map(service => `
+                    <a href="service.html?id=${service.id}" class="card-hover bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
+                        <div class="aspect-video bg-gray-100">
+                            <img src="${getServiceImage(service)}" alt="${service.title}"
+                                 class="w-full h-full object-cover"
+                                 onerror="this.src='${DEFAULT_PRODUCT_IMAGE}'">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-gray-800 mb-2 line-clamp-2">${service.title}</h3>
+                            <div class="flex items-center justify-between">
+                                <span class="text-red-500 font-bold">${formatServicePrice(service)}</span>
+                                <span class="text-gray-400 text-sm">${getServiceTypeName(service.service_type)}</span>
+                            </div>
+                            <p class="text-gray-500 text-sm mt-2">
+                                <i class="fas fa-map-marker-alt mr-1"></i>${service.service_area || '全国'}
+                            </p>
+                        </div>
+                    </a>
+                `).join('');
+            }
+
+            // 显示内容
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('content').classList.remove('hidden');
+        }
+
+        function switchTab(tab) {
+            const tabStores = document.getElementById('tabStores');
+            const tabServices = document.getElementById('tabServices');
+            const storesSection = document.getElementById('storesSection');
+            const servicesSection = document.getElementById('servicesSection');
+
+            if (tab === 'stores') {
+                tabStores.classList.add('tab-active');
+                tabServices.classList.remove('tab-active');
+                storesSection.classList.remove('hidden');
+                servicesSection.classList.add('hidden');
+            } else {
+                tabServices.classList.add('tab-active');
+                tabStores.classList.remove('tab-active');
+                servicesSection.classList.remove('hidden');
+                storesSection.classList.add('hidden');
+            }
+        }
+
+        function getServiceImage(service) {
+            if (service.images && service.images.length > 0) {
+                return service.images[0];
+            }
+            if (service.cover_image) {
+                return service.cover_image;
+            }
+            return DEFAULT_PRODUCT_IMAGE;
+        }
+
+        function formatServicePrice(service) {
+            if (service.price_type === 'negotiable' || !service.price) {
+                return '面议';
+            }
+            return formatPrice(service.price);
+        }
+
+        function getServiceTypeName(type) {
+            const types = {
+                'moving': '搬家服务',
+                'cleaning': '清洁保洁',
+                'repair': '维修服务',
+                'translation': '翻译服务',
+                'driving': '代驾接送',
+                'shopping': '代购跑腿',
+                'teaching': '教学培训',
+                'beauty': '美容美发',
+                'photography': '摄影摄像',
+                'other': '其他服务'
+            };
+            return types[type] || type || '生活服务';
+        }
+
+        function getCategoryName(category) {
+            const categories = {
+                'food': '食品',
+                'daily': '日用品',
+                'electronics': '数码电器',
+                'fashion': '服饰',
+                'beauty': '美妆护肤',
+                'home': '家居',
+                'other': '其他'
+            };
+            return categories[category] || category || '综合';
+        }
+    </script>
+</body>
+
+</html>
