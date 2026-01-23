@@ -22,6 +22,11 @@
         .star-empty { color: #D1D5DB; }
         .menu-card { transition: all 0.3s ease; }
         .menu-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+        .status-open { background: #10B981; }
+        .status-closed { background: #6B7280; }
+        .status-holiday { background: #F59E0B; }
+        .facility-tag { transition: all 0.2s ease; }
+        .facility-tag:hover { transform: scale(1.05); }
     </style>
 </head>
 
@@ -70,21 +75,34 @@
                                  class="w-full aspect-video sm:aspect-square rounded-xl object-cover shadow-lg">
                         </div>
                         <div class="flex-1">
-                            <h1 id="restaurantName" class="text-2xl sm:text-3xl font-bold mb-2"></h1>
-                            <div id="cuisineTag" class="inline-block bg-white/20 px-3 py-1 rounded-full text-sm mb-3"></div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <h1 id="restaurantName" class="text-2xl sm:text-3xl font-bold"></h1>
+                                <span id="verifiedBadge" class="hidden bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+                                    <i class="fas fa-check-circle mr-1"></i>认证商家
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-2 mb-3">
+                                <span id="cuisineTag" class="bg-white/20 px-3 py-1 rounded-full text-sm"></span>
+                                <span id="statusBadge" class="px-3 py-1 rounded-full text-sm"></span>
+                            </div>
 
                             <!-- 评分 -->
                             <div class="flex items-center gap-2 mb-3">
                                 <div id="starRating" class="flex"></div>
                                 <span id="ratingScore" class="text-white/90 font-bold"></span>
                                 <span id="reviewCount" class="text-white/70 text-sm"></span>
+                                <span id="viewCount" class="text-white/70 text-sm ml-2"></span>
                             </div>
 
                             <!-- 基本信息 -->
                             <div class="flex flex-wrap gap-4 text-sm text-white/80">
                                 <span id="priceRange"><i class="fas fa-yen-sign mr-1"></i></span>
                                 <span id="businessHours"><i class="fas fa-clock mr-1"></i></span>
+                                <span id="closedDaysHeader" class="hidden"><i class="fas fa-calendar-times mr-1"></i></span>
                             </div>
+
+                            <!-- 服务方式 -->
+                            <div id="serviceTypes" class="flex flex-wrap gap-2 mt-3"></div>
                         </div>
                     </div>
                 </div>
@@ -94,6 +112,15 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <!-- 左侧：餐厅详情 -->
                     <div class="lg:col-span-2 space-y-6">
+                        <!-- 认证信息 -->
+                        <div id="certificationSection" class="hidden bg-gradient-to-r from-blue-50 to-green-50 rounded-xl p-6 shadow-sm border border-blue-100">
+                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-shield-alt text-blue-500 mr-2"></i>
+                                认证信息
+                            </h2>
+                            <div id="certificationList" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+                        </div>
+
                         <!-- 餐厅简介 -->
                         <div class="bg-white rounded-xl p-6 shadow-sm">
                             <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
@@ -101,6 +128,7 @@
                                 餐厅简介
                             </h2>
                             <p id="restaurantDescription" class="text-gray-700 whitespace-pre-wrap"></p>
+                            <div id="establishedYear" class="mt-3 text-sm text-gray-500 hidden"></div>
                         </div>
 
                         <!-- 特色菜品 -->
@@ -109,9 +137,25 @@
                                 <i class="fas fa-fire text-red-500 mr-2"></i>
                                 特色推荐
                             </h2>
-                            <div id="menuList" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                                <!-- 菜品将动态插入 -->
-                            </div>
+                            <div id="menuList" class="grid grid-cols-2 sm:grid-cols-3 gap-4"></div>
+                        </div>
+
+                        <!-- 设施服务 -->
+                        <div id="facilitiesSection" class="bg-white rounded-xl p-6 shadow-sm">
+                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-concierge-bell text-purple-500 mr-2"></i>
+                                设施服务
+                            </h2>
+                            <div id="facilitiesList" class="flex flex-wrap gap-3"></div>
+                        </div>
+
+                        <!-- 座位信息 -->
+                        <div id="seatingSection" class="bg-white rounded-xl p-6 shadow-sm hidden">
+                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-chair text-amber-500 mr-2"></i>
+                                座位信息
+                            </h2>
+                            <div id="seatingInfo" class="grid grid-cols-2 sm:grid-cols-4 gap-4"></div>
                         </div>
 
                         <!-- 餐厅环境 -->
@@ -120,9 +164,16 @@
                                 <i class="fas fa-images text-purple-500 mr-2"></i>
                                 环境展示
                             </h2>
-                            <div id="photoGallery" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                <!-- 照片将动态插入 -->
-                            </div>
+                            <div id="photoGallery" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+                        </div>
+
+                        <!-- 外卖配送 -->
+                        <div id="deliverySection" class="bg-white rounded-xl p-6 shadow-sm hidden">
+                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-motorcycle text-green-500 mr-2"></i>
+                                外卖配送
+                            </h2>
+                            <div id="deliveryInfo" class="space-y-3"></div>
                         </div>
                     </div>
 
@@ -134,10 +185,15 @@
                                 <i class="fas fa-map-marker-alt text-red-500 mr-2"></i>
                                 位置信息
                             </h2>
-                            <p id="restaurantAddress" class="text-gray-700 mb-3"></p>
-                            <p id="nearStation" class="text-gray-500 text-sm mb-4"></p>
+                            <div id="locationInfo" class="space-y-2 text-gray-700">
+                                <p id="restaurantRegion" class="hidden"><i class="fas fa-globe-asia text-gray-400 mr-2"></i></p>
+                                <p id="restaurantCity" class="hidden"><i class="fas fa-city text-gray-400 mr-2"></i></p>
+                                <p id="restaurantDistrict" class="hidden"><i class="fas fa-map text-gray-400 mr-2"></i></p>
+                                <p id="restaurantAddress" class="font-medium"></p>
+                                <p id="restaurantLocation" class="text-sm text-gray-500 hidden"></p>
+                            </div>
                             <a id="mapLink" href="#" target="_blank"
-                               class="block text-center bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition">
+                               class="block text-center bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition mt-4">
                                 <i class="fas fa-external-link-alt mr-2"></i>在地图中查看
                             </a>
                         </div>
@@ -149,11 +205,31 @@
                                 联系方式
                             </h2>
                             <div class="space-y-3">
-                                <p id="restaurantPhone" class="text-gray-700">
-                                    <i class="fas fa-phone mr-2 text-gray-400"></i>
-                                </p>
-                                <div id="socialLinks" class="space-y-2">
-                                    <!-- 社交链接将动态插入 -->
+                                <p id="restaurantPhone" class="text-gray-700"></p>
+                                <div id="socialLinks" class="space-y-2"></div>
+                            </div>
+                        </div>
+
+                        <!-- 支付方式 -->
+                        <div id="paymentSection" class="bg-white rounded-xl p-6 shadow-sm hidden">
+                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-credit-card text-indigo-500 mr-2"></i>
+                                支付方式
+                            </h2>
+                            <div id="paymentMethods" class="flex flex-wrap gap-2"></div>
+                        </div>
+
+                        <!-- 店主信息 -->
+                        <div id="ownerSection" class="bg-white rounded-xl p-6 shadow-sm hidden">
+                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-user text-blue-500 mr-2"></i>
+                                店主信息
+                            </h2>
+                            <div class="flex items-center gap-3">
+                                <img id="ownerAvatar" src="" alt="店主头像" class="w-12 h-12 rounded-full object-cover">
+                                <div>
+                                    <p id="ownerName" class="font-medium text-gray-800"></p>
+                                    <p class="text-sm text-gray-500">店主</p>
                                 </div>
                             </div>
                         </div>
@@ -179,9 +255,7 @@
                                 <i class="fas fa-info-circle mr-2"></i>
                                 营业信息
                             </h4>
-                            <ul id="businessInfo" class="text-yellow-700 text-sm space-y-1">
-                                <!-- 营业信息将动态插入 -->
-                            </ul>
+                            <ul id="businessInfo" class="text-yellow-700 text-sm space-y-1"></ul>
                         </div>
                     </div>
                 </div>
@@ -254,32 +328,94 @@
             // 封面图
             const coverImage = restaurant.images && restaurant.images.length > 0
                 ? restaurant.images[0]
-                : (restaurant.cover_image || DEFAULT_PRODUCT_IMAGE);
+                : DEFAULT_PRODUCT_IMAGE;
             document.getElementById('restaurantCover').src = coverImage;
 
             // 基本信息
             document.getElementById('restaurantName').textContent = restaurant.name;
             document.getElementById('cuisineTag').textContent = getCuisineName(restaurant.cuisine);
 
+            // 认证徽章
+            if (restaurant.business_verified) {
+                document.getElementById('verifiedBadge').classList.remove('hidden');
+            }
+
+            // 营业状态
+            const businessStatus = getBusinessStatus(restaurant);
+            const statusBadge = document.getElementById('statusBadge');
+            statusBadge.textContent = businessStatus.text;
+            statusBadge.className = `px-3 py-1 rounded-full text-sm ${businessStatus.class}`;
+
             // 评分
             const rating = restaurant.rating || 0;
-            const starRating = document.getElementById('starRating');
-            starRating.innerHTML = renderStars(rating);
+            document.getElementById('starRating').innerHTML = renderStars(rating);
             document.getElementById('ratingScore').textContent = rating.toFixed(1);
             document.getElementById('reviewCount').textContent = `(${restaurant.review_count || 0}条点评)`;
+            document.getElementById('viewCount').innerHTML = `<i class="fas fa-eye mr-1"></i>${restaurant.view_count || 0}`;
 
             // 价格和营业时间
             document.getElementById('priceRange').innerHTML = `<i class="fas fa-yen-sign mr-1"></i>${getPriceRange(restaurant.price_range)}`;
             document.getElementById('businessHours').innerHTML = `<i class="fas fa-clock mr-1"></i>${restaurant.business_hours || '详情请咨询'}`;
 
+            // 定休日
+            if (restaurant.closed_days) {
+                const closedDaysHeader = document.getElementById('closedDaysHeader');
+                closedDaysHeader.classList.remove('hidden');
+                closedDaysHeader.innerHTML = `<i class="fas fa-calendar-times mr-1"></i>定休: ${restaurant.closed_days}`;
+            }
+
+            // 服务方式
+            const serviceTypes = document.getElementById('serviceTypes');
+            let serviceHtml = '';
+            if (restaurant.dine_in_enabled) {
+                serviceHtml += '<span class="bg-white/20 px-3 py-1 rounded-full text-sm"><i class="fas fa-store mr-1"></i>堂食</span>';
+            }
+            if (restaurant.takeout_enabled) {
+                serviceHtml += '<span class="bg-white/20 px-3 py-1 rounded-full text-sm"><i class="fas fa-shopping-bag mr-1"></i>外带</span>';
+            }
+            if (restaurant.self_delivery_enabled) {
+                serviceHtml += '<span class="bg-white/20 px-3 py-1 rounded-full text-sm"><i class="fas fa-motorcycle mr-1"></i>外卖</span>';
+            }
+            if (restaurant.dine_in_reservation) {
+                serviceHtml += '<span class="bg-white/20 px-3 py-1 rounded-full text-sm"><i class="fas fa-calendar-check mr-1"></i>可预约</span>';
+            }
+            serviceTypes.innerHTML = serviceHtml;
+
+            // 认证信息
+            renderCertifications(restaurant);
+
             // 简介
             document.getElementById('restaurantDescription').textContent = restaurant.description || '暂无简介';
 
-            // 位置
+            // 创店年份
+            if (restaurant.established_year) {
+                const establishedEl = document.getElementById('establishedYear');
+                establishedEl.classList.remove('hidden');
+                establishedEl.innerHTML = `<i class="fas fa-history mr-1"></i>创立于 ${restaurant.established_year} 年`;
+            }
+
+            // 位置信息
+            if (restaurant.region) {
+                const regionEl = document.getElementById('restaurantRegion');
+                regionEl.classList.remove('hidden');
+                regionEl.innerHTML = `<i class="fas fa-globe-asia text-gray-400 mr-2"></i>地区: ${restaurant.region}`;
+            }
+            if (restaurant.city) {
+                const cityEl = document.getElementById('restaurantCity');
+                cityEl.classList.remove('hidden');
+                cityEl.innerHTML = `<i class="fas fa-city text-gray-400 mr-2"></i>城市: ${restaurant.city}`;
+            }
+            if (restaurant.district) {
+                const districtEl = document.getElementById('restaurantDistrict');
+                districtEl.classList.remove('hidden');
+                districtEl.innerHTML = `<i class="fas fa-map text-gray-400 mr-2"></i>区域: ${restaurant.district}`;
+            }
             document.getElementById('restaurantAddress').textContent = restaurant.address || '地址未公开';
-            document.getElementById('nearStation').innerHTML = restaurant.nearest_station
-                ? `<i class="fas fa-train mr-1"></i>最近车站: ${restaurant.nearest_station}`
-                : '';
+            if (restaurant.location) {
+                const locationEl = document.getElementById('restaurantLocation');
+                locationEl.classList.remove('hidden');
+                locationEl.textContent = restaurant.location;
+            }
 
             // 地图链接
             if (restaurant.address) {
@@ -288,7 +424,7 @@
             }
 
             // 电话
-            const phone = restaurant.phone || restaurant.contact_phone;
+            const phone = restaurant.phone;
             document.getElementById('restaurantPhone').innerHTML = phone
                 ? `<i class="fas fa-phone mr-2 text-gray-400"></i><a href="tel:${phone}" class="text-blue-600">${phone}</a>`
                 : '<i class="fas fa-phone mr-2 text-gray-400"></i>暂无电话';
@@ -297,19 +433,23 @@
             // 社交链接
             const socialLinks = document.getElementById('socialLinks');
             let socialHtml = '';
-            if (restaurant.line_id) {
-                socialHtml += `<p class="text-gray-700"><i class="fab fa-line mr-2 text-green-500"></i>LINE: ${restaurant.line_id}</p>`;
-            }
-            if (restaurant.wechat_id) {
-                socialHtml += `<p class="text-gray-700"><i class="fab fa-weixin mr-2 text-green-600"></i>微信: ${restaurant.wechat_id}</p>`;
+            if (restaurant.wechat) {
+                socialHtml += `<p class="text-gray-700"><i class="fab fa-weixin mr-2 text-green-600"></i>微信: ${restaurant.wechat}</p>`;
             }
             socialLinks.innerHTML = socialHtml || '<p class="text-gray-400 text-sm">暂无社交账号</p>';
+
+            // 设施服务
+            renderFacilities(restaurant);
+
+            // 座位信息
+            renderSeatingInfo(restaurant);
 
             // 特色菜品
             if (restaurant.specialties && restaurant.specialties.length > 0) {
                 document.getElementById('menuSection').classList.remove('hidden');
                 document.getElementById('menuList').innerHTML = restaurant.specialties.map(item => `
-                    <div class="menu-card bg-gray-50 rounded-lg p-3 text-center">
+                    <div class="menu-card bg-orange-50 rounded-lg p-4 text-center border border-orange-100">
+                        <i class="fas fa-utensils text-orange-400 mb-2"></i>
                         <p class="font-medium text-gray-800">${item}</p>
                     </div>
                 `).join('');
@@ -321,8 +461,54 @@
                 document.getElementById('photoGallery').innerHTML = restaurant.images.slice(1).map(img => `
                     <img src="${img}" alt="餐厅环境"
                          class="rounded-lg aspect-square object-cover cursor-pointer hover:opacity-90 transition"
-                         onclick="window.open('${img}', '_blank')">
+                         onclick="window.open('${img}', '_blank')"
+                         onerror="this.style.display='none'">
                 `).join('');
+            }
+
+            // 外卖配送
+            if (restaurant.self_delivery_enabled) {
+                document.getElementById('deliverySection').classList.remove('hidden');
+                let deliveryHtml = '';
+                if (restaurant.self_delivery_fee !== null && restaurant.self_delivery_fee !== undefined) {
+                    deliveryHtml += `<p class="flex justify-between"><span class="text-gray-600">配送费:</span><span class="font-medium">${formatPrice(restaurant.self_delivery_fee)}</span></p>`;
+                }
+                if (restaurant.self_delivery_min_order) {
+                    deliveryHtml += `<p class="flex justify-between"><span class="text-gray-600">起送金额:</span><span class="font-medium">${formatPrice(restaurant.self_delivery_min_order)}</span></p>`;
+                }
+                if (restaurant.self_delivery_range) {
+                    deliveryHtml += `<p class="flex justify-between"><span class="text-gray-600">配送范围:</span><span class="font-medium">${restaurant.self_delivery_range}</span></p>`;
+                }
+                document.getElementById('deliveryInfo').innerHTML = deliveryHtml || '<p class="text-gray-500">详情请咨询餐厅</p>';
+            }
+
+            // 支付方式
+            if (restaurant.payment_methods && restaurant.payment_methods.length > 0) {
+                document.getElementById('paymentSection').classList.remove('hidden');
+                const paymentMap = {
+                    'cash': { icon: 'fa-money-bill-wave', label: '现金', color: 'green' },
+                    'credit_card': { icon: 'fa-credit-card', label: '信用卡', color: 'blue' },
+                    'paypay': { icon: 'fa-mobile-alt', label: 'PayPay', color: 'red' },
+                    'line_pay': { icon: 'fab fa-line', label: 'LINE Pay', color: 'green' },
+                    'suica': { icon: 'fa-train', label: 'Suica', color: 'green' },
+                    'wechat_pay': { icon: 'fab fa-weixin', label: '微信支付', color: 'green' },
+                    'alipay': { icon: 'fab fa-alipay', label: '支付宝', color: 'blue' },
+                    'id': { icon: 'fa-id-card', label: 'iD', color: 'red' },
+                    'quicpay': { icon: 'fa-bolt', label: 'QUICPay', color: 'purple' }
+                };
+                document.getElementById('paymentMethods').innerHTML = restaurant.payment_methods.map(method => {
+                    const info = paymentMap[method] || { icon: 'fa-wallet', label: method, color: 'gray' };
+                    return `<span class="inline-flex items-center bg-${info.color}-50 text-${info.color}-700 px-3 py-1 rounded-full text-sm">
+                        <i class="fas ${info.icon} mr-1"></i>${info.label}
+                    </span>`;
+                }).join('');
+            }
+
+            // 店主信息
+            if (restaurant.users) {
+                document.getElementById('ownerSection').classList.remove('hidden');
+                document.getElementById('ownerAvatar').src = restaurant.users.avatar_url || DEFAULT_AVATAR;
+                document.getElementById('ownerName').textContent = restaurant.users.nickname || '店主';
             }
 
             // 营业信息
@@ -330,15 +516,170 @@
             let infoHtml = '';
             if (restaurant.business_hours) infoHtml += `<li>• 营业时间: ${restaurant.business_hours}</li>`;
             if (restaurant.closed_days) infoHtml += `<li>• 定休日: ${restaurant.closed_days}</li>`;
-            if (restaurant.seats) infoHtml += `<li>• 座位数: ${restaurant.seats}席</li>`;
-            if (restaurant.parking) infoHtml += `<li>• 停车场: ${restaurant.parking}</li>`;
-            if (restaurant.reservation) infoHtml += `<li>• 预约: ${restaurant.reservation ? '可预约' : '无需预约'}</li>`;
+            if (restaurant.seating_capacity) infoHtml += `<li>• 座位数: ${restaurant.seating_capacity}席</li>`;
+            if (restaurant.table_count) infoHtml += `<li>• 餐桌数: ${restaurant.table_count}桌</li>`;
+            if (restaurant.max_party_size) infoHtml += `<li>• 最大接待: ${restaurant.max_party_size}人</li>`;
+            if (restaurant.max_reservation_days) infoHtml += `<li>• 最多可提前${restaurant.max_reservation_days}天预约</li>`;
+            if (restaurant.parking_available && restaurant.parking_spaces) {
+                infoHtml += `<li>• 停车位: ${restaurant.parking_spaces}个</li>`;
+            }
             businessInfo.innerHTML = infoHtml || '<li>• 详情请咨询餐厅</li>';
 
             // 显示内容
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('content').classList.remove('hidden');
             document.getElementById('bottomBar').classList.remove('hidden');
+        }
+
+        function renderCertifications(restaurant) {
+            const certifications = [];
+            if (restaurant.business_verified) {
+                certifications.push({ icon: 'fa-store', label: '商家认证', verified: true });
+            }
+            if (restaurant.business_license_verified) {
+                certifications.push({ icon: 'fa-file-alt', label: '营业执照', verified: true });
+            }
+            if (restaurant.food_hygiene_verified) {
+                certifications.push({ icon: 'fa-utensils', label: '食品卫生', verified: true });
+            }
+            if (restaurant.fire_safety_verified) {
+                certifications.push({ icon: 'fa-fire-extinguisher', label: '消防安全', verified: true });
+            }
+
+            if (certifications.length > 0) {
+                document.getElementById('certificationSection').classList.remove('hidden');
+                document.getElementById('certificationList').innerHTML = certifications.map(cert => `
+                    <div class="flex items-center gap-2 bg-white rounded-lg p-3 border border-green-200">
+                        <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                            <i class="fas ${cert.icon} text-green-600 text-sm"></i>
+                        </div>
+                        <span class="text-sm font-medium text-green-700">${cert.label}</span>
+                        <i class="fas fa-check-circle text-green-500 ml-auto"></i>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function renderFacilities(restaurant) {
+            const facilities = [];
+
+            // WiFi
+            if (restaurant.has_wifi || restaurant.wifi_available) {
+                facilities.push({ icon: 'fa-wifi', label: 'WiFi', color: 'blue' });
+            }
+            // 停车场
+            if (restaurant.parking_available) {
+                facilities.push({ icon: 'fa-parking', label: '停车场', color: 'blue' });
+            }
+            // 包间
+            if (restaurant.private_rooms) {
+                const label = restaurant.private_rooms_count ? `包间(${restaurant.private_rooms_count}间)` : '包间';
+                facilities.push({ icon: 'fa-door-closed', label: label, color: 'purple' });
+            }
+            // 儿童友好
+            if (restaurant.child_friendly) {
+                facilities.push({ icon: 'fa-baby', label: '儿童友好', color: 'pink' });
+            }
+            // 儿童座椅
+            if (restaurant.has_child_seats) {
+                facilities.push({ icon: 'fa-baby-carriage', label: '儿童座椅', color: 'pink' });
+            }
+            // 无障碍
+            if (restaurant.wheelchair_accessible) {
+                facilities.push({ icon: 'fa-wheelchair', label: '无障碍', color: 'green' });
+            }
+            // TV
+            if (restaurant.has_tv) {
+                facilities.push({ icon: 'fa-tv', label: '电视', color: 'gray' });
+            }
+            // 吸烟
+            if (restaurant.is_non_smoking) {
+                facilities.push({ icon: 'fa-smoking-ban', label: '禁烟', color: 'red' });
+            } else if (restaurant.has_smoking_room) {
+                facilities.push({ icon: 'fa-smoking', label: '吸烟室', color: 'gray' });
+            } else if (restaurant.has_smoking_seats) {
+                facilities.push({ icon: 'fa-smoking', label: '吸烟席', color: 'gray' });
+            } else if (restaurant.smoking_allowed) {
+                facilities.push({ icon: 'fa-smoking', label: '可吸烟', color: 'gray' });
+            }
+
+            if (facilities.length > 0) {
+                document.getElementById('facilitiesSection').classList.remove('hidden');
+                document.getElementById('facilitiesList').innerHTML = facilities.map(f => `
+                    <span class="facility-tag inline-flex items-center bg-${f.color}-50 text-${f.color}-700 px-4 py-2 rounded-full text-sm">
+                        <i class="fas ${f.icon} mr-2"></i>${f.label}
+                    </span>
+                `).join('');
+            } else {
+                document.getElementById('facilitiesSection').classList.add('hidden');
+            }
+        }
+
+        function renderSeatingInfo(restaurant) {
+            const seatingInfo = [];
+            if (restaurant.seating_capacity) {
+                seatingInfo.push({ icon: 'fa-users', label: '总座位', value: `${restaurant.seating_capacity}席` });
+            }
+            if (restaurant.table_count) {
+                seatingInfo.push({ icon: 'fa-th-large', label: '餐桌数', value: `${restaurant.table_count}桌` });
+            }
+            if (restaurant.max_party_size) {
+                seatingInfo.push({ icon: 'fa-user-friends', label: '最大接待', value: `${restaurant.max_party_size}人` });
+            }
+            if (restaurant.private_rooms && restaurant.private_rooms_count) {
+                seatingInfo.push({ icon: 'fa-door-closed', label: '包间数', value: `${restaurant.private_rooms_count}间` });
+            }
+
+            if (seatingInfo.length > 0) {
+                document.getElementById('seatingSection').classList.remove('hidden');
+                document.getElementById('seatingInfo').innerHTML = seatingInfo.map(info => `
+                    <div class="bg-amber-50 rounded-lg p-4 text-center">
+                        <i class="fas ${info.icon} text-amber-500 text-xl mb-2"></i>
+                        <p class="text-gray-500 text-xs">${info.label}</p>
+                        <p class="font-bold text-gray-800">${info.value}</p>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function getBusinessStatus(restaurant) {
+            const now = new Date();
+            const currentDay = now.getDay();
+            const currentTime = now.getHours() * 100 + now.getMinutes();
+
+            const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+            const dayNamesCN = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+            const dayNamesJP = ['日曜', '月曜', '火曜', '水曜', '木曜', '金曜', '土曜'];
+
+            const closedDays = restaurant.closed_days || '';
+            const isHoliday = (
+                closedDays.includes(dayNames[currentDay]) ||
+                closedDays.includes(dayNamesCN[currentDay]) ||
+                closedDays.includes(dayNamesJP[currentDay])
+            );
+
+            if (isHoliday) {
+                return { status: 'holiday', text: '定休日', class: 'status-holiday' };
+            }
+
+            const businessHours = restaurant.business_hours || '';
+            if (!businessHours) {
+                return { status: 'unknown', text: '营业中', class: 'status-open' };
+            }
+
+            const timeMatch = businessHours.match(/(\d{1,2}):?(\d{2})?\s*[-~～]\s*(\d{1,2}):?(\d{2})?/);
+            if (timeMatch) {
+                const openHour = parseInt(timeMatch[1]) * 100 + (parseInt(timeMatch[2]) || 0);
+                const closeHour = parseInt(timeMatch[3]) * 100 + (parseInt(timeMatch[4]) || 0);
+
+                if (currentTime >= openHour && currentTime < closeHour) {
+                    return { status: 'open', text: '营业中', class: 'status-open' };
+                } else {
+                    return { status: 'closed', text: '休息中', class: 'status-closed' };
+                }
+            }
+
+            return { status: 'open', text: '营业中', class: 'status-open' };
         }
 
         function renderStars(rating) {

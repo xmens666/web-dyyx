@@ -110,8 +110,14 @@ async function getUserMarketplaceItemCount(userId) {
 
 // 获取餐厅详情
 async function getRestaurantById(restaurantId) {
-    const data = await supabaseQuery('restaurants', `?id=eq.${restaurantId}&select=*,users!restaurants_user_id_fkey(id,nickname,avatar_url)`);
+    const data = await supabaseQuery('restaurants', `?id=eq.${restaurantId}&select=*,users:owner_id(id,nickname,avatar_url)`);
     return data[0] || null;
+}
+
+// 获取用户发布的餐厅数量
+async function getUserRestaurantCount(userId) {
+    const data = await supabaseQuery('restaurants', `?owner_id=eq.${userId}&status=eq.active&select=id`);
+    return data?.length || 0;
 }
 
 // ==================== 客栈驿站（房源）====================
@@ -179,7 +185,7 @@ async function getServiceList(page = 1, limit = 20) {
 // 获取餐厅列表
 async function getRestaurantList(page = 1, limit = 20) {
     const offset = (page - 1) * limit;
-    return await supabaseQuery('restaurants', `?status=eq.active&select=*,users!restaurants_user_id_fkey(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
+    return await supabaseQuery('restaurants', `?status=eq.active&select=*,users:owner_id(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
 }
 
 // 获取房源列表

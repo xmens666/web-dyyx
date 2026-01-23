@@ -21,6 +21,9 @@
         .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
         .gradient-header { background: linear-gradient(135deg, #F97316 0%, #EA580C 50%, #DC2626 100%); }
         .star { color: #FBBF24; }
+        .status-open { background: #10B981; }
+        .status-closed { background: #6B7280; }
+        .status-holiday { background: #F59E0B; }
     </style>
 </head>
 
@@ -176,6 +179,41 @@
 
                 const rating = restaurant.rating || 0;
 
+                // 计算营业状态
+                const businessStatus = getBusinessStatus(restaurant);
+
+                // 认证徽章
+                const verifiedBadge = restaurant.business_verified
+                    ? '<span class="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full"><i class="fas fa-check-circle mr-1"></i>认证</span>'
+                    : '';
+
+                // 服务方式标签
+                let serviceTags = [];
+                if (restaurant.dine_in_enabled) serviceTags.push('堂食');
+                if (restaurant.takeout_enabled) serviceTags.push('外带');
+                if (restaurant.self_delivery_enabled) serviceTags.push('外卖');
+                const serviceHtml = serviceTags.length > 0
+                    ? `<div class="flex gap-1 mt-2">${serviceTags.map(t => `<span class="text-xs bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded">${t}</span>`).join('')}</div>`
+                    : '';
+
+                // 设施图标
+                let facilityIcons = [];
+                if (restaurant.has_wifi || restaurant.wifi_available) facilityIcons.push('<i class="fas fa-wifi text-blue-400" title="WiFi"></i>');
+                if (restaurant.parking_available) facilityIcons.push('<i class="fas fa-parking text-blue-400" title="停车场"></i>');
+                if (restaurant.private_rooms) facilityIcons.push('<i class="fas fa-door-closed text-purple-400" title="包间"></i>');
+                if (restaurant.has_child_seats || restaurant.child_friendly) facilityIcons.push('<i class="fas fa-baby text-pink-400" title="儿童友好"></i>');
+                const facilityHtml = facilityIcons.length > 0
+                    ? `<div class="flex gap-2 text-sm">${facilityIcons.join('')}</div>`
+                    : '';
+
+                // 位置显示
+                const location = restaurant.city || restaurant.region || '';
+
+                // 定休日
+                const closedDaysHtml = restaurant.closed_days
+                    ? `<span class="text-xs text-gray-400 ml-2">定休: ${restaurant.closed_days}</span>`
+                    : '';
+
                 card.innerHTML = `
                     <div class="aspect-video bg-gray-100 relative">
                         <img src="${image}" alt="${restaurant.name}"
@@ -184,6 +222,8 @@
                         <span class="absolute top-2 right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full">
                             ${getCuisineName(restaurant.cuisine)}
                         </span>
+                        ${verifiedBadge}
+                        <span class="absolute bottom-2 left-2 ${businessStatus.class} text-white text-xs px-2 py-0.5 rounded-full">${businessStatus.text}</span>
                     </div>
                     <div class="p-4">
                         <h3 class="font-bold text-gray-800 mb-2 line-clamp-1">${restaurant.name}</h3>
@@ -191,12 +231,18 @@
                             ${renderStarsSmall(rating)}
                             <span class="text-sm text-gray-600 ml-1">${rating.toFixed(1)}</span>
                             <span class="text-xs text-gray-400">(${restaurant.review_count || 0})</span>
+                            <span class="text-xs text-gray-400 ml-1"><i class="fas fa-eye"></i> ${restaurant.view_count || 0}</span>
                         </div>
                         <p class="text-gray-500 text-sm line-clamp-1 mb-2">${restaurant.address || '地址未公开'}</p>
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between mb-2">
                             <span class="text-orange-600 font-medium text-sm">${getPriceRange(restaurant.price_range)}</span>
-                            <span class="text-xs text-gray-400">${restaurant.nearest_station || ''}</span>
+                            ${facilityHtml}
                         </div>
+                        <div class="flex items-center justify-between text-xs text-gray-400">
+                            <span><i class="fas fa-map-marker-alt mr-1"></i>${location}</span>
+                            ${closedDaysHtml}
+                        </div>
+                        ${serviceHtml}
                     </div>
                 `;
 
@@ -252,6 +298,55 @@
                 'luxury': '¥5,000以上'
             };
             return ranges[range] || range || '价格面议';
+        }
+
+        // 计算营业状态
+        function getBusinessStatus(restaurant) {
+            const now = new Date();
+            const currentDay = now.getDay(); // 0=周日, 1=周一...
+            const currentTime = now.getHours() * 100 + now.getMinutes();
+
+            // 日语星期映射
+            const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+            const dayNamesCN = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+            const dayNamesJP = ['日曜', '月曜', '火曜', '水曜', '木曜', '金曜', '土曜'];
+
+            // 检查是否为定休日
+            const closedDays = restaurant.closed_days || '';
+            const isHoliday = dayNames.some((d, i) =>
+                closedDays.includes(d) ||
+                closedDays.includes(dayNamesCN[i]) ||
+                closedDays.includes(dayNamesJP[i])
+            ) && (
+                closedDays.includes(dayNames[currentDay]) ||
+                closedDays.includes(dayNamesCN[currentDay]) ||
+                closedDays.includes(dayNamesJP[currentDay])
+            );
+
+            if (isHoliday) {
+                return { status: 'holiday', text: '定休日', class: 'status-holiday' };
+            }
+
+            // 解析营业时间
+            const businessHours = restaurant.business_hours || '';
+            if (!businessHours) {
+                return { status: 'unknown', text: '营业中', class: 'status-open' };
+            }
+
+            // 简单解析时间格式 (如 "11:00-22:00" 或 "11:00～22:00")
+            const timeMatch = businessHours.match(/(\d{1,2}):?(\d{2})?\s*[-~～]\s*(\d{1,2}):?(\d{2})?/);
+            if (timeMatch) {
+                const openHour = parseInt(timeMatch[1]) * 100 + (parseInt(timeMatch[2]) || 0);
+                const closeHour = parseInt(timeMatch[3]) * 100 + (parseInt(timeMatch[4]) || 0);
+
+                if (currentTime >= openHour && currentTime < closeHour) {
+                    return { status: 'open', text: '营业中', class: 'status-open' };
+                } else {
+                    return { status: 'closed', text: '休息中', class: 'status-closed' };
+                }
+            }
+
+            return { status: 'open', text: '营业中', class: 'status-open' };
         }
     </script>
 </body>
