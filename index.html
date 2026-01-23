@@ -289,15 +289,15 @@
                             </p>
                             <!-- 按钮 -->
                             <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 fade-in-up delay-400">
-                                <button onclick="alert('iOS版本正在审核中，敬请期待...')" class="bg-gray-400 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl shadow hover:bg-gray-500 transition flex items-center justify-center text-xs sm:text-base btn-press opacity-80">
+                                <button onclick="showIosModal()" class="bg-gray-400 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl shadow hover:bg-gray-500 transition flex items-center justify-center text-xs sm:text-base btn-press opacity-80">
                                     <i class="fab fa-apple mr-1 sm:mr-2"></i> iOS 下载
                                 </button>
-                                <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download class="android-btn-glow bg-green-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl shadow-lg hover:bg-green-600 transition flex items-center justify-center text-xs sm:text-base btn-press font-bold">
+                                <button onclick="showAndroidModal()" class="android-btn-glow bg-green-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl shadow-lg hover:bg-green-600 transition flex items-center justify-center text-xs sm:text-base btn-press font-bold">
                                     <i class="fab fa-android mr-1 sm:mr-2"></i> Android 下载
-                                </a>
+                                </button>
                             </div>
                             <!-- 状态提示 -->
-                            <div class="mt-2 sm:mt-3 fade-in-up delay-500">
+                            <div class="mt-4 sm:mt-3 fade-in-up delay-500">
                                 <p class="text-[10px] sm:text-xs text-gray-500 flex items-center justify-center sm:justify-start">
                                     <span class="status-blink w-2 h-2 rounded-full mr-1.5"></span>
                                     <span>当前状态：上架审核中</span>
@@ -333,7 +333,7 @@
                     <span class="text-[10px] sm:text-base text-gray-400 mt-1 sm:mt-4 block tracking-wide">每日新鲜蔬果 | 全品类中华调料 | 严选冷冻食品</span>
                 </p>
                 <div class="flex flex-row justify-center gap-3 sm:gap-6 fade-in-up delay-400">
-                    <a href="#store"
+                    <a href="store.html"
                         class="px-4 sm:px-8 py-2 sm:py-3 bg-green-600 rounded-full hover:bg-green-700 transition duration-300 font-medium shadow-lg text-xs sm:text-base btn-press">
                         浏览店内商品
                     </a>
@@ -531,205 +531,11 @@
         </div>
     </section>
 
-    <!-- APP功能介绍 -->
+    <!-- APP界面预览 -->
     <section id="app" class="py-12 sm:py-20 lg:py-24 bg-white">
         <div class="container mx-auto px-4 sm:px-6">
-            <div class="text-center mb-10 sm:mb-16 scroll-reveal">
-                <span class="text-blue-600 font-semibold tracking-wide uppercase text-xs sm:text-sm">SaaS 生态系统</span>
-                <h2 class="text-2xl sm:text-3xl font-bold mt-2">东瀛游侠 APP：您在日本生活需要的一切</h2>
-                <div class="w-16 sm:w-20 h-1 bg-blue-600 mx-auto mt-3 sm:mt-4 rounded-full"></div>
-            </div>
-
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-                <div class="p-4 sm:p-6 lg:p-8 bg-gray-50 rounded-xl sm:rounded-2xl hover:shadow-xl transition border border-gray-100 group cursor-pointer hover:-translate-y-1 scroll-reveal">
-                    <div class="w-10 sm:w-14 h-10 sm:h-14 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 mb-3 sm:mb-6 group-hover:bg-blue-600 group-hover:text-white transition">
-                        <i class="fas fa-exchange-alt text-lg sm:text-2xl"></i>
-                    </div>
-                    <h3 class="text-base sm:text-xl font-bold mb-2 sm:mb-3">二手 & 网店</h3>
-                    <p class="text-gray-500 text-xs sm:text-sm">闲置物品极速变现，精选好货一键下单。</p>
-                </div>
-                <div class="p-4 sm:p-6 lg:p-8 bg-gray-50 rounded-xl sm:rounded-2xl hover:shadow-xl transition border border-gray-100 group cursor-pointer hover:-translate-y-1 scroll-reveal">
-                    <div class="w-10 sm:w-14 h-10 sm:h-14 bg-green-100 rounded-lg flex items-center justify-center text-green-600 mb-3 sm:mb-6 group-hover:bg-green-600 group-hover:text-white transition">
-                        <i class="fas fa-users text-lg sm:text-2xl"></i>
-                    </div>
-                    <h3 class="text-base sm:text-xl font-bold mb-2 sm:mb-3">生活服务</h3>
-                    <p class="text-gray-500 text-xs sm:text-sm">搬家、家政清洁一站式服务。</p>
-                </div>
-                <div class="p-4 sm:p-6 lg:p-8 bg-gray-50 rounded-xl sm:rounded-2xl hover:shadow-xl transition border border-gray-100 group cursor-pointer hover:-translate-y-1 scroll-reveal">
-                    <div class="w-10 sm:w-14 h-10 sm:h-14 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600 mb-3 sm:mb-6 group-hover:bg-purple-600 group-hover:text-white transition">
-                        <i class="fas fa-building text-lg sm:text-2xl"></i>
-                    </div>
-                    <h3 class="text-base sm:text-xl font-bold mb-2 sm:mb-3">房产 & 土地</h3>
-                    <p class="text-gray-500 text-xs sm:text-sm">租房买卖、地图找房功能。</p>
-                </div>
-                <div onclick="openMerchantModal()" class="p-4 sm:p-6 lg:p-8 bg-gray-50 rounded-xl sm:rounded-2xl hover:shadow-xl transition border border-gray-100 group cursor-pointer hover:-translate-y-1 scroll-reveal">
-                    <div class="w-10 sm:w-14 h-10 sm:h-14 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600 mb-3 sm:mb-6 group-hover:bg-orange-600 group-hover:text-white transition">
-                        <i class="fas fa-store text-lg sm:text-2xl"></i>
-                    </div>
-                    <h3 class="text-base sm:text-xl font-bold mb-2 sm:mb-3">商家入驻</h3>
-                    <p class="text-gray-500 text-xs sm:text-sm">SaaS赋能，一站式后台管理。</p>
-                </div>
-                <div class="p-4 sm:p-6 lg:p-8 bg-gray-50 rounded-xl sm:rounded-2xl hover:shadow-xl transition border border-gray-100 group cursor-pointer hover:-translate-y-1 scroll-reveal">
-                    <div class="w-10 sm:w-14 h-10 sm:h-14 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600 mb-3 sm:mb-6 group-hover:bg-indigo-600 group-hover:text-white transition">
-                        <i class="fas fa-briefcase text-lg sm:text-2xl"></i>
-                    </div>
-                    <h3 class="text-base sm:text-xl font-bold mb-2 sm:mb-3">应聘 & 求职</h3>
-                    <p class="text-gray-500 text-xs sm:text-sm">海量职位精准匹配，找工作更简单。</p>
-                </div>
-                <div class="p-4 sm:p-6 lg:p-8 bg-gray-50 rounded-xl sm:rounded-2xl hover:shadow-xl transition border border-gray-100 group cursor-pointer hover:-translate-y-1 scroll-reveal">
-                    <div class="w-10 sm:w-14 h-10 sm:h-14 bg-pink-100 rounded-lg flex items-center justify-center text-pink-600 mb-3 sm:mb-6 group-hover:bg-pink-600 group-hover:text-white transition">
-                        <i class="fas fa-heart text-lg sm:text-2xl"></i>
-                    </div>
-                    <h3 class="text-base sm:text-xl font-bold mb-2 sm:mb-3">俱乐部 & 社区</h3>
-                    <p class="text-gray-500 text-xs sm:text-sm">兴趣社群，结识志同道合的朋友。</p>
-                </div>
-                <div class="p-4 sm:p-6 lg:p-8 bg-gray-50 rounded-xl sm:rounded-2xl hover:shadow-xl transition border border-gray-100 group cursor-pointer hover:-translate-y-1 scroll-reveal">
-                    <div class="w-10 sm:w-14 h-10 sm:h-14 bg-cyan-100 rounded-lg flex items-center justify-center text-cyan-600 mb-3 sm:mb-6 group-hover:bg-cyan-600 group-hover:text-white transition">
-                        <i class="fas fa-comments text-lg sm:text-2xl"></i>
-                    </div>
-                    <h3 class="text-base sm:text-xl font-bold mb-2 sm:mb-3">朋友圈 & 群聊</h3>
-                    <p class="text-gray-500 text-xs sm:text-sm">分享生活动态，群组交流无障碍。</p>
-                </div>
-                <div class="p-4 sm:p-6 lg:p-8 bg-gray-50 rounded-xl sm:rounded-2xl hover:shadow-xl transition border border-gray-100 group cursor-pointer hover:-translate-y-1 scroll-reveal">
-                    <div class="w-10 sm:w-14 h-10 sm:h-14 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600 mb-3 sm:mb-6 group-hover:bg-amber-600 group-hover:text-white transition">
-                        <i class="fas fa-question-circle text-lg sm:text-2xl"></i>
-                    </div>
-                    <h3 class="text-base sm:text-xl font-bold mb-2 sm:mb-3">咨询 & 问答</h3>
-                    <p class="text-gray-500 text-xs sm:text-sm">专业解答，生活疑问一键求助。</p>
-                </div>
-            </div>
-
-            <!-- 一站式生态系统 -->
-            <div class="mt-12 sm:mt-20 lg:mt-24 scroll-reveal">
-                <div class="text-center mb-8 sm:mb-12">
-                    <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-3 sm:mb-4">一个APP，满足所有需求</h3>
-                    <p class="text-gray-500 text-sm sm:text-base max-w-2xl mx-auto">告别繁琐，无需在多个应用间切换。东瀛游侠整合了您在日本生活所需的全部功能，一站式解决衣食住行、社交娱乐、工作学习的方方面面。</p>
-                </div>
-
-                <!-- 核心功能 - 6大模块 -->
-                <div class="bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800 rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 mb-6 sm:mb-8">
-                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">
-                        <div class="flex flex-col items-center text-center p-3 sm:p-4 bg-slate-700/50 rounded-xl hover:bg-slate-700 transition cursor-pointer">
-                            <div class="text-2xl sm:text-3xl mb-2">🔧</div>
-                            <h4 class="font-bold text-sm sm:text-base text-white">找服务</h4>
-                            <p class="text-[10px] sm:text-xs text-gray-400 mt-1">紧急跑腿、技能服务</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-3 sm:p-4 bg-slate-700/50 rounded-xl hover:bg-slate-700 transition cursor-pointer">
-                            <div class="text-2xl sm:text-3xl mb-2">💼</div>
-                            <h4 class="font-bold text-sm sm:text-base text-white">找工作</h4>
-                            <p class="text-[10px] sm:text-xs text-gray-400 mt-1">查看岗位、投递简历</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-3 sm:p-4 bg-slate-700/50 rounded-xl hover:bg-slate-700 transition cursor-pointer">
-                            <div class="text-2xl sm:text-3xl mb-2">🏠</div>
-                            <h4 class="font-bold text-sm sm:text-base text-white">找房源</h4>
-                            <p class="text-[10px] sm:text-xs text-gray-400 mt-1">租房/买卖/办公</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-3 sm:p-4 bg-slate-700/50 rounded-xl hover:bg-slate-700 transition cursor-pointer">
-                            <div class="text-2xl sm:text-3xl mb-2">🤝</div>
-                            <h4 class="font-bold text-sm sm:text-base text-white">找人脉</h4>
-                            <p class="text-[10px] sm:text-xs text-gray-400 mt-1">同乡会、俱乐部</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-3 sm:p-4 bg-slate-700/50 rounded-xl hover:bg-slate-700 transition cursor-pointer">
-                            <div class="text-2xl sm:text-3xl mb-2">🛒</div>
-                            <h4 class="font-bold text-sm sm:text-base text-white">买卖交易</h4>
-                            <p class="text-[10px] sm:text-xs text-gray-400 mt-1">二手市集、商城</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-3 sm:p-4 bg-slate-700/50 rounded-xl hover:bg-slate-700 transition cursor-pointer">
-                            <div class="text-2xl sm:text-3xl mb-2 text-red-500">❓</div>
-                            <h4 class="font-bold text-sm sm:text-base text-white">解决问题</h4>
-                            <p class="text-[10px] sm:text-xs text-gray-400 mt-1">发动态、提问答疑</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 周边系统功能 -->
-                <div class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-12 border border-blue-100/50">
-                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
-                        <div class="flex flex-col items-center text-center p-3 sm:p-4 bg-white/70 rounded-xl hover:bg-white hover:shadow-lg transition">
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600 mb-2 sm:mb-3">
-                                <i class="fas fa-coins text-xl sm:text-2xl"></i>
-                            </div>
-                            <h4 class="font-bold text-sm sm:text-base text-gray-800">游侠币</h4>
-                            <p class="text-xs text-gray-500 mt-1">消费返利，积少成多</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-3 sm:p-4 bg-white/70 rounded-xl hover:bg-white hover:shadow-lg transition">
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 mb-2 sm:mb-3">
-                                <i class="fas fa-star text-xl sm:text-2xl"></i>
-                            </div>
-                            <h4 class="font-bold text-sm sm:text-base text-gray-800">积分系统</h4>
-                            <p class="text-xs text-gray-500 mt-1">签到任务，兑换好礼</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-3 sm:p-4 bg-white/70 rounded-xl hover:bg-white hover:shadow-lg transition">
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-green-100 rounded-full flex items-center justify-center text-green-600 mb-2 sm:mb-3">
-                                <i class="fas fa-user-check text-xl sm:text-2xl"></i>
-                            </div>
-                            <h4 class="font-bold text-sm sm:text-base text-gray-800">实名认证</h4>
-                            <p class="text-xs text-gray-500 mt-1">安全交易，信任保障</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-3 sm:p-4 bg-white/70 rounded-xl hover:bg-white hover:shadow-lg transition">
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-2 sm:mb-3">
-                                <i class="fas fa-certificate text-xl sm:text-2xl"></i>
-                            </div>
-                            <h4 class="font-bold text-sm sm:text-base text-gray-800">资质认证</h4>
-                            <p class="text-xs text-gray-500 mt-1">商家资质，透明可查</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-3 sm:p-4 bg-white/70 rounded-xl hover:bg-white hover:shadow-lg transition">
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 mb-2 sm:mb-3">
-                                <i class="fas fa-comment-dots text-xl sm:text-2xl"></i>
-                            </div>
-                            <h4 class="font-bold text-sm sm:text-base text-gray-800">在线聊天</h4>
-                            <p class="text-xs text-gray-500 mt-1">即时沟通，便捷高效</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-3 sm:p-4 bg-white/70 rounded-xl hover:bg-white hover:shadow-lg transition">
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 mb-2 sm:mb-3">
-                                <i class="fas fa-users text-xl sm:text-2xl"></i>
-                            </div>
-                            <h4 class="font-bold text-sm sm:text-base text-gray-800">群聊功能</h4>
-                            <p class="text-xs text-gray-500 mt-1">群组互动，信息共享</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-3 sm:p-4 bg-white/70 rounded-xl hover:bg-white hover:shadow-lg transition">
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 mb-2 sm:mb-3">
-                                <i class="fas fa-shopping-cart text-xl sm:text-2xl"></i>
-                            </div>
-                            <h4 class="font-bold text-sm sm:text-base text-gray-800">购物车</h4>
-                            <p class="text-xs text-gray-500 mt-1">一键下单，轻松购物</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-3 sm:p-4 bg-white/70 rounded-xl hover:bg-white hover:shadow-lg transition">
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-red-100 rounded-full flex items-center justify-center text-red-600 mb-2 sm:mb-3">
-                                <i class="fas fa-tags text-xl sm:text-2xl"></i>
-                            </div>
-                            <h4 class="font-bold text-sm sm:text-base text-gray-800">优惠折扣</h4>
-                            <p class="text-xs text-gray-500 mt-1">专属优惠，省钱省心</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-3 sm:p-4 bg-white/70 rounded-xl hover:bg-white hover:shadow-lg transition">
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-teal-100 rounded-full flex items-center justify-center text-teal-600 mb-2 sm:mb-3">
-                                <i class="fas fa-bullhorn text-xl sm:text-2xl"></i>
-                            </div>
-                            <h4 class="font-bold text-sm sm:text-base text-gray-800">广告发布</h4>
-                            <p class="text-xs text-gray-500 mt-1">精准投放，高效曝光</p>
-                        </div>
-                        <div class="flex flex-col items-center text-center p-3 sm:p-4 bg-white/70 rounded-xl hover:bg-white hover:shadow-lg transition">
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-cyan-100 rounded-full flex items-center justify-center text-cyan-600 mb-2 sm:mb-3">
-                                <i class="fas fa-award text-xl sm:text-2xl"></i>
-                            </div>
-                            <h4 class="font-bold text-sm sm:text-base text-gray-800">站内优选</h4>
-                            <p class="text-xs text-gray-500 mt-1">品质严选，放心之选</p>
-                        </div>
-                    </div>
-
-                    <div class="mt-8 sm:mt-10 text-center">
-                        <p class="text-gray-600 text-sm sm:text-base mb-4">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span class="font-medium">下载一个APP，即是客户又是商家！大型SaaS生态系统，助力您在日生活。</span>
-                        </p>
-                        <p class="text-gray-400 text-xs sm:text-sm">其他APP有的功能，这里全都有。专为在日华人打造的一站式超级应用。</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 界面预览 -->
-            <div class="mt-12 sm:mt-20 lg:mt-24 scroll-reveal">
-                <h3 class="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-10 text-gray-700">界面预览</h3>
+            <div class="scroll-reveal">
+                <h3 class="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-10 text-gray-700">APP 界面预览</h3>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 px-0 sm:px-4 md:px-20">
                     <div class="bg-gray-100 rounded-2xl sm:rounded-3xl p-1.5 sm:p-2 shadow-lg hover:shadow-2xl transition transform hover:-translate-y-2 border-2 sm:border-4 border-white">
                         <img src="img/app-2.png" alt="界面1" class="rounded-xl sm:rounded-2xl w-full h-auto">
@@ -865,13 +671,45 @@
                     <span class="text-gray-500 text-xs sm:text-sm mt-2 block">入驻流程简单，审核快速，助您轻松开店！</span>
                 </p>
                 <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                    <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
+                    <button onclick="closeMerchantModal();showAndroidModal();"
                        class="bg-orange-600 text-white px-6 py-3 rounded-xl hover:bg-orange-700 transition flex items-center justify-center">
                         <i class="fab fa-android mr-2"></i> 下载APP申请入驻
-                    </a>
+                    </button>
                     <button onclick="closeMerchantModal()" class="border border-gray-300 text-gray-600 px-6 py-3 rounded-xl hover:bg-gray-100 transition">
                         稍后再说
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- iOS弹窗 -->
+    <div id="iosModal" class="fixed inset-0 bg-black/50 z-[100] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 transform scale-95 opacity-0 transition-all duration-300" id="iosModalContent">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fab fa-apple text-gray-500 text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">iOS 测试中</h3>
+                <p class="text-gray-600 mb-6">iOS版本正在App Store审核中，敬请期待！</p>
+                <button onclick="closeIosModal()" class="bg-blue-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-600 transition w-full">知道了</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Android弹窗 -->
+    <div id="androidModal" class="fixed inset-0 bg-black/50 z-[100] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 transform scale-95 opacity-0 transition-all duration-300" id="androidModalContent">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fab fa-android text-green-600 text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">Android 下载提示</h3>
+                <p class="text-gray-600 mb-4">安卓手机请先在设置中开启「允许安装未知来源应用」权限，然后再进行下载安装。</p>
+                <p class="text-xs text-gray-400 mb-6">设置路径：设置 → 安全 → 允许未知来源</p>
+                <div class="flex flex-col gap-3">
+                    <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download onclick="closeAndroidModal()" class="bg-green-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-green-600 transition flex items-center justify-center"><i class="fas fa-download mr-2"></i> 开始下载</a>
+                    <button onclick="closeAndroidModal()" class="border border-gray-300 text-gray-600 px-8 py-3 rounded-xl hover:bg-gray-100 transition">取消</button>
                 </div>
             </div>
         </div>
@@ -1024,6 +862,62 @@
             if (e.target === this) {
                 closeMerchantModal();
             }
+        });
+
+        // === iOS弹窗 ===
+        function showIosModal() {
+            const modal = document.getElementById('iosModal');
+            const content = document.getElementById('iosModalContent');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeIosModal() {
+            const modal = document.getElementById('iosModal');
+            const content = document.getElementById('iosModalContent');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        // === Android弹窗 ===
+        function showAndroidModal() {
+            const modal = document.getElementById('androidModal');
+            const content = document.getElementById('androidModalContent');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeAndroidModal() {
+            const modal = document.getElementById('androidModal');
+            const content = document.getElementById('androidModalContent');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        // 点击遮罩关闭iOS/Android弹窗
+        ['iosModal', 'androidModal'].forEach(id => {
+            document.getElementById(id)?.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    if (id === 'iosModal') closeIosModal();
+                    else if (id === 'androidModal') closeAndroidModal();
+                }
+            });
         });
     </script>
 </body>
