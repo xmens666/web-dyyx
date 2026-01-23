@@ -183,6 +183,34 @@
                 };
                 const status = statusMap[item.status] || statusMap['available'];
 
+                // 急售标签
+                const urgentBadge = item.is_urgent
+                    ? '<span class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">急售</span>'
+                    : '';
+
+                // 折扣计算
+                let discountBadge = '';
+                if (item.original_price && item.original_price > item.price) {
+                    const discount = Math.round((1 - item.price / item.original_price) * 100);
+                    discountBadge = `<span class="text-xs bg-red-100 text-red-500 px-1.5 py-0.5 rounded ml-1">${discount}%OFF</span>`;
+                }
+
+                // 原价显示
+                const originalPriceHtml = item.original_price && item.original_price > item.price
+                    ? `<span class="text-xs text-gray-400 line-through ml-1">${formatPrice(item.original_price)}</span>`
+                    : '';
+
+                // 议价标签
+                const negotiableBadge = item.is_negotiable
+                    ? '<span class="text-xs text-orange-500 ml-1">可议</span>'
+                    : '';
+
+                // 位置显示（优先显示 city -> prefecture -> location_city）
+                const location = item.city || item.prefecture || item.location_city || '未知';
+
+                // 收藏数
+                const favoriteCount = item.favorite_count || 0;
+
                 card.innerHTML = `
                     <div class="relative">
                         <div class="aspect-square bg-gray-100">
@@ -191,16 +219,26 @@
                                  onerror="this.src='${DEFAULT_PRODUCT_IMAGE}'">
                         </div>
                         <span class="absolute top-2 left-2 ${status.class} text-white text-xs px-2 py-0.5 rounded-full">${status.text}</span>
+                        ${urgentBadge}
                     </div>
                     <div class="p-3">
                         <h3 class="font-medium text-gray-800 text-sm mb-2 line-clamp-2">${item.title}</h3>
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center flex-wrap">
                             <span class="text-pink-500 font-bold">${formatPrice(item.price)}</span>
-                            <span class="text-xs text-gray-400">${getConditionShort(item.condition)}</span>
+                            ${originalPriceHtml}
+                            ${discountBadge}
+                            ${negotiableBadge}
                         </div>
                         <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
-                            <span><i class="fas fa-eye mr-1"></i>${item.view_count || 0}</span>
-                            <span>${item.location || '未知'}</span>
+                            <div class="flex items-center gap-2">
+                                <span><i class="fas fa-eye mr-1"></i>${item.view_count || 0}</span>
+                                <span><i class="fas fa-heart mr-1"></i>${favoriteCount}</span>
+                            </div>
+                            <span class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">${getConditionShort(item.condition)}</span>
+                        </div>
+                        <div class="flex items-center justify-between mt-1 text-xs text-gray-400">
+                            <span><i class="fas fa-map-marker-alt mr-1"></i>${location}</span>
+                            ${item.tags && item.tags.length > 0 ? `<span class="text-blue-400">#${item.tags[0]}</span>` : ''}
                         </div>
                     </div>
                 `;

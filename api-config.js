@@ -96,13 +96,13 @@ function generatePublicUrl(type, id) {
 
 // 获取二手商品详情
 async function getMarketplaceItemById(itemId) {
-    const data = await supabaseQuery('marketplace_items', `?id=eq.${itemId}&select=*,users!marketplace_items_user_id_fkey(id,nickname,avatar_url)`);
+    const data = await supabaseQuery('marketplace_items', `?id=eq.${itemId}&select=*,users:seller_id(id,nickname,avatar_url)`);
     return data[0] || null;
 }
 
 // 获取用户发布的二手商品数量
 async function getUserMarketplaceItemCount(userId) {
-    const data = await supabaseQuery('marketplace_items', `?user_id=eq.${userId}&select=id`);
+    const data = await supabaseQuery('marketplace_items', `?seller_id=eq.${userId}&status=eq.available&select=id`);
     return data?.length || 0;
 }
 
@@ -167,7 +167,7 @@ async function getProductList(page = 1, limit = 20) {
 // 获取二手商品列表
 async function getMarketplaceList(page = 1, limit = 20) {
     const offset = (page - 1) * limit;
-    return await supabaseQuery('marketplace_items', `?status=eq.available&select=*,users!marketplace_items_user_id_fkey(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
+    return await supabaseQuery('marketplace_items', `?status=eq.available&select=*,users:seller_id(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
 }
 
 // 获取服务列表

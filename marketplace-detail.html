@@ -72,6 +72,10 @@
                             <!-- 状态标签 -->
                             <div id="statusBadge" class="absolute top-4 right-4 px-4 py-2 rounded-full text-white font-bold text-sm shadow-lg">
                             </div>
+                            <!-- 急售标签 -->
+                            <div id="urgentBadge" class="hidden absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                                <i class="fas fa-fire mr-1"></i>急售
+                            </div>
                         </div>
                         <!-- 缩略图 -->
                         <div id="thumbnails" class="image-gallery grid grid-cols-5 gap-2">
@@ -82,37 +86,123 @@
                     <!-- 右侧：商品信息 -->
                     <div>
                         <!-- 商品标题 -->
-                        <h1 id="itemTitle" class="text-2xl sm:text-3xl font-bold text-gray-900 mb-4"></h1>
+                        <h1 id="itemTitle" class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2"></h1>
+
+                        <!-- 标签区域 -->
+                        <div id="tagsContainer" class="flex flex-wrap gap-2 mb-4">
+                            <!-- 标签将动态插入 -->
+                        </div>
 
                         <!-- 价格区域 -->
                         <div class="bg-gradient-to-r from-pink-50 to-red-50 rounded-xl p-4 mb-6">
-                            <div class="flex items-baseline gap-2">
+                            <div class="flex items-baseline gap-2 flex-wrap">
                                 <span class="text-3xl sm:text-4xl font-bold text-pink-500" id="itemPrice"></span>
+                                <span id="originalPrice" class="hidden text-lg text-gray-400 line-through"></span>
+                                <span id="discountBadge" class="hidden bg-red-500 text-white text-xs px-2 py-1 rounded-full"></span>
+                                <span id="negotiableBadge" class="hidden bg-orange-100 text-orange-600 text-xs px-2 py-1 rounded-full">可议价</span>
                             </div>
-                            <div class="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                            <div class="flex items-center gap-4 mt-3 text-sm text-gray-500 flex-wrap">
                                 <span id="viewCount"><i class="fas fa-eye mr-1"></i></span>
-                                <span id="likeCount"><i class="fas fa-heart mr-1"></i></span>
+                                <span id="favoriteCount"><i class="fas fa-heart mr-1"></i></span>
                                 <span id="postTime"><i class="fas fa-clock mr-1"></i></span>
                             </div>
                         </div>
 
                         <!-- 商品属性 -->
-                        <div class="space-y-4 mb-6">
-                            <div class="flex items-center">
-                                <span class="text-gray-500 w-20">成色</span>
-                                <span id="itemCondition" class="text-gray-800 font-medium"></span>
+                        <div class="bg-white rounded-xl p-4 border border-gray-100 mb-6">
+                            <h3 class="font-bold text-gray-800 mb-3 flex items-center">
+                                <i class="fas fa-tags text-pink-500 mr-2"></i>商品属性
+                            </h3>
+                            <div class="grid grid-cols-2 gap-3 text-sm">
+                                <div class="flex items-center">
+                                    <span class="text-gray-500 w-16">成色</span>
+                                    <span id="itemCondition" class="text-gray-800 font-medium"></span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="text-gray-500 w-16">分类</span>
+                                    <span id="itemCategory" class="text-gray-800"></span>
+                                </div>
+                                <div id="mainCategoryRow" class="hidden flex items-center">
+                                    <span class="text-gray-500 w-16">主类</span>
+                                    <span id="mainCategory" class="text-gray-800"></span>
+                                </div>
+                                <div id="subCategoryRow" class="hidden flex items-center">
+                                    <span class="text-gray-500 w-16">子类</span>
+                                    <span id="subCategory" class="text-gray-800"></span>
+                                </div>
                             </div>
-                            <div class="flex items-center">
-                                <span class="text-gray-500 w-20">分类</span>
-                                <span id="itemCategory" class="text-gray-800"></span>
+                        </div>
+
+                        <!-- 交易信息 -->
+                        <div class="bg-white rounded-xl p-4 border border-gray-100 mb-6">
+                            <h3 class="font-bold text-gray-800 mb-3 flex items-center">
+                                <i class="fas fa-truck text-blue-500 mr-2"></i>交易方式
+                            </h3>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex items-start">
+                                    <span class="text-gray-500 w-20 flex-shrink-0">交易方式</span>
+                                    <span id="itemDelivery" class="text-gray-800"></span>
+                                </div>
+                                <div id="shippingFeeRow" class="hidden flex items-start">
+                                    <span class="text-gray-500 w-20 flex-shrink-0">快递运费</span>
+                                    <span id="shippingFee" class="text-gray-800"></span>
+                                </div>
+                                <div id="localDeliveryRow" class="hidden flex items-start">
+                                    <span class="text-gray-500 w-20 flex-shrink-0">本地配送</span>
+                                    <span id="localDelivery" class="text-gray-800"></span>
+                                </div>
+                                <div id="deliveryAreasRow" class="hidden flex items-start">
+                                    <span class="text-gray-500 w-20 flex-shrink-0">配送范围</span>
+                                    <span id="deliveryAreas" class="text-gray-800"></span>
+                                </div>
+                                <div id="codRow" class="hidden flex items-start">
+                                    <span class="text-gray-500 w-20 flex-shrink-0">货到付款</span>
+                                    <span id="codStatus" class="text-green-600 font-medium">支持</span>
+                                </div>
                             </div>
-                            <div class="flex items-center">
-                                <span class="text-gray-500 w-20">交易方式</span>
-                                <span id="itemDelivery" class="text-gray-800"></span>
+                        </div>
+
+                        <!-- 支付方式 -->
+                        <div id="paymentSection" class="hidden bg-white rounded-xl p-4 border border-gray-100 mb-6">
+                            <h3 class="font-bold text-gray-800 mb-3 flex items-center">
+                                <i class="fas fa-credit-card text-green-500 mr-2"></i>支付方式
+                            </h3>
+                            <div id="paymentMethods" class="flex flex-wrap gap-2">
+                                <!-- 支付方式将动态插入 -->
                             </div>
-                            <div class="flex items-center">
-                                <span class="text-gray-500 w-20">位置</span>
-                                <span id="itemLocation" class="text-gray-800"></span>
+                        </div>
+
+                        <!-- 位置信息 -->
+                        <div class="bg-white rounded-xl p-4 border border-gray-100 mb-6">
+                            <h3 class="font-bold text-gray-800 mb-3 flex items-center">
+                                <i class="fas fa-map-marker-alt text-red-500 mr-2"></i>位置信息
+                            </h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-start">
+                                    <span class="text-gray-500 w-16 flex-shrink-0">地区</span>
+                                    <span id="itemLocation" class="text-gray-800"></span>
+                                </div>
+                                <div id="locationDetailRow" class="hidden flex items-start">
+                                    <span class="text-gray-500 w-16 flex-shrink-0">详细</span>
+                                    <span id="locationDetail" class="text-gray-800"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 联系方式 -->
+                        <div id="contactSection" class="hidden bg-white rounded-xl p-4 border border-gray-100 mb-6">
+                            <h3 class="font-bold text-gray-800 mb-3 flex items-center">
+                                <i class="fas fa-address-book text-purple-500 mr-2"></i>联系方式
+                            </h3>
+                            <div class="space-y-2 text-sm">
+                                <div id="phoneRow" class="hidden flex items-center">
+                                    <span class="text-gray-500 w-16">电话</span>
+                                    <span id="contactPhone" class="text-gray-800"></span>
+                                </div>
+                                <div id="wechatRow" class="hidden flex items-center">
+                                    <span class="text-gray-500 w-16">微信</span>
+                                    <span id="contactWechat" class="text-gray-800"></span>
+                                </div>
                             </div>
                         </div>
 
@@ -120,7 +210,7 @@
                         <div class="bg-white rounded-xl p-4 border border-gray-100 mb-6">
                             <div class="flex items-center gap-3">
                                 <img id="sellerAvatar" src="" alt="卖家头像"
-                                     class="w-12 h-12 rounded-full object-cover border-2 border-gray-100">
+                                     class="w-14 h-14 rounded-full object-cover border-2 border-gray-100">
                                 <div class="flex-1">
                                     <h4 id="sellerName" class="font-medium text-gray-800"></h4>
                                     <p id="sellerInfo" class="text-gray-500 text-sm"></p>
@@ -148,7 +238,7 @@
                     </div>
                 </div>
 
-                <!-- 商品详情 -->
+                <!-- 商品详情描述 -->
                 <div class="mt-8">
                     <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
                         <i class="fas fa-info-circle text-pink-500 mr-2"></i>
@@ -167,7 +257,10 @@
         <div class="container mx-auto flex items-center justify-between gap-4">
             <div class="flex-shrink-0">
                 <p class="text-gray-500 text-xs">二手价格</p>
-                <p class="text-pink-500 font-bold text-xl" id="bottomPrice"></p>
+                <div class="flex items-baseline gap-1">
+                    <p class="text-pink-500 font-bold text-xl" id="bottomPrice"></p>
+                    <span id="bottomNegotiable" class="hidden text-xs text-orange-500">可议</span>
+                </div>
             </div>
             <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
                class="flex-1 bg-gradient-to-r from-pink-500 to-rose-600 text-white text-center py-3 rounded-xl font-bold hover:opacity-90 transition">
@@ -256,26 +349,148 @@
             statusBadge.textContent = status.text;
             statusBadge.classList.add(status.class);
 
-            // 商品信息
+            // 急售标签
+            if (item.is_urgent) {
+                document.getElementById('urgentBadge').classList.remove('hidden');
+            }
+
+            // 商品标题
             document.getElementById('itemTitle').textContent = item.title;
+
+            // 标签
+            const tagsContainer = document.getElementById('tagsContainer');
+            if (item.tags && item.tags.length > 0) {
+                tagsContainer.innerHTML = item.tags.map(tag =>
+                    `<span class="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded-full">#${tag}</span>`
+                ).join('');
+            }
+
+            // 价格
             document.getElementById('itemPrice').textContent = formatPrice(item.price);
             document.getElementById('bottomPrice').textContent = formatPrice(item.price);
 
-            // 浏览量、点赞、发布时间
+            // 原价和折扣
+            if (item.original_price && item.original_price > item.price) {
+                document.getElementById('originalPrice').textContent = formatPrice(item.original_price);
+                document.getElementById('originalPrice').classList.remove('hidden');
+
+                const discount = Math.round((1 - item.price / item.original_price) * 100);
+                document.getElementById('discountBadge').textContent = `${discount}% OFF`;
+                document.getElementById('discountBadge').classList.remove('hidden');
+            }
+
+            // 议价标签
+            if (item.is_negotiable) {
+                document.getElementById('negotiableBadge').classList.remove('hidden');
+                document.getElementById('bottomNegotiable').classList.remove('hidden');
+            }
+
+            // 浏览量、收藏、发布时间
             document.getElementById('viewCount').innerHTML = `<i class="fas fa-eye mr-1"></i>${item.view_count || 0} 浏览`;
-            document.getElementById('likeCount').innerHTML = `<i class="fas fa-heart mr-1"></i>${item.like_count || 0} 喜欢`;
+            document.getElementById('favoriteCount').innerHTML = `<i class="fas fa-heart mr-1"></i>${item.favorite_count || 0} 收藏`;
             document.getElementById('postTime').innerHTML = `<i class="fas fa-clock mr-1"></i>${formatDate(item.created_at)}`;
 
             // 商品属性
             document.getElementById('itemCondition').textContent = getConditionName(item.condition);
             document.getElementById('itemCategory').textContent = getCategoryName(item.category);
+
+            // 主分类/子分类
+            if (item.main_category) {
+                document.getElementById('mainCategoryRow').classList.remove('hidden');
+                document.getElementById('mainCategory').textContent = item.main_category;
+            }
+            if (item.sub_category) {
+                document.getElementById('subCategoryRow').classList.remove('hidden');
+                document.getElementById('subCategory').textContent = item.sub_category;
+            }
+
+            // 交易方式
             document.getElementById('itemDelivery').textContent = getDeliveryName(item.delivery_method);
-            document.getElementById('itemLocation').textContent = item.location || '未指定';
+
+            // 运费
+            if (item.shipping_fee !== null && item.shipping_fee !== undefined) {
+                document.getElementById('shippingFeeRow').classList.remove('hidden');
+                document.getElementById('shippingFee').textContent = item.shipping_fee > 0 ? `¥${item.shipping_fee}` : '包邮';
+            }
+
+            // 本地配送
+            if (item.local_delivery_fee !== null || item.local_delivery_range) {
+                document.getElementById('localDeliveryRow').classList.remove('hidden');
+                let localText = [];
+                if (item.local_delivery_fee !== null) {
+                    localText.push(item.local_delivery_fee > 0 ? `配送费¥${item.local_delivery_fee}` : '免费配送');
+                }
+                if (item.local_delivery_range) {
+                    localText.push(`范围: ${item.local_delivery_range}`);
+                }
+                document.getElementById('localDelivery').textContent = localText.join(' / ');
+            }
+
+            // 配送区域
+            if (item.delivery_areas && item.delivery_areas.length > 0) {
+                document.getElementById('deliveryAreasRow').classList.remove('hidden');
+                document.getElementById('deliveryAreas').textContent = item.delivery_areas.join('、');
+            }
+
+            // 货到付款
+            if (item.is_shipping_cod) {
+                document.getElementById('codRow').classList.remove('hidden');
+            }
+
+            // 支付方式
+            if (item.payment_method && item.payment_method.length > 0) {
+                document.getElementById('paymentSection').classList.remove('hidden');
+                const paymentContainer = document.getElementById('paymentMethods');
+                const paymentIcons = {
+                    'wechat': { icon: 'fab fa-weixin', color: 'text-green-500', name: '微信' },
+                    'alipay': { icon: 'fab fa-alipay', color: 'text-blue-500', name: '支付宝' },
+                    'cash': { icon: 'fas fa-money-bill', color: 'text-green-600', name: '现金' },
+                    'credit_card': { icon: 'fas fa-credit-card', color: 'text-orange-500', name: '信用卡' },
+                    'paypay': { icon: 'fas fa-mobile-alt', color: 'text-red-500', name: 'PayPay' },
+                    'bank_transfer': { icon: 'fas fa-university', color: 'text-gray-600', name: '银行转账' }
+                };
+                paymentContainer.innerHTML = item.payment_method.map(method => {
+                    const p = paymentIcons[method] || { icon: 'fas fa-wallet', color: 'text-gray-500', name: method };
+                    return `<span class="flex items-center gap-1 bg-gray-100 px-3 py-1.5 rounded-full text-sm">
+                        <i class="${p.icon} ${p.color}"></i>${p.name}
+                    </span>`;
+                }).join('');
+            }
+
+            // 位置信息
+            const locationParts = [];
+            if (item.region) locationParts.push(item.region);
+            if (item.prefecture) locationParts.push(item.prefecture);
+            if (item.city) locationParts.push(item.city);
+            if (item.location_city && locationParts.length === 0) locationParts.push(item.location_city);
+
+            document.getElementById('itemLocation').textContent = locationParts.join(' / ') || '未指定';
+
+            if (item.location_detail) {
+                document.getElementById('locationDetailRow').classList.remove('hidden');
+                document.getElementById('locationDetail').textContent = item.location_detail;
+            }
+
+            // 联系方式
+            if (item.contact_phone || item.contact_wechat) {
+                document.getElementById('contactSection').classList.remove('hidden');
+
+                if (item.contact_phone) {
+                    document.getElementById('phoneRow').classList.remove('hidden');
+                    document.getElementById('contactPhone').textContent = item.contact_phone;
+                }
+
+                if (item.contact_wechat) {
+                    document.getElementById('wechatRow').classList.remove('hidden');
+                    document.getElementById('contactWechat').textContent = item.contact_wechat;
+                }
+            }
 
             // 卖家信息
             if (item.users) {
                 const user = item.users;
                 document.getElementById('sellerAvatar').src = user.avatar_url || DEFAULT_AVATAR;
+                document.getElementById('sellerAvatar').onerror = function() { this.src = DEFAULT_AVATAR; };
                 document.getElementById('sellerName').textContent = user.nickname || '卖家';
                 document.getElementById('sellerInfo').textContent = `发布了多件商品`;
                 document.getElementById('sellerLink').href = `seller.html?id=${user.id}`;
@@ -284,7 +499,7 @@
             // 商品描述
             const descriptionEl = document.getElementById('itemDescription');
             if (item.description) {
-                descriptionEl.innerHTML = `<p class="text-gray-700 whitespace-pre-wrap">${item.description}</p>`;
+                descriptionEl.innerHTML = `<p class="text-gray-700 whitespace-pre-wrap leading-relaxed">${item.description}</p>`;
             } else {
                 descriptionEl.innerHTML = '<p class="text-gray-400">暂无详细描述</p>';
             }
@@ -313,7 +528,7 @@
 
         function getConditionName(condition) {
             const conditions = {
-                'new': '全新',
+                'new': '全新未拆封',
                 'like_new': '几乎全新',
                 'good': '成色良好',
                 'fair': '有使用痕迹',
@@ -333,12 +548,29 @@
                 'beauty': '美妆护肤',
                 'food': '食品饮料',
                 'car': '汽车用品',
+                'furniture': '家具',
+                'appliances': '家电',
+                'digital': '数码产品',
                 'other': '其他'
             };
             return categories[category] || category || '其他';
         }
 
         function getDeliveryName(method) {
+            if (!method) return '当面交易';
+
+            // 如果是数组
+            if (Array.isArray(method)) {
+                const methodMap = {
+                    'face_to_face': '当面交易',
+                    'pickup': '自取',
+                    'shipping': '快递邮寄',
+                    'local_delivery': '本地配送',
+                    'both': '支持快递/自取'
+                };
+                return method.map(m => methodMap[m] || m).join('、');
+            }
+
             const methods = {
                 'face_to_face': '当面交易',
                 'shipping': '快递邮寄',
