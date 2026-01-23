@@ -84,8 +84,8 @@ function formatDate(dateStr) {
 
 // 默认图片
 const DEFAULT_AVATAR = 'img/default-avatar.png';
-const DEFAULT_PRODUCT_IMAGE = 'img/default-product.png';
-const DEFAULT_STORE_LOGO = 'img/default-store.png';
+const DEFAULT_PRODUCT_IMAGE = 'img/default-product.svg';
+const DEFAULT_STORE_LOGO = 'img/default-store.svg';
 
 // 生成公开链接
 function generatePublicUrl(type, id) {
