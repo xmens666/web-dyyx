@@ -1,7 +1,7 @@
 // api-config.js - Supabase API 配置
 // 用于从数据库动态获取店铺、商品、服务数据
 
-const SUPABASE_URL = 'https://mfeboXhispfjyvssupjl.supabase.co'.toLowerCase();
+const SUPABASE_URL = 'https://mfeboXhispfjyvssupjl.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1mZWJveGhpc3Bmanl2c3N1cGpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2NzMyMTAsImV4cCI6MjA3NDI0OTIxMH0.5T3igmyx0bwkf6JaiVnyNPzAn_Wtr0-_5MHv6cSN-Yw';
 
 // 基础域名
@@ -83,7 +83,7 @@ function formatDate(dateStr) {
 }
 
 // 默认图片
-const DEFAULT_AVATAR = 'https://mfeboXhispfjyvssupjl.supabase.co/storage/v1/object/public/avatars/default-avatar.png'.toLowerCase();
+const DEFAULT_AVATAR = 'https://mfeboXhispfjyvssupjl.supabase.co/storage/v1/object/public/avatars/default-avatar.png';
 const DEFAULT_PRODUCT_IMAGE = 'https://via.placeholder.com/400x300?text=No+Image';
 const DEFAULT_STORE_LOGO = 'https://via.placeholder.com/200x200?text=Store';
 
