@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社群详情 - 东瀛游侠</title>
+    <meta name="description" content="东瀛游侠英雄结义 - 在日华人社群平台">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#14B8A6">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .loading-spinner { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .gradient-club { background: linear-gradient(135deg, #14B8A6 0%, #0D9488 50%, #0F766E 100%); }
+        .gradient-hometown { background: linear-gradient(135deg, #F43F5E 0%, #E11D48 50%, #BE123C 100%); }
+        .member-avatar { transition: all 0.3s ease; }
+        .member-avatar:hover { transform: scale(1.1); z-index: 10; }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="fixed w-full bg-white/95 backdrop-blur-md shadow-sm z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2">
+                <span class="text-lg font-bold text-gray-800">🏯 东瀛游侠</span>
+            </a>
+            <a href="community.html" class="text-teal-500 text-sm hover:text-teal-600">
+                <i class="fas fa-arrow-left mr-1"></i> 返回列表
+            </a>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="pt-16 pb-24">
+        <!-- 加载状态 -->
+        <div id="loading" class="flex flex-col items-center justify-center min-h-[60vh]">
+            <div class="w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full loading-spinner"></div>
+            <p class="mt-4 text-gray-500">正在加载社群信息...</p>
+        </div>
+
+        <!-- 错误状态 -->
+        <div id="error" class="hidden flex flex-col items-center justify-center min-h-[60vh] px-4">
+            <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                <i class="fas fa-exclamation-triangle text-red-500 text-3xl"></i>
+            </div>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">社群不存在</h2>
+            <p class="text-gray-500 mb-6 text-center">该社群可能已解散或链接无效</p>
+            <a href="community.html" class="bg-teal-500 text-white px-6 py-2 rounded-full hover:bg-teal-600 transition">
+                返回列表
+            </a>
+        </div>
+
+        <!-- 社群内容 -->
+        <div id="content" class="hidden fade-in">
+            <!-- 社群头部 -->
+            <div id="communityHeader" class="gradient-club text-white">
+                <div class="container mx-auto px-4 py-8 sm:py-12">
+                    <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+                        <!-- 社群头像 -->
+                        <div class="relative">
+                            <img id="communityLogo" src="" alt="社群头像"
+                                 class="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl object-cover border-4 border-white/30 shadow-lg">
+                            <div id="communityBadge" class="absolute -bottom-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center shadow">
+                                <i class="fas fa-crown text-white text-sm"></i>
+                            </div>
+                        </div>
+                        <div class="text-center sm:text-left flex-1">
+                            <div class="flex items-center justify-center sm:justify-start gap-2 mb-2">
+                                <span id="communityTypeTag" class="px-3 py-1 rounded-full text-xs font-medium bg-white/20"></span>
+                            </div>
+                            <h1 id="communityName" class="text-2xl sm:text-3xl font-bold mb-2"></h1>
+                            <p id="communitySlogan" class="text-white/80 text-sm sm:text-base mb-3"></p>
+                            <div class="flex flex-wrap justify-center sm:justify-start gap-4 text-sm">
+                                <span id="memberCount" class="bg-white/20 px-3 py-1 rounded-full"></span>
+                                <span id="createDate" class="bg-white/20 px-3 py-1 rounded-full"></span>
+                                <span id="activityLevel" class="bg-white/20 px-3 py-1 rounded-full"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container mx-auto px-4 py-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- 左侧：社群详情 -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- 社群简介 -->
+                        <div class="bg-white rounded-xl p-6 shadow-sm">
+                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-info-circle text-teal-500 mr-2"></i>
+                                社群简介
+                            </h2>
+                            <p id="communityDescription" class="text-gray-700 whitespace-pre-wrap"></p>
+                        </div>
+
+                        <!-- 成员展示 -->
+                        <div class="bg-white rounded-xl p-6 shadow-sm">
+                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-users text-blue-500 mr-2"></i>
+                                成员风采
+                            </h2>
+                            <div id="memberList" class="flex flex-wrap gap-2">
+                                <!-- 成员头像将动态插入 -->
+                            </div>
+                            <p id="memberMore" class="text-gray-500 text-sm mt-4 text-center"></p>
+                        </div>
+
+                        <!-- 社群公告 -->
+                        <div id="announcementSection" class="bg-white rounded-xl p-6 shadow-sm hidden">
+                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-bullhorn text-orange-500 mr-2"></i>
+                                社群公告
+                            </h2>
+                            <div id="announcementContent" class="text-gray-700"></div>
+                        </div>
+                    </div>
+
+                    <!-- 右侧：加入信息 -->
+                    <div class="space-y-6">
+                        <!-- 社群管理 -->
+                        <div class="bg-white rounded-xl p-6 shadow-sm">
+                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-user-shield text-indigo-500 mr-2"></i>
+                                管理团队
+                            </h2>
+                            <div id="adminList" class="space-y-3">
+                                <!-- 管理员将动态插入 -->
+                            </div>
+                        </div>
+
+                        <!-- 下载APP加入 -->
+                        <div id="joinCard" class="bg-gradient-to-br from-teal-500 to-emerald-600 rounded-xl p-6 text-white">
+                            <div class="text-center">
+                                <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-user-plus text-2xl"></i>
+                                </div>
+                                <h3 class="font-bold text-lg mb-2">加入社群</h3>
+                                <p class="text-white/80 text-sm mb-4">下载APP加入社群，参与精彩活动</p>
+                                <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
+                                   class="block bg-white text-teal-600 py-3 rounded-xl font-bold hover:bg-teal-50 transition">
+                                    <i class="fab fa-android mr-2"></i> 下载APP加入
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- 社群标签 -->
+                        <div id="tagsSection" class="bg-white rounded-xl p-6 shadow-sm hidden">
+                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-tags text-pink-500 mr-2"></i>
+                                社群标签
+                            </h2>
+                            <div id="tagsList" class="flex flex-wrap gap-2">
+                                <!-- 标签将动态插入 -->
+                            </div>
+                        </div>
+
+                        <!-- 入群须知 -->
+                        <div class="bg-teal-50 rounded-xl p-4 border border-teal-100">
+                            <h4 class="font-medium text-teal-800 mb-2 flex items-center">
+                                <i class="fas fa-hand-point-right mr-2"></i>
+                                入群须知
+                            </h4>
+                            <ul id="joinRules" class="text-teal-700 text-sm space-y-1">
+                                <li>• 遵守社群规则，友善交流</li>
+                                <li>• 禁止发布广告、违规内容</li>
+                                <li>• 积极参与社群活动</li>
+                                <li>• 互帮互助，共同进步</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部固定栏 -->
+    <div id="bottomBar" class="hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40">
+        <div class="container mx-auto flex items-center gap-3">
+            <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
+               class="flex-1 bg-gradient-to-r from-teal-500 to-emerald-600 text-white text-center py-3 rounded-xl font-bold hover:opacity-90 transition">
+                <i class="fab fa-android mr-2"></i> 下载APP加入社群
+            </a>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400 text-sm mb-2">东瀛游侠 - 在日华人的生活服务平台</p>
+            <p class="text-gray-500 text-xs">&copy; 2026 株式会社昇陽商事</p>
+        </div>
+    </footer>
+
+    <!-- API配置 -->
+    <script src="api-config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const type = getUrlParam('type'); // club 或 hometown
+            const id = getUrlParam('id');
+
+            if (!id) {
+                showError();
+                return;
+            }
+
+            try {
+                let community;
+                if (type === 'hometown') {
+                    community = await getHometownById(id);
+                    community._type = 'hometown';
+                } else {
+                    community = await getClubById(id);
+                    community._type = 'club';
+                }
+
+                if (!community) {
+                    showError();
+                    return;
+                }
+
+                renderCommunity(community);
+
+            } catch (err) {
+                console.error('加载社群失败:', err);
+                showError();
+            }
+        });
+
+        function showError() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('error').classList.remove('hidden');
+        }
+
+        function renderCommunity(community) {
+            const isHometown = community._type === 'hometown';
+
+            // 更新页面标题
+            document.title = `${community.name} - ${isHometown ? '同乡会' : '俱乐部'}`;
+
+            // 更换头部渐变色
+            const header = document.getElementById('communityHeader');
+            if (isHometown) {
+                header.classList.remove('gradient-club');
+                header.classList.add('gradient-hometown');
+            }
+
+            // 社群头像
+            document.getElementById('communityLogo').src = community.logo_url || community.cover_image || DEFAULT_AVATAR;
+
+            // 类型标签
+            const typeTag = document.getElementById('communityTypeTag');
+            if (isHometown) {
+                typeTag.textContent = `${community.china_province || ''}同乡会`;
+            } else {
+                typeTag.textContent = getClubTypeName(community.club_type);
+            }
+
+            // 基本信息
+            document.getElementById('communityName').textContent = community.name;
+            document.getElementById('communitySlogan').textContent = community.slogan || community.description?.substring(0, 50) || '欢迎加入我们！';
+
+            // 统计数据
+            document.getElementById('memberCount').innerHTML = `<i class="fas fa-users mr-1"></i>${community.member_count || 0} 成员`;
+            document.getElementById('createDate').innerHTML = `<i class="fas fa-calendar mr-1"></i>创建于 ${formatDate(community.created_at)}`;
+            document.getElementById('activityLevel').innerHTML = `<i class="fas fa-fire mr-1"></i>${getActivityLevel(community.activity_score)}`;
+
+            // 社群简介
+            document.getElementById('communityDescription').textContent = community.description || '暂无简介，快来了解这个精彩的社群吧！';
+
+            // 成员展示（模拟数据）
+            const memberList = document.getElementById('memberList');
+            const memberCount = community.member_count || 0;
+            const displayCount = Math.min(memberCount, 20);
+            let memberHtml = '';
+            for (let i = 0; i < displayCount; i++) {
+                memberHtml += `
+                    <div class="member-avatar w-10 h-10 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 border-2 border-white shadow-sm -ml-2 first:ml-0 overflow-hidden">
+                        <img src="${DEFAULT_AVATAR}" alt="成员${i+1}" class="w-full h-full object-cover">
+                    </div>
+                `;
+            }
+            memberList.innerHTML = memberHtml;
+            if (memberCount > 20) {
+                document.getElementById('memberMore').textContent = `还有 ${memberCount - 20} 位成员...`;
+            }
+
+            // 管理员（使用创建者信息）
+            const adminList = document.getElementById('adminList');
+            if (community.users || community.creator) {
+                const admin = community.users || community.creator;
+                adminList.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <img src="${admin.avatar_url || DEFAULT_AVATAR}" alt="管理员头像"
+                             class="w-12 h-12 rounded-full object-cover border-2 border-indigo-100">
+                        <div>
+                            <p class="font-medium text-gray-800">${admin.nickname || '群主'}</p>
+                            <p class="text-indigo-500 text-xs">
+                                <i class="fas fa-crown mr-1"></i>群主
+                            </p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 社群标签
+            if (community.tags && community.tags.length > 0) {
+                document.getElementById('tagsSection').classList.remove('hidden');
+                document.getElementById('tagsList').innerHTML = community.tags.map(tag =>
+                    `<span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">${tag}</span>`
+                ).join('');
+            }
+
+            // 公告
+            if (community.announcement) {
+                document.getElementById('announcementSection').classList.remove('hidden');
+                document.getElementById('announcementContent').textContent = community.announcement;
+            }
+
+            // 更换加入卡片颜色
+            if (isHometown) {
+                const joinCard = document.getElementById('joinCard');
+                joinCard.classList.remove('from-teal-500', 'to-emerald-600');
+                joinCard.classList.add('from-rose-500', 'to-pink-600');
+                joinCard.querySelector('a').classList.remove('text-teal-600');
+                joinCard.querySelector('a').classList.add('text-rose-600');
+            }
+
+            // 显示内容
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('content').classList.remove('hidden');
+            document.getElementById('bottomBar').classList.remove('hidden');
+        }
+
+        function getClubTypeName(type) {
+            const types = {
+                'interest': '兴趣爱好',
+                'sports': '运动健身',
+                'business': '商务社交',
+                'parenting': '亲子育儿',
+                'study': '学习交流',
+                'travel': '旅游户外',
+                'food': '美食探店',
+                'pet': '宠物',
+                'game': '游戏',
+                'other': '其他'
+            };
+            return types[type] || type || '俱乐部';
+        }
+
+        function getActivityLevel(score) {
+            if (!score || score < 30) return '冷清';
+            if (score < 60) return '一般';
+            if (score < 80) return '活跃';
+            return '超活跃';
+        }
+    </script>
+</body>
+
+</html>
