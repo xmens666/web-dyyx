@@ -33,7 +33,7 @@ async function getStoreById(storeId) {
 
 // 获取店铺商品列表
 async function getStoreProducts(storeId) {
-    return await supabaseQuery('store_products', `?store_id=eq.${storeId}&audit_status=eq.active&select=*&order=created_at.desc`);
+    return await supabaseQuery('store_products', `?store_id=eq.${storeId}&status=eq.active&select=*&order=created_at.desc`);
 }
 
 // 获取商品详情
@@ -44,7 +44,7 @@ async function getProductById(productId) {
 
 // 获取服务详情
 async function getServiceById(serviceId) {
-    const data = await supabaseQuery('services', `?id=eq.${serviceId}&select=*,users!services_user_id_fkey(id,nickname,avatar_url,phone)`);
+    const data = await supabaseQuery('services', `?id=eq.${serviceId}&select=*,users:provider_id(id,nickname,avatar_url)`);
     return data[0] || null;
 }
 
@@ -52,8 +52,8 @@ async function getServiceById(serviceId) {
 async function getSellerInfo(userId) {
     const [user, stores, services] = await Promise.all([
         supabaseQuery('users', `?id=eq.${userId}&select=id,nickname,avatar_url,bio,created_at`),
-        supabaseQuery('stores', `?owner_id=eq.${userId}&audit_status=eq.active&select=*`),
-        supabaseQuery('services', `?user_id=eq.${userId}&audit_status=eq.active&select=*`)
+        supabaseQuery('stores', `?owner_id=eq.${userId}&status=eq.active&select=*`),
+        supabaseQuery('services', `?provider_id=eq.${userId}&status=eq.active&select=*`)
     ]);
 
     return {
@@ -173,7 +173,7 @@ async function getMarketplaceList(page = 1, limit = 20) {
 // 获取服务列表
 async function getServiceList(page = 1, limit = 20) {
     const offset = (page - 1) * limit;
-    return await supabaseQuery('services', `?status=eq.active&select=*,users!services_user_id_fkey(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
+    return await supabaseQuery('services', `?status=eq.active&select=*,users:provider_id(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
 }
 
 // 获取餐厅列表
