@@ -103,10 +103,63 @@
         <div class="container mx-auto px-4 text-center">
             <h3 class="text-xl sm:text-2xl font-bold mb-3">想加入社群？下载东瀛游侠APP</h3>
             <p class="text-white/80 mb-6 text-sm sm:text-base">在APP内加入社群、参与活动、结交好友</p>
-            <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
-               class="inline-block bg-white text-teal-600 px-8 py-3 rounded-xl font-bold hover:bg-teal-50 transition">
-                <i class="fab fa-android mr-2"></i> Android 下载
-            </a>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <button onclick="showIosModal()" class="bg-gray-400 text-white px-6 py-3 rounded-xl font-bold hover:bg-gray-500 transition opacity-80 cursor-pointer">
+                    <i class="fab fa-apple mr-2"></i> iOS 下载（上架审核中）
+                </button>
+                <button onclick="showAndroidModal()" class="bg-white text-teal-600 px-6 py-3 rounded-xl font-bold hover:bg-teal-50 transition">
+                    <i class="fab fa-android mr-2"></i> Android 下载（测试版）
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- iOS弹窗 -->
+    <div id="iosModal" class="fixed inset-0 bg-black/50 z-[100] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 transform scale-95 opacity-0 transition-all duration-300" id="iosModalContent">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fab fa-apple text-gray-500 text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">iOS 测试中</h3>
+                <p class="text-gray-600 mb-6">iOS版本正在App Store审核中，敬请期待！</p>
+                <button onclick="closeIosModal()" class="bg-teal-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-teal-600 transition w-full">知道了</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Android弹窗 -->
+    <div id="androidModal" class="fixed inset-0 bg-black/50 z-[100] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 transform scale-95 opacity-0 transition-all duration-300" id="androidModalContent">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fab fa-android text-green-600 text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">Android 下载提示</h3>
+                <p class="text-gray-600 mb-4">安卓手机请先在设置中开启「允许安装未知来源应用」权限，然后再进行下载安装。</p>
+                <p class="text-xs text-gray-400 mb-6">设置路径：设置 → 安全 → 允许未知来源</p>
+                <div class="flex flex-col gap-3">
+                    <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download onclick="closeAndroidModal()" class="bg-green-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-green-600 transition flex items-center justify-center"><i class="fas fa-download mr-2"></i> 开始下载</a>
+                    <button onclick="closeAndroidModal()" class="border border-gray-300 text-gray-600 px-8 py-3 rounded-xl hover:bg-gray-100 transition">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 头像点击提示弹窗 -->
+    <div id="avatarModal" class="fixed inset-0 bg-black/50 z-[100] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 transform scale-95 opacity-0 transition-all duration-300" id="avatarModalContent">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-mobile-alt text-teal-600 text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">下载APP体验更多</h3>
+                <p class="text-gray-600 mb-6">用户详情查看/聊天请下载APP，玩转更多功能。</p>
+                <div class="flex flex-col gap-3">
+                    <button onclick="closeAvatarModal();showAndroidModal();" class="bg-teal-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-teal-600 transition">立即下载APP</button>
+                    <button onclick="closeAvatarModal()" class="border border-gray-300 text-gray-600 px-8 py-3 rounded-xl hover:bg-gray-100 transition">稍后再说</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -233,6 +286,59 @@
             };
             return types[type] || type || '俱乐部';
         }
+
+        // ==================== 弹窗控制 ====================
+        function showIosModal() {
+            const modal = document.getElementById('iosModal');
+            const content = document.getElementById('iosModalContent');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => { content.classList.remove('scale-95', 'opacity-0'); content.classList.add('scale-100', 'opacity-100'); }, 10);
+        }
+        function closeIosModal() {
+            const modal = document.getElementById('iosModal');
+            const content = document.getElementById('iosModalContent');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+        }
+        function showAndroidModal() {
+            const modal = document.getElementById('androidModal');
+            const content = document.getElementById('androidModalContent');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => { content.classList.remove('scale-95', 'opacity-0'); content.classList.add('scale-100', 'opacity-100'); }, 10);
+        }
+        function closeAndroidModal() {
+            const modal = document.getElementById('androidModal');
+            const content = document.getElementById('androidModalContent');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+        }
+        function showAvatarModal() {
+            const modal = document.getElementById('avatarModal');
+            const content = document.getElementById('avatarModalContent');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => { content.classList.remove('scale-95', 'opacity-0'); content.classList.add('scale-100', 'opacity-100'); }, 10);
+        }
+        function closeAvatarModal() {
+            const modal = document.getElementById('avatarModal');
+            const content = document.getElementById('avatarModalContent');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
+        }
+        ['iosModal', 'androidModal', 'avatarModal'].forEach(id => {
+            document.getElementById(id)?.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    if (id === 'iosModal') closeIosModal();
+                    else if (id === 'androidModal') closeAndroidModal();
+                    else if (id === 'avatarModal') closeAvatarModal();
+                }
+            });
+        });
     </script>
 </body>
 </html>

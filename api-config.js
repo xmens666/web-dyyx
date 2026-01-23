@@ -150,14 +150,14 @@ async function getJobList(page = 1, limit = 20) {
 
 // 获取简历详情
 async function getResumeById(resumeId) {
-    const data = await supabaseQuery('resumes', `?id=eq.${resumeId}&select=*,users:user_id(id,nickname,avatar_url)`);
+    const data = await supabaseQuery('jianghu_resumes', `?id=eq.${resumeId}&select=*,users:user_id(id,nickname,avatar_url)`);
     return data[0] || null;
 }
 
 // 获取简历列表
 async function getResumeList(page = 1, limit = 20) {
     const offset = (page - 1) * limit;
-    return await supabaseQuery('resumes', `?status=eq.active&select=*,users:user_id(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
+    return await supabaseQuery('jianghu_resumes', `?status=eq.published&select=*,users:user_id(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
 }
 
 // ==================== 江湖问答 ====================
