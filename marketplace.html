@@ -257,9 +257,16 @@
                 'like_new': '准新',
                 'good': '良好',
                 'fair': '一般',
-                'poor': '可用'
+                'poor': '可用',
+                // 新格式：10分制成色
+                '10_out_of_10': '10成新',
+                '9_out_of_10': '9成新',
+                '8_out_of_10': '8成新',
+                '7_out_of_10': '7成新',
+                '6_out_of_10': '6成新',
+                '5_out_of_10': '5成以下'
             };
-            return conditions[condition] || '未知';
+            return conditions[condition] || condition || '未知';
         }
     </script>
 </body>

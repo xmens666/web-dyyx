@@ -532,13 +532,21 @@
                 'like_new': '几乎全新',
                 'good': '成色良好',
                 'fair': '有使用痕迹',
-                'poor': '功能正常'
+                'poor': '功能正常',
+                // 新格式：10分制成色
+                '10_out_of_10': '10成新（全新）',
+                '9_out_of_10': '9成新',
+                '8_out_of_10': '8成新',
+                '7_out_of_10': '7成新',
+                '6_out_of_10': '6成新',
+                '5_out_of_10': '5成新以下'
             };
             return conditions[condition] || condition || '未标注';
         }
 
         function getCategoryName(category) {
             const categories = {
+                // 主要分类
                 'electronics': '数码电器',
                 'fashion': '服饰鞋包',
                 'home': '家居用品',
@@ -551,7 +559,27 @@
                 'furniture': '家具',
                 'appliances': '家电',
                 'digital': '数码产品',
-                'other': '其他'
+                'other': '其他',
+                // 扩展分类
+                'clothing': '服装',
+                'shoes': '鞋子',
+                'bags': '箱包',
+                'accessories': '配饰',
+                'watches': '手表',
+                'jewelry': '珠宝首饰',
+                'phones': '手机',
+                'computers': '电脑',
+                'tablets': '平板',
+                'cameras': '相机',
+                'games': '游戏机',
+                'toys': '玩具',
+                'pets': '宠物用品',
+                'office': '办公用品',
+                'musical': '乐器',
+                'art': '艺术品',
+                'collectibles': '收藏品',
+                'tickets': '票券',
+                'services': '服务'
             };
             return categories[category] || category || '其他';
         }
