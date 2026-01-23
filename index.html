@@ -1094,9 +1094,37 @@
                 { id: 'count-restaurant', table: 'restaurants', filter: 'status=eq.active' },
                 { id: 'count-accommodation', table: 'accommodations', filter: 'status=eq.active' },
                 { id: 'count-question', table: 'questions', filter: 'status=eq.published' },
-                { id: 'count-community', table: 'organizations', filter: 'status=eq.active' },
-                { id: 'count-bounty', table: 'bounties', filter: 'status=eq.open' }
+                { id: 'count-bounty', table: 'job_invitations', filter: 'audit_status=eq.approved' }
             ];
+
+            // 英雄结义需要合并俱乐部和同乡会的数量
+            let communityTotal = 0;
+            try {
+                const clubsRes = await fetch(
+                    `${SUPABASE_URL}/rest/v1/clubs?status=eq.active&select=id`,
+                    { method: 'HEAD', headers }
+                );
+                const clubsCount = clubsRes.headers.get('content-range');
+                if (clubsCount) {
+                    const total = clubsCount.split('/')[1];
+                    if (total && total !== '*') communityTotal += parseInt(total);
+                }
+            } catch (e) {}
+            try {
+                const htRes = await fetch(
+                    `${SUPABASE_URL}/rest/v1/hometown_associations?status=eq.active&select=id`,
+                    { method: 'HEAD', headers }
+                );
+                const htCount = htRes.headers.get('content-range');
+                if (htCount) {
+                    const total = htCount.split('/')[1];
+                    if (total && total !== '*') communityTotal += parseInt(total);
+                }
+            } catch (e) {}
+            const communityEl = document.getElementById('count-community');
+            if (communityEl) {
+                communityEl.textContent = communityTotal > 999 ? '999+' : communityTotal.toString();
+            }
 
             for (const module of modules) {
                 try {
