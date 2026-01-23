@@ -134,6 +134,32 @@ async function getUserAccommodationCount(userId) {
     return data?.length || 0;
 }
 
+// ==================== 江湖揭榜（求职招聘）====================
+
+// 获取招聘详情
+async function getJobById(jobId) {
+    const data = await supabaseQuery('job_invitations', `?id=eq.${jobId}&select=*,users:recruiter_id(id,nickname,avatar_url)`);
+    return data[0] || null;
+}
+
+// 获取招聘列表
+async function getJobList(page = 1, limit = 20) {
+    const offset = (page - 1) * limit;
+    return await supabaseQuery('job_invitations', `?visibility=eq.public&audit_status=eq.approved&select=*,users:recruiter_id(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
+}
+
+// 获取简历详情
+async function getResumeById(resumeId) {
+    const data = await supabaseQuery('resumes', `?id=eq.${resumeId}&select=*,users:user_id(id,nickname,avatar_url)`);
+    return data[0] || null;
+}
+
+// 获取简历列表
+async function getResumeList(page = 1, limit = 20) {
+    const offset = (page - 1) * limit;
+    return await supabaseQuery('resumes', `?status=eq.active&select=*,users:user_id(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
+}
+
 // ==================== 江湖问答 ====================
 
 // 获取问题详情

@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>江湖揭榜详情 - 东瀛游侠</title>
+    <meta name="description" content="东瀛游侠江湖揭榜 - 在日华人求职招聘平台">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#F59E0B">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .loading-spinner { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .gradient-job { background: linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #B45309 100%); }
+        .gradient-resume { background: linear-gradient(135deg, #3B82F6 0%, #2563EB 50%, #1D4ED8 100%); }
+        .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #F3F4F6; }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: #6B7280; font-size: 14px; }
+        .info-value { color: #1F2937; font-weight: 500; font-size: 14px; text-align: right; }
+        .section-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 16px; }
+        .section-title { font-size: 16px; font-weight: 700; color: #1F2937; margin-bottom: 16px; display: flex; align-items: center; }
+        .section-title i { margin-right: 8px; }
+        .badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 9999px; font-size: 12px; font-weight: 500; margin-right: 6px; margin-bottom: 6px; }
+        .badge-amber { background: #FEF3C7; color: #92400E; }
+        .badge-blue { background: #DBEAFE; color: #1E40AF; }
+        .badge-green { background: #D1FAE5; color: #065F46; }
+        .badge-gray { background: #F3F4F6; color: #4B5563; }
+        .salary-highlight { background: linear-gradient(135deg, #FEF3C7, #FDE68A); }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="fixed w-full bg-white/95 backdrop-blur-md shadow-sm z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2">
+                <span class="text-lg font-bold text-gray-800">🏯 东瀛游侠</span>
+            </a>
+            <a href="bounty.html" class="text-amber-500 text-sm hover:text-amber-600">
+                <i class="fas fa-arrow-left mr-1"></i> 返回列表
+            </a>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="pt-16 pb-24">
+        <!-- 加载状态 -->
+        <div id="loading" class="flex flex-col items-center justify-center min-h-[60vh]">
+            <div class="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full loading-spinner"></div>
+            <p class="mt-4 text-gray-500">正在加载...</p>
+        </div>
+
+        <!-- 错误状态 -->
+        <div id="error" class="hidden flex flex-col items-center justify-center min-h-[60vh] px-4">
+            <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                <i class="fas fa-exclamation-triangle text-red-500 text-3xl"></i>
+            </div>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">内容不存在</h2>
+            <p class="text-gray-500 mb-6 text-center">该内容可能已下架或链接无效</p>
+            <a href="bounty.html" class="bg-amber-500 text-white px-6 py-2 rounded-full hover:bg-amber-600 transition">
+                返回列表
+            </a>
+        </div>
+
+        <!-- 招聘详情 -->
+        <div id="jobContent" class="hidden fade-in">
+            <!-- 头部 -->
+            <header id="jobHeader" class="gradient-job pt-20 pb-8">
+                <div class="container mx-auto px-4 text-white">
+                    <div class="flex flex-wrap gap-2 mb-3" id="jobBadges"></div>
+                    <h1 id="jobTitle" class="text-2xl font-bold mb-2"></h1>
+                    <p id="jobCompany" class="text-white/80 text-lg mb-4"></p>
+                    <div class="salary-highlight text-amber-900 inline-block px-4 py-2 rounded-lg font-bold text-xl" id="jobSalary"></div>
+                </div>
+            </header>
+
+            <div class="container mx-auto px-4 py-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- 左侧：职位详情 -->
+                    <div class="lg:col-span-2 space-y-4">
+                        <!-- 工作信息 -->
+                        <div class="section-card">
+                            <h2 class="section-title">
+                                <i class="fas fa-briefcase text-amber-500"></i>工作信息
+                            </h2>
+                            <div id="jobInfo"></div>
+                        </div>
+
+                        <!-- 职位描述 -->
+                        <div class="section-card">
+                            <h2 class="section-title">
+                                <i class="fas fa-file-alt text-blue-500"></i>职位描述
+                            </h2>
+                            <p id="jobDescription" class="text-gray-700 whitespace-pre-wrap leading-relaxed"></p>
+                        </div>
+
+                        <!-- 福利待遇 -->
+                        <div id="benefitsSection" class="section-card hidden">
+                            <h2 class="section-title">
+                                <i class="fas fa-gift text-green-500"></i>福利待遇
+                            </h2>
+                            <div id="jobBenefits" class="flex flex-wrap"></div>
+                        </div>
+                    </div>
+
+                    <!-- 右侧：联系信息 -->
+                    <div class="space-y-4">
+                        <!-- 招聘方信息 -->
+                        <div class="section-card">
+                            <h2 class="section-title">
+                                <i class="fas fa-building text-amber-500"></i>招聘方
+                            </h2>
+                            <div class="flex items-center gap-4 mb-4">
+                                <img id="recruiterAvatar" src="" alt="头像" class="w-14 h-14 rounded-full object-cover border-2 border-gray-100">
+                                <div>
+                                    <h3 id="recruiterName" class="font-bold text-gray-800"></h3>
+                                    <p id="recruiterCompany" class="text-gray-500 text-sm"></p>
+                                </div>
+                            </div>
+                            <div id="contactInfo" class="text-sm text-gray-600 space-y-2"></div>
+                        </div>
+
+                        <!-- 下载APP -->
+                        <div class="bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl p-6 text-white">
+                            <div class="text-center">
+                                <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-paper-plane text-2xl"></i>
+                                </div>
+                                <h3 class="font-bold text-lg mb-2">立即投递简历</h3>
+                                <p class="text-white/80 text-sm mb-4">下载APP直接联系招聘方</p>
+                                <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
+                                   class="block bg-white text-amber-600 py-3 rounded-xl font-bold hover:bg-amber-50 transition">
+                                    <i class="fab fa-android mr-2"></i> 下载APP投递
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 简历详情 -->
+        <div id="resumeContent" class="hidden fade-in">
+            <!-- 头部 -->
+            <header id="resumeHeader" class="gradient-resume pt-20 pb-8">
+                <div class="container mx-auto px-4 text-white">
+                    <div class="flex items-center gap-6">
+                        <img id="resumePhoto" src="" alt="照片" class="w-24 h-24 rounded-full object-cover border-4 border-white/30">
+                        <div>
+                            <h1 id="resumeName" class="text-2xl font-bold mb-2"></h1>
+                            <p id="resumeExpectedSalary" class="text-white/80 text-lg"></p>
+                            <div class="flex flex-wrap gap-2 mt-3" id="resumeBadges"></div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="container mx-auto px-4 py-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- 左侧：简历详情 -->
+                    <div class="lg:col-span-2 space-y-4">
+                        <!-- 基本信息 -->
+                        <div class="section-card">
+                            <h2 class="section-title">
+                                <i class="fas fa-user text-blue-500"></i>基本信息
+                            </h2>
+                            <div id="resumeBasicInfo"></div>
+                        </div>
+
+                        <!-- 期望职位 -->
+                        <div id="desiredJobsSection" class="section-card hidden">
+                            <h2 class="section-title">
+                                <i class="fas fa-bullseye text-amber-500"></i>期望职位
+                            </h2>
+                            <div id="desiredJobs" class="flex flex-wrap"></div>
+                        </div>
+
+                        <!-- 工作经历 -->
+                        <div id="workExpSection" class="section-card hidden">
+                            <h2 class="section-title">
+                                <i class="fas fa-briefcase text-green-500"></i>工作经历
+                            </h2>
+                            <div id="workExperiences"></div>
+                        </div>
+
+                        <!-- 教育经历 -->
+                        <div id="eduExpSection" class="section-card hidden">
+                            <h2 class="section-title">
+                                <i class="fas fa-graduation-cap text-purple-500"></i>教育经历
+                            </h2>
+                            <div id="eduExperiences"></div>
+                        </div>
+                    </div>
+
+                    <!-- 右侧：联系 -->
+                    <div class="space-y-4">
+                        <!-- 下载APP -->
+                        <div class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl p-6 text-white">
+                            <div class="text-center">
+                                <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-comments text-2xl"></i>
+                                </div>
+                                <h3 class="font-bold text-lg mb-2">联系求职者</h3>
+                                <p class="text-white/80 text-sm mb-4">下载APP直接联系沟通</p>
+                                <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
+                                   class="block bg-white text-blue-600 py-3 rounded-xl font-bold hover:bg-blue-50 transition">
+                                    <i class="fab fa-android mr-2"></i> 下载APP联系
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- 统计 -->
+                        <div class="section-card">
+                            <h2 class="section-title">
+                                <i class="fas fa-chart-bar text-indigo-500"></i>浏览统计
+                            </h2>
+                            <div class="text-center">
+                                <p id="resumeViewCount" class="text-3xl font-bold text-blue-500">0</p>
+                                <p class="text-sm text-gray-500">浏览次数</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部固定栏 -->
+    <div id="bottomBar" class="hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40">
+        <div class="container mx-auto flex items-center justify-between gap-4">
+            <div class="flex-shrink-0">
+                <p class="text-gray-500 text-xs" id="bottomLabel"></p>
+                <p class="text-amber-600 font-bold text-xl" id="bottomValue"></p>
+            </div>
+            <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
+               class="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-center py-3 rounded-xl font-bold hover:opacity-90 transition">
+                <i class="fab fa-android mr-2"></i> <span id="bottomAction">下载APP</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400 text-sm mb-2">东瀛游侠 - 在日华人的生活服务平台</p>
+            <p class="text-gray-500 text-xs">&copy; 2026 株式会社昇陽商事</p>
+        </div>
+    </footer>
+
+    <script src="api-config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const type = getUrlParam('type');
+            const id = getUrlParam('id');
+
+            if (!id) {
+                showError();
+                return;
+            }
+
+            try {
+                if (type === 'resume') {
+                    await loadResume(id);
+                } else {
+                    await loadJob(id);
+                }
+            } catch (err) {
+                console.error('加载失败:', err);
+                showError();
+            }
+        });
+
+        function showError() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('error').classList.remove('hidden');
+        }
+
+        // ==================== 招聘详情 ====================
+
+        async function loadJob(id) {
+            const data = await supabaseQuery('job_invitations', `?id=eq.${id}&select=*,users:recruiter_id(id,nickname,avatar_url)`);
+            const job = data[0];
+
+            if (!job) {
+                showError();
+                return;
+            }
+
+            renderJob(job);
+        }
+
+        function renderJob(job) {
+            document.title = `${job.position_name} - ${job.company_name} - 江湖揭榜`;
+
+            // 标签
+            const badges = [];
+            badges.push(`<span class="badge badge-amber">${getJobCategory(job.job_category)}</span>`);
+            badges.push(`<span class="badge badge-blue">${getEmploymentType(job.employment_type)}</span>`);
+            if (job.work_mode) badges.push(`<span class="badge badge-gray">${getWorkMode(job.work_mode)}</span>`);
+            document.getElementById('jobBadges').innerHTML = badges.join('');
+
+            // 基本信息
+            document.getElementById('jobTitle').textContent = job.position_name;
+            document.getElementById('jobCompany').textContent = job.company_name;
+            document.getElementById('jobSalary').textContent = getSalaryDisplay(job.salary_type, job.salary_amount);
+
+            // 工作信息
+            const infos = [];
+            if (job.work_city) infos.push({ label: '工作城市', value: job.work_city });
+            if (job.work_address) infos.push({ label: '工作地址', value: job.work_address });
+            if (job.work_days) infos.push({ label: '工作日', value: job.work_days });
+            if (job.work_hours) infos.push({ label: '工作时间', value: job.work_hours });
+            if (job.overtime) infos.push({ label: '加班情况', value: job.overtime });
+
+            document.getElementById('jobInfo').innerHTML = infos.map(i => `
+                <div class="info-row">
+                    <span class="info-label">${i.label}</span>
+                    <span class="info-value">${i.value}</span>
+                </div>
+            `).join('');
+
+            // 职位描述
+            document.getElementById('jobDescription').textContent = job.job_description || '暂无描述';
+
+            // 福利待遇
+            const benefits = [];
+            if (job.pension) benefits.push({ icon: 'fa-umbrella-beach', text: '年金加入' });
+            if (job.social_insurance) benefits.push({ icon: 'fa-shield-alt', text: '社会保险' });
+            if (job.transport_allowance) benefits.push({ icon: 'fa-train', text: '交通补贴' });
+            if (job.housing_allowance) benefits.push({ icon: 'fa-home', text: '住房补贴' });
+            if (job.bonus_times) benefits.push({ icon: 'fa-gift', text: `年终奖${job.bonus_times}次` });
+            if (job.paid_leave) benefits.push({ icon: 'fa-calendar-check', text: '带薪休假' });
+            if (job.other_benefits) benefits.push({ icon: 'fa-star', text: job.other_benefits });
+
+            if (benefits.length > 0) {
+                document.getElementById('benefitsSection').classList.remove('hidden');
+                document.getElementById('jobBenefits').innerHTML = benefits.map(b => `
+                    <span class="badge badge-green"><i class="fas ${b.icon} mr-1"></i>${b.text}</span>
+                `).join('');
+            }
+
+            // 招聘方信息
+            const recruiterAvatar = job.users?.avatar_url || DEFAULT_AVATAR;
+            document.getElementById('recruiterAvatar').src = recruiterAvatar;
+            document.getElementById('recruiterAvatar').onerror = function() { this.src = DEFAULT_AVATAR; };
+            document.getElementById('recruiterName').textContent = job.contact_person || job.users?.nickname || '招聘方';
+            document.getElementById('recruiterCompany').textContent = job.company_name;
+
+            // 联系方式
+            const contacts = [];
+            if (job.contact_phone) contacts.push(`<p><i class="fas fa-phone text-green-500 mr-2"></i>${job.contact_phone}</p>`);
+            if (job.contact_email) contacts.push(`<p><i class="fas fa-envelope text-blue-500 mr-2"></i>${job.contact_email}</p>`);
+            if (job.contact_wechat) contacts.push(`<p><i class="fab fa-weixin text-green-500 mr-2"></i>微信: ${job.contact_wechat}</p>`);
+
+            document.getElementById('contactInfo').innerHTML = contacts.length > 0
+                ? contacts.join('')
+                : '<p class="text-gray-400">下载APP查看联系方式</p>';
+
+            // 底部栏
+            document.getElementById('bottomLabel').textContent = '薪资待遇';
+            document.getElementById('bottomValue').textContent = getSalaryDisplay(job.salary_type, job.salary_amount);
+            document.getElementById('bottomAction').textContent = '立即投递';
+
+            // 显示内容
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('jobContent').classList.remove('hidden');
+            document.getElementById('bottomBar').classList.remove('hidden');
+        }
+
+        // ==================== 简历详情 ====================
+
+        async function loadResume(id) {
+            const data = await supabaseQuery('resumes', `?id=eq.${id}&select=*,users:user_id(id,nickname,avatar_url)`);
+            const resume = data[0];
+
+            if (!resume) {
+                showError();
+                return;
+            }
+
+            renderResume(resume);
+        }
+
+        function renderResume(resume) {
+            const name = resume.name_cn || resume.name_jp || resume.users?.nickname || '求职者';
+            document.title = `${name}的简历 - 江湖揭榜`;
+
+            // 头像
+            const photo = resume.photo_url || resume.users?.avatar_url || DEFAULT_AVATAR;
+            document.getElementById('resumePhoto').src = photo;
+            document.getElementById('resumePhoto').onerror = function() { this.src = DEFAULT_AVATAR; };
+
+            // 姓名
+            document.getElementById('resumeName').textContent = name;
+
+            // 期望薪资
+            const salary = resume.salary_min && resume.salary_max
+                ? `期望薪资: ${resume.salary_min / 10000}~${resume.salary_max / 10000}万/月`
+                : (resume.salary_min ? `期望薪资: ${resume.salary_min / 10000}万以上` : '薪资面议');
+            document.getElementById('resumeExpectedSalary').textContent = salary;
+
+            // 标签
+            const badges = [];
+            if (resume.city_cn || resume.city_jp) {
+                badges.push(`<span class="badge badge-blue"><i class="fas fa-map-marker-alt mr-1"></i>${resume.city_cn || resume.city_jp}</span>`);
+            }
+            document.getElementById('resumeBadges').innerHTML = badges.join('');
+
+            // 基本信息
+            const basicInfos = [];
+            if (resume.gender) basicInfos.push({ label: '性别', value: getGender(resume.gender) });
+            if (resume.birthday) basicInfos.push({ label: '年龄', value: calculateAge(resume.birthday) + '岁' });
+            if (resume.nationality_cn || resume.nationality_jp) basicInfos.push({ label: '国籍', value: resume.nationality_cn || resume.nationality_jp });
+            if (resume.city_cn || resume.city_jp) basicInfos.push({ label: '所在地', value: resume.city_cn || resume.city_jp });
+
+            document.getElementById('resumeBasicInfo').innerHTML = basicInfos.map(i => `
+                <div class="info-row">
+                    <span class="info-label">${i.label}</span>
+                    <span class="info-value">${i.value}</span>
+                </div>
+            `).join('');
+
+            // 期望职位
+            const desiredJobs = resume.desired_jobs || [];
+            if (desiredJobs.length > 0) {
+                document.getElementById('desiredJobsSection').classList.remove('hidden');
+                document.getElementById('desiredJobs').innerHTML = desiredJobs.map(j => `
+                    <span class="badge badge-amber">${j}</span>
+                `).join('');
+            }
+
+            // 工作经历
+            const workExp = resume.work_experiences || [];
+            if (workExp.length > 0) {
+                document.getElementById('workExpSection').classList.remove('hidden');
+                document.getElementById('workExperiences').innerHTML = workExp.map(w => `
+                    <div class="mb-4 pb-4 border-b border-gray-100 last:border-0">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h4 class="font-bold text-gray-800">${w.position || '职位'}</h4>
+                                <p class="text-amber-600">${w.company || '公司'}</p>
+                            </div>
+                            <span class="text-sm text-gray-400">${w.start_date || ''} ~ ${w.end_date || '至今'}</span>
+                        </div>
+                        ${w.description ? `<p class="text-gray-600 text-sm mt-2">${w.description}</p>` : ''}
+                    </div>
+                `).join('');
+            }
+
+            // 教育经历
+            const eduExp = resume.education_experiences || [];
+            if (eduExp.length > 0) {
+                document.getElementById('eduExpSection').classList.remove('hidden');
+                document.getElementById('eduExperiences').innerHTML = eduExp.map(e => `
+                    <div class="mb-4 pb-4 border-b border-gray-100 last:border-0">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h4 class="font-bold text-gray-800">${e.school || '学校'}</h4>
+                                <p class="text-blue-600">${e.major || ''} ${e.degree ? '· ' + e.degree : ''}</p>
+                            </div>
+                            <span class="text-sm text-gray-400">${e.start_date || ''} ~ ${e.end_date || ''}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // 浏览统计
+            document.getElementById('resumeViewCount').textContent = resume.view_count || 0;
+
+            // 底部栏
+            document.getElementById('bottomLabel').textContent = '期望薪资';
+            document.getElementById('bottomValue').textContent = resume.salary_min
+                ? `${resume.salary_min / 10000}万+/月`
+                : '面议';
+            document.getElementById('bottomAction').textContent = '联系求职者';
+
+            // 显示内容
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('resumeContent').classList.remove('hidden');
+            document.getElementById('bottomBar').classList.remove('hidden');
+        }
+
+        // ==================== 辅助函数 ====================
+
+        function getSalaryDisplay(type, amount) {
+            if (!amount) return '面议';
+            const typeLabels = {
+                'monthly': '/月',
+                'hourly': '/时',
+                'daily': '/天',
+                'yearly': '/年',
+                'negotiable': ''
+            };
+            return amount + (typeLabels[type] || '');
+        }
+
+        function getEmploymentType(type) {
+            const types = {
+                'full_time': '全职',
+                'part_time': '兼职',
+                'contract': '合同工',
+                'intern': '实习',
+                'freelance': '自由职业',
+                'temporary': '临时工'
+            };
+            return types[type] || type || '全职';
+        }
+
+        function getJobCategory(category) {
+            const categories = {
+                'it': 'IT/互联网',
+                'sales': '销售',
+                'service': '服务业',
+                'restaurant': '餐饮',
+                'retail': '零售',
+                'manufacturing': '制造业',
+                'education': '教育',
+                'healthcare': '医疗',
+                'finance': '金融',
+                'logistics': '物流',
+                'construction': '建筑',
+                'other': '其他'
+            };
+            return categories[category] || category || '其他';
+        }
+
+        function getWorkMode(mode) {
+            const modes = {
+                'onsite': '现场办公',
+                'remote': '远程办公',
+                'hybrid': '混合办公'
+            };
+            return modes[mode] || mode || '';
+        }
+
+        function getGender(gender) {
+            const genders = {
+                'male': '男',
+                'female': '女',
+                'other': '其他'
+            };
+            return genders[gender] || gender || '';
+        }
+
+        function calculateAge(birthday) {
+            if (!birthday) return '';
+            const birth = new Date(birthday);
+            const today = new Date();
+            let age = today.getFullYear() - birth.getFullYear();
+            const m = today.getMonth() - birth.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+                age--;
+            }
+            return age;
+        }
+    </script>
+</body>
+</html>

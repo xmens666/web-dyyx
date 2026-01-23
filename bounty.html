@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>江湖揭榜 - 东瀛游侠</title>
+    <meta name="description" content="东瀛游侠江湖揭榜 - 在日华人求职招聘平台">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#F59E0B">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .loading-spinner { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
+        .gradient-header { background: linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #B45309 100%); }
+        .tab-active { background: #F59E0B; color: white; }
+        .tab-inactive { background: #F3F4F6; color: #6B7280; }
+        .salary-badge { background: linear-gradient(135deg, #FEF3C7, #FDE68A); color: #92400E; }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="fixed w-full bg-white/95 backdrop-blur-md shadow-sm z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2">
+                <span class="text-lg font-bold text-gray-800">🏯 东瀛游侠</span>
+            </a>
+            <a href="index.html#contact" class="bg-amber-500 text-white px-4 py-2 rounded-full text-sm hover:bg-amber-600 transition">
+                下载APP
+            </a>
+        </div>
+    </nav>
+
+    <!-- 页面头部 -->
+    <header class="gradient-header pt-20 pb-8 sm:pb-12">
+        <div class="container mx-auto px-4">
+            <div class="text-center text-white">
+                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-scroll text-3xl"></i>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-bold mb-2">江湖揭榜</h1>
+                <p class="text-white/80">招贤纳士、投名状、找到理想工作</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Tab 切换 -->
+    <div class="container mx-auto px-4 -mt-4 relative z-10">
+        <div class="bg-white rounded-xl shadow-sm p-1 flex">
+            <button id="tabJob" onclick="switchTab('job')" class="flex-1 py-2 rounded-lg font-medium text-sm transition tab-active">
+                <i class="fas fa-briefcase mr-1"></i>招贤纳士
+            </button>
+            <button id="tabResume" onclick="switchTab('resume')" class="flex-1 py-2 rounded-lg font-medium text-sm transition tab-inactive">
+                <i class="fas fa-user-tie mr-1"></i>投名状
+            </button>
+        </div>
+    </div>
+
+    <!-- 主内容 -->
+    <main class="container mx-auto px-4 py-6 sm:py-8">
+        <!-- 加载状态 -->
+        <div id="loading" class="flex flex-col items-center justify-center py-20">
+            <div class="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full loading-spinner"></div>
+            <p class="mt-4 text-gray-500">正在加载...</p>
+        </div>
+
+        <!-- 空状态 -->
+        <div id="empty" class="hidden text-center py-20">
+            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-scroll text-gray-400 text-3xl"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-700 mb-2">暂无内容</h3>
+            <p class="text-gray-500 mb-6">快来发布吧</p>
+            <a href="index.html" class="text-amber-500 hover:text-amber-600">返回首页</a>
+        </div>
+
+        <!-- 招聘列表 -->
+        <div id="jobList" class="hidden">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-lg font-bold text-gray-800">
+                    <i class="fas fa-fire text-orange-500 mr-2"></i>最新招聘
+                </h2>
+                <span id="jobCount" class="text-sm text-gray-500"></span>
+            </div>
+            <div id="jobGrid" class="space-y-4">
+                <!-- 招聘卡片将动态插入 -->
+            </div>
+            <div id="loadMoreJobs" class="text-center mt-8 hidden">
+                <button onclick="loadMoreJobs()" class="bg-white border border-gray-200 text-gray-600 px-8 py-3 rounded-full hover:bg-gray-50 transition">
+                    <i class="fas fa-plus mr-2"></i>加载更多
+                </button>
+            </div>
+        </div>
+
+        <!-- 简历列表 -->
+        <div id="resumeList" class="hidden">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-lg font-bold text-gray-800">
+                    <i class="fas fa-fire text-orange-500 mr-2"></i>最新简历
+                </h2>
+                <span id="resumeCount" class="text-sm text-gray-500"></span>
+            </div>
+            <div id="resumeGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- 简历卡片将动态插入 -->
+            </div>
+            <div id="loadMoreResumes" class="text-center mt-8 hidden">
+                <button onclick="loadMoreResumes()" class="bg-white border border-gray-200 text-gray-600 px-8 py-3 rounded-full hover:bg-gray-50 transition">
+                    <i class="fas fa-plus mr-2"></i>加载更多
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部下载提示 -->
+    <div class="bg-gradient-to-r from-amber-500 to-orange-600 text-white py-8 sm:py-12">
+        <div class="container mx-auto px-4 text-center">
+            <h3 class="text-xl sm:text-2xl font-bold mb-3">找工作招人才？下载东瀛游侠APP</h3>
+            <p class="text-white/80 mb-6 text-sm sm:text-base">在APP内发布招聘、投递简历、直接联系</p>
+            <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
+               class="inline-block bg-white text-amber-600 px-8 py-3 rounded-xl font-bold hover:bg-amber-50 transition">
+                <i class="fab fa-android mr-2"></i> Android 下载
+            </a>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400 text-sm mb-2">东瀛游侠 - 在日华人的生活服务平台</p>
+            <p class="text-gray-500 text-xs">&copy; 2026 株式会社昇陽商事</p>
+        </div>
+    </footer>
+
+    <script src="api-config.js"></script>
+    <script>
+        let currentTab = 'job';
+        let jobPage = 1;
+        let resumePage = 1;
+        let isLoadingJobs = false;
+        let isLoadingResumes = false;
+        let hasMoreJobs = true;
+        let hasMoreResumes = true;
+        const ITEMS_PER_PAGE = 20;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadJobs();
+        });
+
+        function switchTab(tab) {
+            currentTab = tab;
+
+            // 更新Tab样式
+            document.getElementById('tabJob').className = tab === 'job'
+                ? 'flex-1 py-2 rounded-lg font-medium text-sm transition tab-active'
+                : 'flex-1 py-2 rounded-lg font-medium text-sm transition tab-inactive';
+            document.getElementById('tabResume').className = tab === 'resume'
+                ? 'flex-1 py-2 rounded-lg font-medium text-sm transition tab-active'
+                : 'flex-1 py-2 rounded-lg font-medium text-sm transition tab-inactive';
+
+            // 切换显示内容
+            document.getElementById('jobList').classList.toggle('hidden', tab !== 'job');
+            document.getElementById('resumeList').classList.toggle('hidden', tab !== 'resume');
+
+            // 加载数据
+            if (tab === 'job' && jobPage === 1) {
+                loadJobs();
+            } else if (tab === 'resume' && resumePage === 1) {
+                loadResumes();
+            }
+        }
+
+        // ==================== 招聘列表 ====================
+
+        async function loadJobs() {
+            if (isLoadingJobs || !hasMoreJobs) return;
+            isLoadingJobs = true;
+
+            try {
+                const offset = (jobPage - 1) * ITEMS_PER_PAGE;
+                const jobs = await supabaseQuery('job_invitations',
+                    `?visibility=eq.public&audit_status=eq.approved&select=*,users:recruiter_id(id,nickname,avatar_url)&order=created_at.desc&limit=${ITEMS_PER_PAGE}&offset=${offset}`);
+
+                document.getElementById('loading').classList.add('hidden');
+
+                if (jobs.length === 0 && jobPage === 1) {
+                    document.getElementById('empty').classList.remove('hidden');
+                    return;
+                }
+
+                document.getElementById('jobList').classList.remove('hidden');
+
+                if (jobPage === 1) {
+                    document.getElementById('jobCount').textContent = `共 ${jobs.length}+ 个职位`;
+                }
+
+                renderJobs(jobs);
+
+                if (jobs.length < ITEMS_PER_PAGE) {
+                    hasMoreJobs = false;
+                    document.getElementById('loadMoreJobs').classList.add('hidden');
+                } else {
+                    document.getElementById('loadMoreJobs').classList.remove('hidden');
+                }
+
+                jobPage++;
+
+            } catch (err) {
+                console.error('加载招聘失败:', err);
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('empty').classList.remove('hidden');
+            } finally {
+                isLoadingJobs = false;
+            }
+        }
+
+        function renderJobs(jobs) {
+            const grid = document.getElementById('jobGrid');
+
+            jobs.forEach((job, index) => {
+                const card = document.createElement('a');
+                card.href = `bounty-detail.html?type=job&id=${job.id}`;
+                card.className = 'card-hover bg-white rounded-xl p-4 shadow-sm border border-gray-100 block fade-in';
+                card.style.animationDelay = `${index * 0.05}s`;
+
+                // 薪资显示
+                const salaryHtml = getSalaryDisplay(job.salary_type, job.salary_amount);
+
+                // 工作地点
+                const location = job.work_city || job.work_location || '未指定';
+
+                // 工作类型标签
+                const employmentType = getEmploymentType(job.employment_type);
+                const jobCategory = getJobCategory(job.job_category);
+
+                // 福利标签
+                const benefits = [];
+                if (job.pension) benefits.push('年金');
+                if (job.social_insurance) benefits.push('社保');
+                if (job.transport_allowance) benefits.push('交通补贴');
+                if (job.housing_allowance) benefits.push('住房补贴');
+                if (job.bonus_times) benefits.push(`年终奖${job.bonus_times}次`);
+                if (job.paid_leave) benefits.push('带薪休假');
+
+                const benefitsHtml = benefits.length > 0
+                    ? `<div class="flex flex-wrap gap-1 mt-2">${benefits.slice(0, 4).map(b => `<span class="text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded">${b}</span>`).join('')}</div>`
+                    : '';
+
+                // 招聘者信息
+                const recruiterName = job.contact_person || (job.users?.nickname) || '招聘方';
+                const recruiterAvatar = job.users?.avatar_url || DEFAULT_AVATAR;
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex-1">
+                            <h3 class="font-bold text-gray-800 text-lg mb-1">${job.position_name}</h3>
+                            <p class="text-amber-600 font-medium">${job.company_name}</p>
+                        </div>
+                        <div class="salary-badge px-3 py-1 rounded-lg text-sm font-bold">
+                            ${salaryHtml}
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <span class="text-xs bg-amber-50 text-amber-700 px-2 py-1 rounded">${jobCategory}</span>
+                        <span class="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded">${employmentType}</span>
+                        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                            <i class="fas fa-map-marker-alt mr-1"></i>${location}
+                        </span>
+                    </div>
+
+                    ${job.job_description ? `<p class="text-gray-500 text-sm line-clamp-2 mb-3">${job.job_description}</p>` : ''}
+
+                    ${benefitsHtml}
+
+                    <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
+                        <div class="flex items-center gap-2">
+                            <img src="${recruiterAvatar}" alt="${recruiterName}" class="w-8 h-8 rounded-full object-cover" onerror="this.src='${DEFAULT_AVATAR}'">
+                            <span class="text-sm text-gray-600">${recruiterName}</span>
+                        </div>
+                        <span class="text-xs text-gray-400">${formatDate(job.created_at)}</span>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        function loadMoreJobs() {
+            loadJobs();
+        }
+
+        // ==================== 简历列表 ====================
+
+        async function loadResumes() {
+            if (isLoadingResumes || !hasMoreResumes) return;
+            isLoadingResumes = true;
+
+            document.getElementById('loading').classList.remove('hidden');
+
+            try {
+                const offset = (resumePage - 1) * ITEMS_PER_PAGE;
+                const resumes = await supabaseQuery('resumes',
+                    `?status=eq.active&select=*,users:user_id(id,nickname,avatar_url)&order=created_at.desc&limit=${ITEMS_PER_PAGE}&offset=${offset}`);
+
+                document.getElementById('loading').classList.add('hidden');
+
+                if (resumes.length === 0 && resumePage === 1) {
+                    document.getElementById('empty').classList.remove('hidden');
+                    document.getElementById('resumeList').classList.add('hidden');
+                    return;
+                }
+
+                document.getElementById('empty').classList.add('hidden');
+                document.getElementById('resumeList').classList.remove('hidden');
+
+                if (resumePage === 1) {
+                    document.getElementById('resumeCount').textContent = `共 ${resumes.length}+ 份简历`;
+                }
+
+                renderResumes(resumes);
+
+                if (resumes.length < ITEMS_PER_PAGE) {
+                    hasMoreResumes = false;
+                    document.getElementById('loadMoreResumes').classList.add('hidden');
+                } else {
+                    document.getElementById('loadMoreResumes').classList.remove('hidden');
+                }
+
+                resumePage++;
+
+            } catch (err) {
+                console.error('加载简历失败:', err);
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('empty').classList.remove('hidden');
+            } finally {
+                isLoadingResumes = false;
+            }
+        }
+
+        function renderResumes(resumes) {
+            const grid = document.getElementById('resumeGrid');
+
+            resumes.forEach((resume, index) => {
+                const card = document.createElement('a');
+                card.href = `bounty-detail.html?type=resume&id=${resume.id}`;
+                card.className = 'card-hover bg-white rounded-xl p-4 shadow-sm border border-gray-100 block fade-in';
+                card.style.animationDelay = `${index * 0.05}s`;
+
+                // 头像
+                const photo = resume.photo_url || (resume.users?.avatar_url) || DEFAULT_AVATAR;
+
+                // 姓名
+                const name = resume.name_cn || resume.name_jp || (resume.users?.nickname) || '求职者';
+
+                // 期望薪资
+                const salary = resume.salary_min && resume.salary_max
+                    ? `${resume.salary_min / 10000}~${resume.salary_max / 10000}万/月`
+                    : (resume.salary_min ? `${resume.salary_min / 10000}万以上` : '面议');
+
+                // 期望职位
+                const desiredJobs = resume.desired_jobs || [];
+                const desiredJobsHtml = desiredJobs.length > 0
+                    ? desiredJobs.slice(0, 2).map(j => `<span class="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded">${j}</span>`).join('')
+                    : '<span class="text-xs text-gray-400">未设置</span>';
+
+                // 工作经验
+                const workExp = resume.work_experiences || [];
+                const lastJob = workExp.length > 0 ? workExp[0] : null;
+
+                // 学历
+                const eduExp = resume.education_experiences || [];
+                const lastEdu = eduExp.length > 0 ? eduExp[0] : null;
+
+                // 所在地
+                const location = resume.city_cn || resume.city_jp || '未知';
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-4 mb-4">
+                        <img src="${photo}" alt="${name}" class="w-16 h-16 rounded-full object-cover border-2 border-gray-100" onerror="this.src='${DEFAULT_AVATAR}'">
+                        <div class="flex-1">
+                            <h3 class="font-bold text-gray-800 text-lg">${name}</h3>
+                            <p class="text-amber-600 font-medium text-sm">${salary}</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <p class="text-xs text-gray-500 mb-1">期望职位</p>
+                        <div class="flex flex-wrap gap-1">
+                            ${desiredJobsHtml}
+                        </div>
+                    </div>
+
+                    ${lastJob ? `
+                    <div class="mb-3">
+                        <p class="text-xs text-gray-500 mb-1">最近工作</p>
+                        <p class="text-sm text-gray-700">${lastJob.company || ''} · ${lastJob.position || ''}</p>
+                    </div>
+                    ` : ''}
+
+                    ${lastEdu ? `
+                    <div class="mb-3">
+                        <p class="text-xs text-gray-500 mb-1">学历</p>
+                        <p class="text-sm text-gray-700">${lastEdu.school || ''} · ${lastEdu.major || ''}</p>
+                    </div>
+                    ` : ''}
+
+                    <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
+                        <span class="text-xs text-gray-500">
+                            <i class="fas fa-map-marker-alt mr-1"></i>${location}
+                        </span>
+                        <span class="text-xs text-gray-400">
+                            <i class="fas fa-eye mr-1"></i>${resume.view_count || 0}浏览
+                        </span>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        function loadMoreResumes() {
+            loadResumes();
+        }
+
+        // ==================== 辅助函数 ====================
+
+        function getSalaryDisplay(type, amount) {
+            if (!amount) return '面议';
+
+            const typeLabels = {
+                'monthly': '/月',
+                'hourly': '/时',
+                'daily': '/天',
+                'yearly': '/年',
+                'negotiable': ''
+            };
+
+            return amount + (typeLabels[type] || '');
+        }
+
+        function getEmploymentType(type) {
+            const types = {
+                'full_time': '全职',
+                'part_time': '兼职',
+                'contract': '合同工',
+                'intern': '实习',
+                'freelance': '自由职业',
+                'temporary': '临时工'
+            };
+            return types[type] || type || '全职';
+        }
+
+        function getJobCategory(category) {
+            const categories = {
+                'it': 'IT/互联网',
+                'sales': '销售',
+                'service': '服务业',
+                'restaurant': '餐饮',
+                'retail': '零售',
+                'manufacturing': '制造业',
+                'education': '教育',
+                'healthcare': '医疗',
+                'finance': '金融',
+                'logistics': '物流',
+                'construction': '建筑',
+                'other': '其他'
+            };
+            return categories[category] || category || '其他';
+        }
+    </script>
+</body>
+</html>
