@@ -150,6 +150,62 @@ async function getHometownById(hometownId) {
     return data[0] || null;
 }
 
+// ==================== 列表查询函数 ====================
+
+// 获取店铺列表
+async function getStoreList(page = 1, limit = 20) {
+    const offset = (page - 1) * limit;
+    return await supabaseQuery('stores', `?status=eq.active&select=*,users!stores_owner_id_fkey(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
+}
+
+// 获取商品列表
+async function getProductList(page = 1, limit = 20) {
+    const offset = (page - 1) * limit;
+    return await supabaseQuery('store_products', `?status=eq.active&select=*,stores(id,name,logo_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
+}
+
+// 获取二手商品列表
+async function getMarketplaceList(page = 1, limit = 20) {
+    const offset = (page - 1) * limit;
+    return await supabaseQuery('marketplace_items', `?status=eq.available&select=*,users!marketplace_items_user_id_fkey(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
+}
+
+// 获取服务列表
+async function getServiceList(page = 1, limit = 20) {
+    const offset = (page - 1) * limit;
+    return await supabaseQuery('services', `?status=eq.active&select=*,users!services_user_id_fkey(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
+}
+
+// 获取餐厅列表
+async function getRestaurantList(page = 1, limit = 20) {
+    const offset = (page - 1) * limit;
+    return await supabaseQuery('restaurants', `?status=eq.active&select=*,users!restaurants_user_id_fkey(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
+}
+
+// 获取房源列表
+async function getAccommodationList(page = 1, limit = 20) {
+    const offset = (page - 1) * limit;
+    return await supabaseQuery('accommodations', `?status=eq.active&select=*,users!accommodations_user_id_fkey(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
+}
+
+// 获取问答列表
+async function getQuestionList(page = 1, limit = 20) {
+    const offset = (page - 1) * limit;
+    return await supabaseQuery('questions', `?select=*,users!questions_user_id_fkey(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
+}
+
+// 获取俱乐部列表
+async function getClubList(page = 1, limit = 20) {
+    const offset = (page - 1) * limit;
+    return await supabaseQuery('clubs', `?select=*,users!clubs_creator_id_fkey(id,nickname,avatar_url)&order=member_count.desc,created_at.desc&limit=${limit}&offset=${offset}`);
+}
+
+// 获取同乡会列表
+async function getHometownList(page = 1, limit = 20) {
+    const offset = (page - 1) * limit;
+    return await supabaseQuery('hometown_associations', `?select=*,users!hometown_associations_creator_id_fkey(id,nickname,avatar_url)&order=member_count.desc,created_at.desc&limit=${limit}&offset=${offset}`);
+}
+
 // ==================== 公开链接生成工具 ====================
 
 // 根据模块类型生成公开链接

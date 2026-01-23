@@ -4,28 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>二手商品详情 - 东瀛游侠</title>
+    <title>侠客市集 - 东瀛游侠</title>
     <meta name="description" content="东瀛游侠侠客市集 - 在日华人二手交易平台">
-    <!-- PWA & 图标 -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#006633">
+    <meta name="theme-color" content="#EC4899">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <!-- 样式 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
     <style>
         .loading-spinner { animation: spin 1s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .fade-in { animation: fadeIn 0.5s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .gradient-marketplace { background: linear-gradient(135deg, #EC4899 0%, #F43F5E 50%, #EF4444 100%); }
-        .image-gallery img { cursor: pointer; transition: all 0.2s; }
-        .image-gallery img:hover { opacity: 0.8; }
-        .status-available { background: linear-gradient(135deg, #10B981, #059669); }
-        .status-sold { background: linear-gradient(135deg, #6B7280, #4B5563); }
-        .status-reserved { background: linear-gradient(135deg, #F59E0B, #D97706); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
+        .gradient-header { background: linear-gradient(135deg, #EC4899 0%, #F43F5E 50%, #EF4444 100%); }
+        .status-available { background: #10B981; }
+        .status-sold { background: #6B7280; }
+        .status-reserved { background: #F59E0B; }
     </style>
 </head>
 
@@ -42,139 +39,67 @@
         </div>
     </nav>
 
-    <!-- 主内容区 -->
-    <main class="pt-16 pb-24">
-        <!-- 加载状态 -->
-        <div id="loading" class="flex flex-col items-center justify-center min-h-[60vh]">
-            <div class="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full loading-spinner"></div>
-            <p class="mt-4 text-gray-500">正在加载商品信息...</p>
-        </div>
-
-        <!-- 错误状态 -->
-        <div id="error" class="hidden flex flex-col items-center justify-center min-h-[60vh] px-4">
-            <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                <i class="fas fa-exclamation-triangle text-red-500 text-3xl"></i>
+    <!-- 页面头部 -->
+    <header class="gradient-header pt-20 pb-8 sm:pb-12">
+        <div class="container mx-auto px-4">
+            <div class="text-center text-white">
+                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-shopping-bag text-3xl"></i>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-bold mb-2">侠客市集</h1>
+                <p class="text-white/80">淘宝贝、捡漏、高质二手好物</p>
             </div>
-            <h2 class="text-xl font-bold text-gray-800 mb-2">商品不存在</h2>
-            <p class="text-gray-500 mb-6 text-center">该商品可能已删除或链接无效</p>
-            <a href="index.html" class="bg-pink-500 text-white px-6 py-2 rounded-full hover:bg-pink-600 transition">
-                返回首页
-            </a>
+        </div>
+    </header>
+
+    <!-- 主内容 -->
+    <main class="container mx-auto px-4 py-6 sm:py-8">
+        <!-- 加载状态 -->
+        <div id="loading" class="flex flex-col items-center justify-center py-20">
+            <div class="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full loading-spinner"></div>
+            <p class="mt-4 text-gray-500">正在加载商品...</p>
         </div>
 
-        <!-- 商品内容 -->
-        <div id="content" class="hidden fade-in">
-            <div class="container mx-auto px-4 py-6">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- 左侧：图片区域 -->
-                    <div>
-                        <!-- 主图 -->
-                        <div class="relative bg-white rounded-2xl overflow-hidden shadow-sm mb-4">
-                            <img id="mainImage" src="" alt="商品图片"
-                                 class="w-full aspect-square object-contain bg-gray-50">
-                            <!-- 状态标签 -->
-                            <div id="statusBadge" class="absolute top-4 right-4 px-4 py-2 rounded-full text-white font-bold text-sm shadow-lg">
-                            </div>
-                        </div>
-                        <!-- 缩略图 -->
-                        <div id="thumbnails" class="image-gallery grid grid-cols-5 gap-2">
-                            <!-- 缩略图将动态插入 -->
-                        </div>
-                    </div>
+        <!-- 空状态 -->
+        <div id="empty" class="hidden text-center py-20">
+            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-box-open text-gray-400 text-3xl"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-700 mb-2">暂无商品</h3>
+            <p class="text-gray-500 mb-6">快来发布你的闲置物品吧</p>
+            <a href="index.html" class="text-pink-500 hover:text-pink-600">返回首页</a>
+        </div>
 
-                    <!-- 右侧：商品信息 -->
-                    <div>
-                        <!-- 商品标题 -->
-                        <h1 id="itemTitle" class="text-2xl sm:text-3xl font-bold text-gray-900 mb-4"></h1>
+        <!-- 商品列表 -->
+        <div id="itemList" class="hidden">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-lg font-bold text-gray-800">
+                    <i class="fas fa-fire text-orange-500 mr-2"></i>最新发布
+                </h2>
+                <span id="itemCount" class="text-sm text-gray-500"></span>
+            </div>
 
-                        <!-- 价格区域 -->
-                        <div class="bg-gradient-to-r from-pink-50 to-red-50 rounded-xl p-4 mb-6">
-                            <div class="flex items-baseline gap-2">
-                                <span class="text-3xl sm:text-4xl font-bold text-pink-500" id="itemPrice"></span>
-                            </div>
-                            <div class="flex items-center gap-4 mt-2 text-sm text-gray-500">
-                                <span id="viewCount"><i class="fas fa-eye mr-1"></i></span>
-                                <span id="likeCount"><i class="fas fa-heart mr-1"></i></span>
-                                <span id="postTime"><i class="fas fa-clock mr-1"></i></span>
-                            </div>
-                        </div>
+            <div id="itemGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
+                <!-- 商品卡片将动态插入 -->
+            </div>
 
-                        <!-- 商品属性 -->
-                        <div class="space-y-4 mb-6">
-                            <div class="flex items-center">
-                                <span class="text-gray-500 w-20">成色</span>
-                                <span id="itemCondition" class="text-gray-800 font-medium"></span>
-                            </div>
-                            <div class="flex items-center">
-                                <span class="text-gray-500 w-20">分类</span>
-                                <span id="itemCategory" class="text-gray-800"></span>
-                            </div>
-                            <div class="flex items-center">
-                                <span class="text-gray-500 w-20">交易方式</span>
-                                <span id="itemDelivery" class="text-gray-800"></span>
-                            </div>
-                            <div class="flex items-center">
-                                <span class="text-gray-500 w-20">位置</span>
-                                <span id="itemLocation" class="text-gray-800"></span>
-                            </div>
-                        </div>
-
-                        <!-- 卖家信息 -->
-                        <div class="bg-white rounded-xl p-4 border border-gray-100 mb-6">
-                            <div class="flex items-center gap-3">
-                                <img id="sellerAvatar" src="" alt="卖家头像"
-                                     class="w-12 h-12 rounded-full object-cover border-2 border-gray-100">
-                                <div class="flex-1">
-                                    <h4 id="sellerName" class="font-medium text-gray-800"></h4>
-                                    <p id="sellerInfo" class="text-gray-500 text-sm"></p>
-                                </div>
-                                <a href="" id="sellerLink" class="text-pink-500 text-sm hover:text-pink-600">
-                                    查看主页 <i class="fas fa-chevron-right ml-1"></i>
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- 下载APP提示 -->
-                        <div class="bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl p-6 text-white">
-                            <div class="text-center">
-                                <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <i class="fas fa-comments text-2xl"></i>
-                                </div>
-                                <h3 class="font-bold text-lg mb-2">联系卖家购买</h3>
-                                <p class="text-white/80 text-sm mb-4">下载APP与卖家私聊，享受平台担保交易</p>
-                                <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
-                                   class="block bg-white text-pink-600 py-3 rounded-xl font-bold hover:bg-pink-50 transition">
-                                    <i class="fab fa-android mr-2"></i> 下载APP购买
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 商品详情 -->
-                <div class="mt-8">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                        <i class="fas fa-info-circle text-pink-500 mr-2"></i>
-                        商品详情
-                    </h2>
-                    <div id="itemDescription" class="bg-white rounded-xl p-6 shadow-sm">
-                        <!-- 商品描述将动态插入 -->
-                    </div>
-                </div>
+            <!-- 加载更多 -->
+            <div id="loadMore" class="text-center mt-8 hidden">
+                <button onclick="loadMoreItems()" class="bg-white border border-gray-200 text-gray-600 px-8 py-3 rounded-full hover:bg-gray-50 transition">
+                    <i class="fas fa-plus mr-2"></i>加载更多
+                </button>
             </div>
         </div>
     </main>
 
-    <!-- 底部固定栏 -->
-    <div id="bottomBar" class="hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40">
-        <div class="container mx-auto flex items-center justify-between gap-4">
-            <div class="flex-shrink-0">
-                <p class="text-gray-500 text-xs">二手价格</p>
-                <p class="text-pink-500 font-bold text-xl" id="bottomPrice"></p>
-            </div>
+    <!-- 底部下载提示 -->
+    <div class="bg-gradient-to-r from-pink-500 to-rose-600 text-white py-8 sm:py-12">
+        <div class="container mx-auto px-4 text-center">
+            <h3 class="text-xl sm:text-2xl font-bold mb-3">想要买卖二手？下载东瀛游侠APP</h3>
+            <p class="text-white/80 mb-6 text-sm sm:text-base">在APP内发布闲置、联系卖家、享受担保交易</p>
             <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
-               class="flex-1 bg-gradient-to-r from-pink-500 to-rose-600 text-white text-center py-3 rounded-xl font-bold hover:opacity-90 transition">
-                <i class="fab fa-android mr-2"></i> 下载APP购买
+               class="inline-block bg-white text-pink-600 px-8 py-3 rounded-xl font-bold hover:bg-pink-50 transition">
+                <i class="fab fa-android mr-2"></i> Android 下载
             </a>
         </div>
     </div>
@@ -187,169 +112,117 @@
         </div>
     </footer>
 
-    <!-- API配置 -->
     <script src="api-config.js"></script>
     <script>
-        let currentImageIndex = 0;
-        let itemImages = [];
+        let currentPage = 1;
+        let isLoading = false;
+        let hasMore = true;
+        const ITEMS_PER_PAGE = 20;
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            const itemId = getUrlParam('id');
+        document.addEventListener('DOMContentLoaded', () => {
+            loadItems();
+        });
 
-            if (!itemId) {
-                showError();
-                return;
-            }
+        async function loadItems() {
+            if (isLoading || !hasMore) return;
+            isLoading = true;
 
             try {
-                const item = await getMarketplaceItemById(itemId);
+                const items = await getMarketplaceList(currentPage, ITEMS_PER_PAGE);
 
-                if (!item) {
-                    showError();
+                document.getElementById('loading').classList.add('hidden');
+
+                if (items.length === 0 && currentPage === 1) {
+                    document.getElementById('empty').classList.remove('hidden');
                     return;
                 }
 
-                renderItem(item);
+                document.getElementById('itemList').classList.remove('hidden');
+
+                if (currentPage === 1) {
+                    document.getElementById('itemCount').textContent = `共 ${items.length}+ 件商品`;
+                }
+
+                renderItems(items);
+
+                if (items.length < ITEMS_PER_PAGE) {
+                    hasMore = false;
+                    document.getElementById('loadMore').classList.add('hidden');
+                } else {
+                    document.getElementById('loadMore').classList.remove('hidden');
+                }
+
+                currentPage++;
 
             } catch (err) {
                 console.error('加载商品失败:', err);
-                showError();
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('empty').classList.remove('hidden');
+            } finally {
+                isLoading = false;
             }
-        });
-
-        function showError() {
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('error').classList.remove('hidden');
         }
 
-        function renderItem(item) {
-            // 更新页面标题
-            document.title = `${item.title} - 侠客市集`;
+        function renderItems(items) {
+            const grid = document.getElementById('itemGrid');
 
-            // 处理图片
-            itemImages = [];
-            if (item.images && item.images.length > 0) {
-                itemImages = item.images;
-            } else {
-                itemImages = [DEFAULT_PRODUCT_IMAGE];
-            }
+            items.forEach((item, index) => {
+                const card = document.createElement('a');
+                card.href = `marketplace-detail.html?id=${item.id}`;
+                card.className = 'card-hover bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 fade-in';
+                card.style.animationDelay = `${index * 0.03}s`;
 
-            // 主图
-            document.getElementById('mainImage').src = itemImages[0];
+                const image = item.images && item.images.length > 0
+                    ? item.images[0]
+                    : DEFAULT_PRODUCT_IMAGE;
 
-            // 缩略图
-            const thumbnails = document.getElementById('thumbnails');
-            if (itemImages.length > 1) {
-                thumbnails.innerHTML = itemImages.map((img, index) => `
-                    <img src="${img}" alt="缩略图${index + 1}"
-                         class="aspect-square object-cover rounded-lg border-2 ${index === 0 ? 'border-pink-500' : 'border-transparent'}"
-                         onclick="switchImage(${index})"
-                         onerror="this.src='${DEFAULT_PRODUCT_IMAGE}'">
-                `).join('');
-            }
+                const statusMap = {
+                    'available': { text: '在售', class: 'status-available' },
+                    'sold': { text: '已售', class: 'status-sold' },
+                    'reserved': { text: '预定', class: 'status-reserved' }
+                };
+                const status = statusMap[item.status] || statusMap['available'];
 
-            // 状态标签
-            const statusBadge = document.getElementById('statusBadge');
-            const statusMap = {
-                'available': { text: '在售中', class: 'status-available' },
-                'sold': { text: '已售出', class: 'status-sold' },
-                'reserved': { text: '已预定', class: 'status-reserved' }
-            };
-            const status = statusMap[item.status] || statusMap['available'];
-            statusBadge.textContent = status.text;
-            statusBadge.classList.add(status.class);
+                card.innerHTML = `
+                    <div class="relative">
+                        <div class="aspect-square bg-gray-100">
+                            <img src="${image}" alt="${item.title}"
+                                 class="w-full h-full object-cover"
+                                 onerror="this.src='${DEFAULT_PRODUCT_IMAGE}'">
+                        </div>
+                        <span class="absolute top-2 left-2 ${status.class} text-white text-xs px-2 py-0.5 rounded-full">${status.text}</span>
+                    </div>
+                    <div class="p-3">
+                        <h3 class="font-medium text-gray-800 text-sm mb-2 line-clamp-2">${item.title}</h3>
+                        <div class="flex items-center justify-between">
+                            <span class="text-pink-500 font-bold">${formatPrice(item.price)}</span>
+                            <span class="text-xs text-gray-400">${getConditionShort(item.condition)}</span>
+                        </div>
+                        <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+                            <span><i class="fas fa-eye mr-1"></i>${item.view_count || 0}</span>
+                            <span>${item.location || '未知'}</span>
+                        </div>
+                    </div>
+                `;
 
-            // 商品信息
-            document.getElementById('itemTitle').textContent = item.title;
-            document.getElementById('itemPrice').textContent = formatPrice(item.price);
-            document.getElementById('bottomPrice').textContent = formatPrice(item.price);
-
-            // 浏览量、点赞、发布时间
-            document.getElementById('viewCount').innerHTML = `<i class="fas fa-eye mr-1"></i>${item.view_count || 0} 浏览`;
-            document.getElementById('likeCount').innerHTML = `<i class="fas fa-heart mr-1"></i>${item.like_count || 0} 喜欢`;
-            document.getElementById('postTime').innerHTML = `<i class="fas fa-clock mr-1"></i>${formatDate(item.created_at)}`;
-
-            // 商品属性
-            document.getElementById('itemCondition').textContent = getConditionName(item.condition);
-            document.getElementById('itemCategory').textContent = getCategoryName(item.category);
-            document.getElementById('itemDelivery').textContent = getDeliveryName(item.delivery_method);
-            document.getElementById('itemLocation').textContent = item.location || '未指定';
-
-            // 卖家信息
-            if (item.users) {
-                const user = item.users;
-                document.getElementById('sellerAvatar').src = user.avatar_url || DEFAULT_AVATAR;
-                document.getElementById('sellerName').textContent = user.nickname || '卖家';
-                document.getElementById('sellerInfo').textContent = `发布了 ${item.user_item_count || 1} 件商品`;
-                document.getElementById('sellerLink').href = `seller.html?id=${user.id}`;
-            }
-
-            // 商品描述
-            const descriptionEl = document.getElementById('itemDescription');
-            if (item.description) {
-                descriptionEl.innerHTML = `<p class="text-gray-700 whitespace-pre-wrap">${item.description}</p>`;
-            } else {
-                descriptionEl.innerHTML = '<p class="text-gray-400">暂无详细描述</p>';
-            }
-
-            // 显示内容
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('content').classList.remove('hidden');
-            document.getElementById('bottomBar').classList.remove('hidden');
-        }
-
-        function switchImage(index) {
-            currentImageIndex = index;
-            document.getElementById('mainImage').src = itemImages[index];
-
-            const thumbs = document.querySelectorAll('#thumbnails img');
-            thumbs.forEach((thumb, i) => {
-                if (i === index) {
-                    thumb.classList.remove('border-transparent');
-                    thumb.classList.add('border-pink-500');
-                } else {
-                    thumb.classList.remove('border-pink-500');
-                    thumb.classList.add('border-transparent');
-                }
+                grid.appendChild(card);
             });
         }
 
-        function getConditionName(condition) {
+        function loadMoreItems() {
+            loadItems();
+        }
+
+        function getConditionShort(condition) {
             const conditions = {
                 'new': '全新',
-                'like_new': '几乎全新',
-                'good': '成色良好',
-                'fair': '有使用痕迹',
-                'poor': '功能正常'
+                'like_new': '准新',
+                'good': '良好',
+                'fair': '一般',
+                'poor': '可用'
             };
-            return conditions[condition] || condition || '未标注';
-        }
-
-        function getCategoryName(category) {
-            const categories = {
-                'electronics': '数码电器',
-                'fashion': '服饰鞋包',
-                'home': '家居用品',
-                'baby': '母婴用品',
-                'sports': '运动户外',
-                'books': '图书影音',
-                'beauty': '美妆护肤',
-                'food': '食品饮料',
-                'car': '汽车用品',
-                'other': '其他'
-            };
-            return categories[category] || category || '其他';
-        }
-
-        function getDeliveryName(method) {
-            const methods = {
-                'face_to_face': '当面交易',
-                'shipping': '快递邮寄',
-                'both': '支持快递/自取'
-            };
-            return methods[method] || method || '当面交易';
+            return conditions[condition] || '未知';
         }
     </script>
 </body>
-
 </html>

@@ -4,27 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>房源详情 - 东瀛游侠</title>
+    <title>客栈驿站 - 东瀛游侠</title>
     <meta name="description" content="东瀛游侠客栈驿站 - 在日华人房屋租赁平台">
-    <!-- PWA & 图标 -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#006633">
+    <meta name="theme-color" content="#6366F1">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <!-- 样式 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
     <style>
         .loading-spinner { animation: spin 1s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .fade-in { animation: fadeIn 0.5s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .gradient-accommodation { background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #A855F7 100%); }
-        .facility-tag { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 8px; font-size: 13px; margin: 4px; background: #F3F4F6; color: #4B5563; }
-        .facility-tag i { margin-right: 6px; color: #6366F1; }
-        .image-slider { scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
-        .image-slider > div { scroll-snap-align: start; flex-shrink: 0; }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
+        .gradient-header { background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #A855F7 100%); }
     </style>
 </head>
 
@@ -41,213 +36,67 @@
         </div>
     </nav>
 
-    <!-- 主内容区 -->
-    <main class="pt-16 pb-24">
+    <!-- 页面头部 -->
+    <header class="gradient-header pt-20 pb-8 sm:pb-12">
+        <div class="container mx-auto px-4">
+            <div class="text-center text-white">
+                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-home text-3xl"></i>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-bold mb-2">客栈驿站</h1>
+                <p class="text-white/80">租房、民宿、买卖、找到理想居所</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容 -->
+    <main class="container mx-auto px-4 py-6 sm:py-8">
         <!-- 加载状态 -->
-        <div id="loading" class="flex flex-col items-center justify-center min-h-[60vh]">
+        <div id="loading" class="flex flex-col items-center justify-center py-20">
             <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full loading-spinner"></div>
-            <p class="mt-4 text-gray-500">正在加载房源信息...</p>
+            <p class="mt-4 text-gray-500">正在加载房源...</p>
         </div>
 
-        <!-- 错误状态 -->
-        <div id="error" class="hidden flex flex-col items-center justify-center min-h-[60vh] px-4">
-            <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                <i class="fas fa-exclamation-triangle text-red-500 text-3xl"></i>
+        <!-- 空状态 -->
+        <div id="empty" class="hidden text-center py-20">
+            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-home text-gray-400 text-3xl"></i>
             </div>
-            <h2 class="text-xl font-bold text-gray-800 mb-2">房源不存在</h2>
-            <p class="text-gray-500 mb-6 text-center">该房源可能已下架或链接无效</p>
-            <a href="index.html" class="bg-indigo-500 text-white px-6 py-2 rounded-full hover:bg-indigo-600 transition">
-                返回首页
-            </a>
+            <h3 class="text-lg font-bold text-gray-700 mb-2">暂无房源</h3>
+            <p class="text-gray-500 mb-6">快来发布你的房源吧</p>
+            <a href="index.html" class="text-indigo-500 hover:text-indigo-600">返回首页</a>
         </div>
 
-        <!-- 房源内容 -->
-        <div id="content" class="hidden fade-in">
-            <!-- 图片轮播 -->
-            <div class="relative bg-black">
-                <div id="imageSlider" class="image-slider flex overflow-x-auto">
-                    <!-- 图片将动态插入 -->
-                </div>
-                <div id="imageCounter" class="absolute bottom-4 right-4 bg-black/60 text-white px-3 py-1 rounded-full text-sm">
-                    1 / 1
-                </div>
+        <!-- 房源列表 -->
+        <div id="accommodationList" class="hidden">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-lg font-bold text-gray-800">
+                    <i class="fas fa-fire text-orange-500 mr-2"></i>最新房源
+                </h2>
+                <span id="accommodationCount" class="text-sm text-gray-500"></span>
             </div>
 
-            <div class="container mx-auto px-4 py-6">
-                <!-- 房源标题区 -->
-                <div class="bg-white rounded-xl p-4 sm:p-6 shadow-sm mb-6">
-                    <div class="flex flex-wrap gap-2 mb-3">
-                        <span id="typeTag" class="px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700"></span>
-                        <span id="statusTag" class="px-3 py-1 rounded-full text-xs font-medium"></span>
-                    </div>
-                    <h1 id="accommodationTitle" class="text-xl sm:text-2xl font-bold text-gray-900 mb-3"></h1>
-                    <p id="accommodationAddress" class="text-gray-500 text-sm mb-4">
-                        <i class="fas fa-map-marker-alt mr-1"></i>
-                    </p>
+            <div id="accommodationGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                <!-- 房源卡片将动态插入 -->
+            </div>
 
-                    <!-- 价格 -->
-                    <div class="flex items-baseline gap-2">
-                        <span class="text-3xl sm:text-4xl font-bold text-red-500" id="accommodationPrice"></span>
-                        <span class="text-gray-500" id="priceUnit">/月</span>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- 左侧：房源详情 -->
-                    <div class="lg:col-span-2 space-y-6">
-                        <!-- 基本参数 -->
-                        <div class="bg-white rounded-xl p-6 shadow-sm">
-                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                                <i class="fas fa-home text-indigo-500 mr-2"></i>
-                                房屋信息
-                            </h2>
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                                <div class="text-center p-3 bg-gray-50 rounded-lg">
-                                    <p class="text-gray-500 text-xs mb-1">户型</p>
-                                    <p id="roomLayout" class="font-bold text-gray-800"></p>
-                                </div>
-                                <div class="text-center p-3 bg-gray-50 rounded-lg">
-                                    <p class="text-gray-500 text-xs mb-1">面积</p>
-                                    <p id="roomArea" class="font-bold text-gray-800"></p>
-                                </div>
-                                <div class="text-center p-3 bg-gray-50 rounded-lg">
-                                    <p class="text-gray-500 text-xs mb-1">楼层</p>
-                                    <p id="roomFloor" class="font-bold text-gray-800"></p>
-                                </div>
-                                <div class="text-center p-3 bg-gray-50 rounded-lg">
-                                    <p class="text-gray-500 text-xs mb-1">朝向</p>
-                                    <p id="roomDirection" class="font-bold text-gray-800"></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 详细介绍 -->
-                        <div class="bg-white rounded-xl p-6 shadow-sm">
-                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                                <i class="fas fa-info-circle text-blue-500 mr-2"></i>
-                                房源介绍
-                            </h2>
-                            <p id="accommodationDescription" class="text-gray-700 whitespace-pre-wrap"></p>
-                        </div>
-
-                        <!-- 配套设施 -->
-                        <div id="facilitiesSection" class="bg-white rounded-xl p-6 shadow-sm">
-                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                                <i class="fas fa-couch text-purple-500 mr-2"></i>
-                                配套设施
-                            </h2>
-                            <div id="facilitiesList" class="flex flex-wrap">
-                                <!-- 设施将动态插入 -->
-                            </div>
-                        </div>
-
-                        <!-- 费用明细 -->
-                        <div class="bg-white rounded-xl p-6 shadow-sm">
-                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                                <i class="fas fa-yen-sign text-green-500 mr-2"></i>
-                                费用明细
-                            </h2>
-                            <div class="space-y-3">
-                                <div class="flex justify-between py-2 border-b border-gray-100">
-                                    <span class="text-gray-500">月租金</span>
-                                    <span id="feeRent" class="font-medium text-gray-800"></span>
-                                </div>
-                                <div class="flex justify-between py-2 border-b border-gray-100">
-                                    <span class="text-gray-500">押金/敷金</span>
-                                    <span id="feeDeposit" class="font-medium text-gray-800"></span>
-                                </div>
-                                <div class="flex justify-between py-2 border-b border-gray-100">
-                                    <span class="text-gray-500">礼金</span>
-                                    <span id="feeGift" class="font-medium text-gray-800"></span>
-                                </div>
-                                <div class="flex justify-between py-2 border-b border-gray-100">
-                                    <span class="text-gray-500">管理费</span>
-                                    <span id="feeMaintenance" class="font-medium text-gray-800"></span>
-                                </div>
-                                <div class="flex justify-between py-2">
-                                    <span class="text-gray-500">入住日期</span>
-                                    <span id="moveInDate" class="font-medium text-gray-800"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 右侧：联系信息 -->
-                    <div class="space-y-6">
-                        <!-- 房东信息 -->
-                        <div class="bg-white rounded-xl p-6 shadow-sm">
-                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                                <i class="fas fa-user text-orange-500 mr-2"></i>
-                                发布者
-                            </h2>
-                            <div class="flex items-center gap-4 mb-4">
-                                <img id="ownerAvatar" src="" alt="头像"
-                                     class="w-14 h-14 rounded-full object-cover border-2 border-gray-100">
-                                <div>
-                                    <h3 id="ownerName" class="font-bold text-gray-800"></h3>
-                                    <p id="ownerType" class="text-gray-500 text-sm"></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 下载APP联系 -->
-                        <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl p-6 text-white">
-                            <div class="text-center">
-                                <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <i class="fas fa-comments text-2xl"></i>
-                                </div>
-                                <h3 class="font-bold text-lg mb-2">联系房东看房</h3>
-                                <p class="text-white/80 text-sm mb-4">下载APP与房东直接沟通，预约看房</p>
-                                <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
-                                   class="block bg-white text-indigo-600 py-3 rounded-xl font-bold hover:bg-indigo-50 transition">
-                                    <i class="fab fa-android mr-2"></i> 下载APP联系
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- 看房提示 -->
-                        <div class="bg-yellow-50 rounded-xl p-4 border border-yellow-100">
-                            <h4 class="font-medium text-yellow-800 mb-2 flex items-center">
-                                <i class="fas fa-lightbulb mr-2"></i>
-                                看房提示
-                            </h4>
-                            <ul class="text-yellow-700 text-sm space-y-1">
-                                <li>• 实地看房前请先联系确认</li>
-                                <li>• 签约前请核实房源真实性</li>
-                                <li>• 平台提供担保交易保障</li>
-                                <li>• 如遇问题可联系客服处理</li>
-                            </ul>
-                        </div>
-
-                        <!-- 位置信息 -->
-                        <div class="bg-white rounded-xl p-6 shadow-sm">
-                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                                <i class="fas fa-train text-blue-500 mr-2"></i>
-                                交通信息
-                            </h2>
-                            <p id="nearStation" class="text-gray-700 mb-2"></p>
-                            <p id="walkTime" class="text-gray-500 text-sm"></p>
-                            <a id="mapLink" href="#" target="_blank"
-                               class="block text-center bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition mt-4">
-                                <i class="fas fa-external-link-alt mr-2"></i>在地图中查看
-                            </a>
-                        </div>
-                    </div>
-                </div>
+            <!-- 加载更多 -->
+            <div id="loadMore" class="text-center mt-8 hidden">
+                <button onclick="loadMoreAccommodations()" class="bg-white border border-gray-200 text-gray-600 px-8 py-3 rounded-full hover:bg-gray-50 transition">
+                    <i class="fas fa-plus mr-2"></i>加载更多
+                </button>
             </div>
         </div>
     </main>
 
-    <!-- 底部固定栏 -->
-    <div id="bottomBar" class="hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40">
-        <div class="container mx-auto flex items-center justify-between gap-4">
-            <div class="flex-shrink-0">
-                <p class="text-gray-500 text-xs">月租金</p>
-                <p class="text-red-500 font-bold text-xl" id="bottomPrice"></p>
-            </div>
+    <!-- 底部下载提示 -->
+    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-8 sm:py-12">
+        <div class="container mx-auto px-4 text-center">
+            <h3 class="text-xl sm:text-2xl font-bold mb-3">找房租房？下载东瀛游侠APP</h3>
+            <p class="text-white/80 mb-6 text-sm sm:text-base">在APP内联系房东、预约看房、享受担保服务</p>
             <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
-               class="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-center py-3 rounded-xl font-bold hover:opacity-90 transition">
-                <i class="fab fa-android mr-2"></i> 下载APP看房
+               class="inline-block bg-white text-indigo-600 px-8 py-3 rounded-xl font-bold hover:bg-indigo-50 transition">
+                <i class="fab fa-android mr-2"></i> Android 下载
             </a>
         </div>
     </div>
@@ -260,155 +109,107 @@
         </div>
     </footer>
 
-    <!-- API配置 -->
     <script src="api-config.js"></script>
     <script>
-        let accommodationImages = [];
-        let currentImageIndex = 0;
+        let currentPage = 1;
+        let isLoading = false;
+        let hasMore = true;
+        const ITEMS_PER_PAGE = 20;
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            const accommodationId = getUrlParam('id');
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAccommodations();
+        });
 
-            if (!accommodationId) {
-                showError();
-                return;
-            }
+        async function loadAccommodations() {
+            if (isLoading || !hasMore) return;
+            isLoading = true;
 
             try {
-                const accommodation = await getAccommodationById(accommodationId);
+                const accommodations = await getAccommodationList(currentPage, ITEMS_PER_PAGE);
 
-                if (!accommodation) {
-                    showError();
+                document.getElementById('loading').classList.add('hidden');
+
+                if (accommodations.length === 0 && currentPage === 1) {
+                    document.getElementById('empty').classList.remove('hidden');
                     return;
                 }
 
-                renderAccommodation(accommodation);
+                document.getElementById('accommodationList').classList.remove('hidden');
+
+                if (currentPage === 1) {
+                    document.getElementById('accommodationCount').textContent = `共 ${accommodations.length}+ 套房源`;
+                }
+
+                renderAccommodations(accommodations);
+
+                if (accommodations.length < ITEMS_PER_PAGE) {
+                    hasMore = false;
+                    document.getElementById('loadMore').classList.add('hidden');
+                } else {
+                    document.getElementById('loadMore').classList.remove('hidden');
+                }
+
+                currentPage++;
 
             } catch (err) {
                 console.error('加载房源失败:', err);
-                showError();
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('empty').classList.remove('hidden');
+            } finally {
+                isLoading = false;
             }
-        });
-
-        function showError() {
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('error').classList.remove('hidden');
         }
 
-        function renderAccommodation(accommodation) {
-            // 更新页面标题
-            document.title = `${accommodation.title} - 客栈驿站`;
+        function renderAccommodations(accommodations) {
+            const grid = document.getElementById('accommodationGrid');
 
-            // 处理图片
-            accommodationImages = [];
-            if (accommodation.images && accommodation.images.length > 0) {
-                accommodationImages = accommodation.images;
-            } else {
-                accommodationImages = [DEFAULT_PRODUCT_IMAGE];
-            }
+            accommodations.forEach((item, index) => {
+                const card = document.createElement('a');
+                card.href = `accommodation-detail.html?id=${item.id}`;
+                card.className = 'card-hover bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 fade-in';
+                card.style.animationDelay = `${index * 0.05}s`;
 
-            // 图片轮播
-            const imageSlider = document.getElementById('imageSlider');
-            imageSlider.innerHTML = accommodationImages.map((img, index) => `
-                <div class="w-full flex-shrink-0">
-                    <img src="${img}" alt="房源图片${index + 1}"
-                         class="w-full aspect-video object-cover"
-                         onerror="this.src='${DEFAULT_PRODUCT_IMAGE}'">
-                </div>
-            `).join('');
-            document.getElementById('imageCounter').textContent = `1 / ${accommodationImages.length}`;
+                const image = item.images && item.images.length > 0
+                    ? item.images[0]
+                    : DEFAULT_PRODUCT_IMAGE;
 
-            // 图片滚动监听
-            imageSlider.addEventListener('scroll', () => {
-                const index = Math.round(imageSlider.scrollLeft / imageSlider.clientWidth);
-                document.getElementById('imageCounter').textContent = `${index + 1} / ${accommodationImages.length}`;
+                const price = item.price || item.rent;
+
+                card.innerHTML = `
+                    <div class="aspect-video bg-gray-100 relative">
+                        <img src="${image}" alt="${item.title}"
+                             class="w-full h-full object-cover"
+                             onerror="this.src='${DEFAULT_PRODUCT_IMAGE}'">
+                        <span class="absolute top-2 left-2 bg-indigo-500 text-white text-xs px-2 py-1 rounded-full">
+                            ${getAccommodationType(item.accommodation_type)}
+                        </span>
+                        ${item.status === 'active'
+                            ? '<span class="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">可租</span>'
+                            : '<span class="absolute top-2 right-2 bg-gray-500 text-white text-xs px-2 py-1 rounded-full">已租</span>'
+                        }
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-gray-800 mb-2 line-clamp-2">${item.title}</h3>
+                        <p class="text-gray-500 text-sm line-clamp-1 mb-2">
+                            <i class="fas fa-map-marker-alt mr-1"></i>${item.address || '详询地址'}
+                        </p>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-red-500 font-bold">${formatPrice(price)}<span class="text-xs text-gray-400">/月</span></span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-400">
+                            ${item.layout || item.room_layout ? `<span>${item.layout || item.room_layout}</span>` : ''}
+                            ${item.area ? `<span>${item.area}㎡</span>` : ''}
+                            ${item.nearest_station ? `<span>${item.nearest_station}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+
+                grid.appendChild(card);
             });
+        }
 
-            // 类型标签
-            document.getElementById('typeTag').textContent = getAccommodationType(accommodation.accommodation_type);
-
-            // 状态标签
-            const statusTag = document.getElementById('statusTag');
-            if (accommodation.status === 'active') {
-                statusTag.textContent = '可租';
-                statusTag.classList.add('bg-green-100', 'text-green-700');
-            } else {
-                statusTag.textContent = '已租出';
-                statusTag.classList.add('bg-gray-100', 'text-gray-700');
-            }
-
-            // 基本信息
-            document.getElementById('accommodationTitle').textContent = accommodation.title;
-            document.getElementById('accommodationAddress').innerHTML = `<i class="fas fa-map-marker-alt mr-1"></i>${accommodation.address || '详细地址请咨询'}`;
-
-            // 价格
-            const price = accommodation.price || accommodation.rent;
-            document.getElementById('accommodationPrice').textContent = formatPrice(price);
-            document.getElementById('bottomPrice').textContent = formatPrice(price);
-
-            // 价格单位
-            const priceType = accommodation.price_type || 'monthly';
-            const priceUnits = {
-                'monthly': '/月',
-                'daily': '/天',
-                'yearly': '/年'
-            };
-            document.getElementById('priceUnit').textContent = priceUnits[priceType] || '/月';
-
-            // 房屋参数
-            document.getElementById('roomLayout').textContent = accommodation.layout || accommodation.room_layout || '-';
-            document.getElementById('roomArea').textContent = accommodation.area ? `${accommodation.area}㎡` : '-';
-            document.getElementById('roomFloor').textContent = accommodation.floor ? `${accommodation.floor}F` : '-';
-            document.getElementById('roomDirection').textContent = accommodation.direction || '-';
-
-            // 详细介绍
-            document.getElementById('accommodationDescription').textContent = accommodation.description || '暂无详细介绍';
-
-            // 配套设施
-            const facilitiesList = document.getElementById('facilitiesList');
-            const facilities = accommodation.facilities || accommodation.amenities || [];
-            if (facilities.length > 0) {
-                facilitiesList.innerHTML = facilities.map(facility => `
-                    <span class="facility-tag">
-                        <i class="${getFacilityIcon(facility)}"></i>${facility}
-                    </span>
-                `).join('');
-            } else {
-                document.getElementById('facilitiesSection').classList.add('hidden');
-            }
-
-            // 费用明细
-            document.getElementById('feeRent').textContent = formatPrice(price);
-            document.getElementById('feeDeposit').textContent = formatPrice(accommodation.deposit) || '无';
-            document.getElementById('feeGift').textContent = formatPrice(accommodation.gift_money) || '无';
-            document.getElementById('feeMaintenance').textContent = formatPrice(accommodation.maintenance_fee) || '无';
-            document.getElementById('moveInDate').textContent = accommodation.move_in_date ? formatDate(accommodation.move_in_date) : '即可入住';
-
-            // 房东信息
-            if (accommodation.users) {
-                const user = accommodation.users;
-                document.getElementById('ownerAvatar').src = user.avatar_url || DEFAULT_AVATAR;
-                document.getElementById('ownerName').textContent = user.nickname || '房东';
-                document.getElementById('ownerType').textContent = accommodation.owner_type === 'agent' ? '房产中介' : '个人房东';
-            }
-
-            // 交通信息
-            document.getElementById('nearStation').textContent = accommodation.nearest_station
-                ? `最近车站: ${accommodation.nearest_station}`
-                : '详情请咨询';
-            document.getElementById('walkTime').textContent = accommodation.walk_time
-                ? `步行约 ${accommodation.walk_time} 分钟`
-                : '';
-
-            // 地图链接
-            if (accommodation.address) {
-                document.getElementById('mapLink').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(accommodation.address)}`;
-            }
-
-            // 显示内容
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('content').classList.remove('hidden');
-            document.getElementById('bottomBar').classList.remove('hidden');
+        function loadMoreAccommodations() {
+            loadAccommodations();
         }
 
         function getAccommodationType(type) {
@@ -416,41 +217,14 @@
                 'rent': '整租',
                 'sharehouse': '合租',
                 'homestay': '民宿',
-                'sale': '房屋买卖',
+                'sale': '买卖',
                 'office': '办公室',
                 'warehouse': '仓库',
-                'land_rent': '土地租赁',
-                'land_sale': '土地买卖',
-                'apartment': '公寓',
-                'house': '一户建',
-                'mansion': 'マンション'
+                'land_rent': '土地',
+                'land_sale': '土地'
             };
             return types[type] || type || '房源';
         }
-
-        function getFacilityIcon(facility) {
-            const icons = {
-                '空调': 'fas fa-snowflake',
-                '洗衣机': 'fas fa-tshirt',
-                '冰箱': 'fas fa-box',
-                'WiFi': 'fas fa-wifi',
-                '网络': 'fas fa-wifi',
-                '电视': 'fas fa-tv',
-                '厨房': 'fas fa-utensils',
-                '卫生间': 'fas fa-toilet',
-                '浴室': 'fas fa-bath',
-                '阳台': 'fas fa-sun',
-                '停车位': 'fas fa-parking',
-                '电梯': 'fas fa-elevator',
-                '宠物': 'fas fa-paw',
-                '家具': 'fas fa-couch'
-            };
-            for (const [key, icon] of Object.entries(icons)) {
-                if (facility.includes(key)) return icon;
-            }
-            return 'fas fa-check';
-        }
     </script>
 </body>
-
 </html>

@@ -4,25 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>店铺详情 - 东瀛游侠</title>
-    <meta name="description" content="东瀛游侠 - 在日华人的生活服务平台">
-    <!-- PWA & 图标 -->
+    <title>神州宝库 - 东瀛游侠</title>
+    <meta name="description" content="东瀛游侠神州宝库 - 在日华人精选店铺">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#006633">
+    <meta name="theme-color" content="#6366F1">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <!-- 样式 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
     <style>
-        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .loading-spinner { animation: spin 1s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .fade-in { animation: fadeIn 0.5s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
-        .product-card { transition: all 0.3s ease; }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
+        .gradient-header { background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #A855F7 100%); }
     </style>
 </head>
 
@@ -33,90 +30,76 @@
             <a href="index.html" class="flex items-center space-x-2">
                 <span class="text-lg font-bold text-gray-800">🏯 东瀛游侠</span>
             </a>
-            <a href="index.html#contact" class="bg-blue-600 text-white px-4 py-2 rounded-full text-sm hover:bg-blue-700 transition">
+            <a href="index.html#contact" class="bg-indigo-500 text-white px-4 py-2 rounded-full text-sm hover:bg-indigo-600 transition">
                 下载APP
             </a>
         </div>
     </nav>
 
-    <!-- 主内容区 -->
-    <main class="pt-16">
+    <!-- 页面头部 -->
+    <header class="gradient-header pt-20 pb-8 sm:pb-12">
+        <div class="container mx-auto px-4">
+            <div class="text-center text-white">
+                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-store text-3xl"></i>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-bold mb-2">神州宝库</h1>
+                <p class="text-white/80">精选优质店铺，品质好货一站购</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容 -->
+    <main class="container mx-auto px-4 py-6 sm:py-8">
         <!-- 加载状态 -->
-        <div id="loading" class="flex flex-col items-center justify-center min-h-[60vh]">
-            <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full loading-spinner"></div>
-            <p class="mt-4 text-gray-500">正在加载店铺信息...</p>
+        <div id="loading" class="flex flex-col items-center justify-center py-20">
+            <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full loading-spinner"></div>
+            <p class="mt-4 text-gray-500">正在加载店铺...</p>
         </div>
 
-        <!-- 错误状态 -->
-        <div id="error" class="hidden flex flex-col items-center justify-center min-h-[60vh] px-4">
-            <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                <i class="fas fa-exclamation-triangle text-red-500 text-3xl"></i>
+        <!-- 空状态 -->
+        <div id="empty" class="hidden text-center py-20">
+            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-store-slash text-gray-400 text-3xl"></i>
             </div>
-            <h2 class="text-xl font-bold text-gray-800 mb-2">店铺不存在</h2>
-            <p class="text-gray-500 mb-6 text-center">该店铺可能已下架或链接无效</p>
-            <a href="index.html" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">
-                返回首页
-            </a>
+            <h3 class="text-lg font-bold text-gray-700 mb-2">暂无店铺</h3>
+            <p class="text-gray-500 mb-6">店铺正在入驻中，敬请期待</p>
+            <a href="index.html" class="text-indigo-500 hover:text-indigo-600">返回首页</a>
         </div>
 
-        <!-- 店铺内容 -->
-        <div id="content" class="hidden fade-in">
-            <!-- 店铺头部 -->
-            <div class="gradient-bg text-white">
-                <div class="container mx-auto px-4 py-8 sm:py-12">
-                    <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
-                        <img id="storeLogo" src="" alt="店铺Logo"
-                             class="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl object-cover border-4 border-white/30 shadow-lg">
-                        <div class="text-center sm:text-left flex-1">
-                            <h1 id="storeName" class="text-2xl sm:text-3xl font-bold mb-2"></h1>
-                            <p id="storeDescription" class="text-white/80 text-sm sm:text-base mb-3 max-w-2xl"></p>
-                            <div class="flex flex-wrap justify-center sm:justify-start gap-3 text-sm">
-                                <span id="storeCategory" class="bg-white/20 px-3 py-1 rounded-full"></span>
-                                <span id="storeProductCount" class="bg-white/20 px-3 py-1 rounded-full"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 商品列表 -->
-            <div class="container mx-auto px-4 py-8">
-                <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                    <i class="fas fa-shopping-bag text-blue-500 mr-2"></i>
-                    店铺商品
+        <!-- 店铺列表 -->
+        <div id="storeList" class="hidden">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-lg font-bold text-gray-800">
+                    <i class="fas fa-fire text-orange-500 mr-2"></i>热门店铺
                 </h2>
-
-                <div id="productList" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                    <!-- 商品卡片将动态插入 -->
-                </div>
-
-                <div id="noProducts" class="hidden text-center py-12">
-                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-box-open text-gray-400 text-2xl"></i>
-                    </div>
-                    <p class="text-gray-500">店铺暂无商品</p>
-                </div>
+                <span id="storeCount" class="text-sm text-gray-500"></span>
             </div>
 
-            <!-- 下载APP提示 -->
-            <div class="bg-gradient-to-r from-orange-500 to-red-500 text-white py-8 sm:py-12">
-                <div class="container mx-auto px-4 text-center">
-                    <h3 class="text-xl sm:text-2xl font-bold mb-3">想要购买？下载东瀛游侠APP</h3>
-                    <p class="text-white/80 mb-6 text-sm sm:text-base">在APP内可以直接下单购买，享受更多优惠</p>
-                    <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                        <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
-                           class="bg-white text-orange-600 px-6 py-3 rounded-xl font-bold hover:bg-orange-50 transition flex items-center justify-center">
-                            <i class="fab fa-android mr-2"></i> Android 下载
-                        </a>
-                        <button onclick="alert('iOS版本正在审核中，敬请期待...')"
-                                class="bg-white/20 text-white px-6 py-3 rounded-xl font-bold hover:bg-white/30 transition flex items-center justify-center">
-                            <i class="fab fa-apple mr-2"></i> iOS 下载
-                        </button>
-                    </div>
-                </div>
+            <div id="storeGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                <!-- 店铺卡片将动态插入 -->
+            </div>
+
+            <!-- 加载更多 -->
+            <div id="loadMore" class="text-center mt-8 hidden">
+                <button onclick="loadMoreStores()" class="bg-white border border-gray-200 text-gray-600 px-8 py-3 rounded-full hover:bg-gray-50 transition">
+                    <i class="fas fa-plus mr-2"></i>加载更多
+                </button>
             </div>
         </div>
     </main>
+
+    <!-- 底部下载提示 -->
+    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-8 sm:py-12">
+        <div class="container mx-auto px-4 text-center">
+            <h3 class="text-xl sm:text-2xl font-bold mb-3">想要更多功能？下载东瀛游侠APP</h3>
+            <p class="text-white/80 mb-6 text-sm sm:text-base">在APP内购物、联系卖家、享受更多优惠</p>
+            <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
+               class="inline-block bg-white text-indigo-600 px-8 py-3 rounded-xl font-bold hover:bg-indigo-50 transition">
+                <i class="fab fa-android mr-2"></i> Android 下载
+            </a>
+        </div>
+    </div>
 
     <!-- 页脚 -->
     <footer class="bg-gray-900 text-white py-8">
@@ -126,101 +109,107 @@
         </div>
     </footer>
 
-    <!-- API配置 -->
     <script src="api-config.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const storeId = getUrlParam('id');
+        let currentPage = 1;
+        let isLoading = false;
+        let hasMore = true;
+        const STORES_PER_PAGE = 20;
 
-            if (!storeId) {
-                showError();
-                return;
-            }
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStores();
+        });
+
+        async function loadStores() {
+            if (isLoading || !hasMore) return;
+            isLoading = true;
 
             try {
-                // 获取店铺信息
-                const store = await getStoreById(storeId);
+                const stores = await getStoreList(currentPage, STORES_PER_PAGE);
 
-                if (!store) {
-                    showError();
+                document.getElementById('loading').classList.add('hidden');
+
+                if (stores.length === 0 && currentPage === 1) {
+                    document.getElementById('empty').classList.remove('hidden');
                     return;
                 }
 
-                // 获取店铺商品
-                const products = await getStoreProducts(storeId);
+                document.getElementById('storeList').classList.remove('hidden');
 
-                // 渲染页面
-                renderStore(store, products);
+                if (currentPage === 1) {
+                    document.getElementById('storeCount').textContent = `共 ${stores.length}+ 家店铺`;
+                }
+
+                renderStores(stores);
+
+                if (stores.length < STORES_PER_PAGE) {
+                    hasMore = false;
+                    document.getElementById('loadMore').classList.add('hidden');
+                } else {
+                    document.getElementById('loadMore').classList.remove('hidden');
+                }
+
+                currentPage++;
 
             } catch (err) {
                 console.error('加载店铺失败:', err);
-                showError();
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('empty').classList.remove('hidden');
+            } finally {
+                isLoading = false;
             }
-        });
-
-        function showError() {
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('error').classList.remove('hidden');
         }
 
-        function renderStore(store, products) {
-            // 更新页面标题
-            document.title = `${store.name} - 东瀛游侠`;
+        function renderStores(stores) {
+            const grid = document.getElementById('storeGrid');
 
-            // 填充店铺信息
-            document.getElementById('storeLogo').src = store.logo_url || DEFAULT_STORE_LOGO;
-            document.getElementById('storeName').textContent = store.name;
-            document.getElementById('storeDescription').textContent = store.description || '这家店铺还没有介绍';
-            document.getElementById('storeCategory').innerHTML = `<i class="fas fa-tag mr-1"></i>${getCategoryName(store.category)}`;
-            document.getElementById('storeProductCount').innerHTML = `<i class="fas fa-box mr-1"></i>${products.length} 件商品`;
+            stores.forEach((store, index) => {
+                const card = document.createElement('a');
+                card.href = `store-detail.html?id=${store.id}`;
+                card.className = 'card-hover bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 fade-in';
+                card.style.animationDelay = `${index * 0.05}s`;
 
-            // 渲染商品列表
-            const productList = document.getElementById('productList');
+                const logo = store.logo_url || DEFAULT_STORE_LOGO;
+                const ownerName = store.users?.nickname || '店主';
+                const ownerAvatar = store.users?.avatar_url || DEFAULT_AVATAR;
 
-            if (products.length === 0) {
-                document.getElementById('noProducts').classList.remove('hidden');
-            } else {
-                productList.innerHTML = products.map(product => `
-                    <a href="product.html?id=${product.id}" class="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
-                        <div class="aspect-square bg-gray-100">
-                            <img src="${getProductImage(product)}" alt="${product.name}"
-                                 class="w-full h-full object-cover"
-                                 onerror="this.src='${DEFAULT_PRODUCT_IMAGE}'">
-                        </div>
-                        <div class="p-3">
-                            <h3 class="font-medium text-gray-800 text-sm line-clamp-2 mb-2">${product.name}</h3>
-                            <div class="flex items-baseline gap-1">
-                                <span class="text-red-500 font-bold">${formatPrice(product.price)}</span>
-                                ${product.original_price ? `<span class="text-gray-400 text-xs line-through">${formatPrice(product.original_price)}</span>` : ''}
+                card.innerHTML = `
+                    <div class="h-32 sm:h-40 bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 bg-black/10"></div>
+                        <img src="${logo}" alt="${store.name}"
+                             class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover border-4 border-white shadow-lg relative z-10"
+                             onerror="this.src='${DEFAULT_STORE_LOGO}'">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-gray-800 mb-2 truncate">${store.name}</h3>
+                        <p class="text-gray-500 text-sm line-clamp-2 mb-3 min-h-[40px]">${store.description || '暂无简介'}</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <img src="${ownerAvatar}" alt="${ownerName}"
+                                     class="w-6 h-6 rounded-full object-cover mr-2"
+                                     onerror="this.src='${DEFAULT_AVATAR}'">
+                                <span class="text-xs text-gray-500">${ownerName}</span>
                             </div>
-                            ${product.stock !== null ? `<p class="text-gray-400 text-xs mt-1">库存: ${product.stock}</p>` : ''}
+                            <span class="text-xs text-indigo-500 bg-indigo-50 px-2 py-1 rounded-full">${getCategoryName(store.category)}</span>
                         </div>
-                    </a>
-                `).join('');
-            }
+                    </div>
+                `;
 
-            // 显示内容
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('content').classList.remove('hidden');
+                grid.appendChild(card);
+            });
         }
 
-        function getProductImage(product) {
-            if (product.images && product.images.length > 0) {
-                return product.images[0];
-            }
-            if (product.cover_image) {
-                return product.cover_image;
-            }
-            return DEFAULT_PRODUCT_IMAGE;
+        function loadMoreStores() {
+            loadStores();
         }
 
         function getCategoryName(category) {
             const categories = {
                 'food': '食品',
                 'daily': '日用品',
-                'electronics': '数码电器',
+                'electronics': '数码',
                 'fashion': '服饰',
-                'beauty': '美妆护肤',
+                'beauty': '美妆',
                 'home': '家居',
                 'other': '其他'
             };
@@ -228,5 +217,4 @@
         }
     </script>
 </body>
-
 </html>

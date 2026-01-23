@@ -4,27 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>问答详情 - 东瀛游侠</title>
+    <title>江湖问答 - 东瀛游侠</title>
     <meta name="description" content="东瀛游侠江湖问答 - 在日华人互助问答平台">
-    <!-- PWA & 图标 -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#006633">
+    <meta name="theme-color" content="#0EA5E9">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <!-- 样式 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
     <style>
         .loading-spinner { animation: spin 1s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .fade-in { animation: fadeIn 0.5s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .gradient-question { background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 50%, #0369A1 100%); }
-        .answer-card { border-left: 4px solid #10B981; transition: all 0.3s ease; }
-        .answer-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .best-answer { border-left-color: #F59E0B; background: linear-gradient(to right, #FFFBEB, white); }
-        .tag { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 12px; margin-right: 6px; margin-bottom: 6px; }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+        .gradient-header { background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 50%, #0369A1 100%); }
     </style>
 </head>
 
@@ -41,159 +36,67 @@
         </div>
     </nav>
 
-    <!-- 主内容区 -->
-    <main class="pt-16 pb-24">
+    <!-- 页面头部 -->
+    <header class="gradient-header pt-20 pb-8 sm:pb-12">
+        <div class="container mx-auto px-4">
+            <div class="text-center text-white">
+                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-question-circle text-3xl"></i>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-bold mb-2">江湖问答</h1>
+                <p class="text-white/80">有问必答、互帮互助、共享经验</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容 -->
+    <main class="container mx-auto px-4 py-6 sm:py-8">
         <!-- 加载状态 -->
-        <div id="loading" class="flex flex-col items-center justify-center min-h-[60vh]">
+        <div id="loading" class="flex flex-col items-center justify-center py-20">
             <div class="w-12 h-12 border-4 border-sky-500 border-t-transparent rounded-full loading-spinner"></div>
             <p class="mt-4 text-gray-500">正在加载问题...</p>
         </div>
 
-        <!-- 错误状态 -->
-        <div id="error" class="hidden flex flex-col items-center justify-center min-h-[60vh] px-4">
-            <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                <i class="fas fa-exclamation-triangle text-red-500 text-3xl"></i>
+        <!-- 空状态 -->
+        <div id="empty" class="hidden text-center py-20">
+            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-question-circle text-gray-400 text-3xl"></i>
             </div>
-            <h2 class="text-xl font-bold text-gray-800 mb-2">问题不存在</h2>
-            <p class="text-gray-500 mb-6 text-center">该问题可能已删除或链接无效</p>
-            <a href="index.html" class="bg-sky-500 text-white px-6 py-2 rounded-full hover:bg-sky-600 transition">
-                返回首页
-            </a>
+            <h3 class="text-lg font-bold text-gray-700 mb-2">暂无问题</h3>
+            <p class="text-gray-500 mb-6">快来提出你的问题吧</p>
+            <a href="index.html" class="text-sky-500 hover:text-sky-600">返回首页</a>
         </div>
 
-        <!-- 问题内容 -->
-        <div id="content" class="hidden fade-in">
-            <!-- 问题头部 -->
-            <div class="gradient-question text-white">
-                <div class="container mx-auto px-4 py-8 sm:py-12">
-                    <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-question text-2xl"></i>
-                        </div>
-                        <div class="flex-1">
-                            <h1 id="questionTitle" class="text-xl sm:text-2xl font-bold mb-3"></h1>
-                            <div id="questionTags" class="mb-3">
-                                <!-- 标签将动态插入 -->
-                            </div>
-                            <div class="flex flex-wrap gap-4 text-sm text-white/80">
-                                <span id="answerCount"><i class="fas fa-comments mr-1"></i></span>
-                                <span id="viewCount"><i class="fas fa-eye mr-1"></i></span>
-                                <span id="postTime"><i class="fas fa-clock mr-1"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <!-- 问题列表 -->
+        <div id="questionList" class="hidden">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-lg font-bold text-gray-800">
+                    <i class="fas fa-fire text-orange-500 mr-2"></i>热门问题
+                </h2>
+                <span id="questionCount" class="text-sm text-gray-500"></span>
             </div>
 
-            <div class="container mx-auto px-4 py-6">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- 左侧：问题和回答 -->
-                    <div class="lg:col-span-2 space-y-6">
-                        <!-- 问题详情 -->
-                        <div class="bg-white rounded-xl p-6 shadow-sm">
-                            <div class="flex items-center gap-3 mb-4">
-                                <img id="askerAvatar" src="" alt="提问者头像"
-                                     class="w-10 h-10 rounded-full object-cover border-2 border-gray-100">
-                                <div>
-                                    <p id="askerName" class="font-medium text-gray-800"></p>
-                                    <p id="askerInfo" class="text-gray-500 text-xs"></p>
-                                </div>
-                            </div>
-                            <div id="questionContent" class="text-gray-700 whitespace-pre-wrap mb-4"></div>
-                            <!-- 问题图片 -->
-                            <div id="questionImages" class="grid grid-cols-3 gap-2 hidden">
-                                <!-- 图片将动态插入 -->
-                            </div>
-                        </div>
+            <div id="questionGrid" class="space-y-4">
+                <!-- 问题卡片将动态插入 -->
+            </div>
 
-                        <!-- 回答列表 -->
-                        <div>
-                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                                <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
-                                全部回答 <span id="totalAnswers" class="text-sky-500 ml-2"></span>
-                            </h2>
-
-                            <div id="answerList" class="space-y-4">
-                                <!-- 回答将动态插入 -->
-                            </div>
-
-                            <div id="noAnswers" class="hidden bg-white rounded-xl p-8 text-center">
-                                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <i class="fas fa-comments text-gray-400 text-2xl"></i>
-                                </div>
-                                <p class="text-gray-500 mb-4">暂无回答，快来抢沙发！</p>
-                                <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
-                                   class="inline-block bg-sky-500 text-white px-6 py-2 rounded-full hover:bg-sky-600 transition">
-                                    下载APP回答问题
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 右侧：相关信息 -->
-                    <div class="space-y-6">
-                        <!-- 悬赏信息 -->
-                        <div id="rewardSection" class="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl p-6 text-white hidden">
-                            <div class="text-center">
-                                <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                                    <i class="fas fa-coins text-2xl"></i>
-                                </div>
-                                <p class="text-white/80 text-sm mb-1">悬赏金额</p>
-                                <p id="rewardAmount" class="text-3xl font-bold"></p>
-                            </div>
-                        </div>
-
-                        <!-- 下载APP回答 -->
-                        <div class="bg-gradient-to-br from-sky-500 to-blue-600 rounded-xl p-6 text-white">
-                            <div class="text-center">
-                                <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <i class="fas fa-edit text-2xl"></i>
-                                </div>
-                                <h3 class="font-bold text-lg mb-2">我来回答</h3>
-                                <p class="text-white/80 text-sm mb-4">下载APP参与问答，分享你的经验</p>
-                                <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
-                                   class="block bg-white text-sky-600 py-3 rounded-xl font-bold hover:bg-sky-50 transition">
-                                    <i class="fab fa-android mr-2"></i> 下载APP回答
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- 问答规则 -->
-                        <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                            <h4 class="font-medium text-blue-800 mb-2 flex items-center">
-                                <i class="fas fa-info-circle mr-2"></i>
-                                问答须知
-                            </h4>
-                            <ul class="text-blue-700 text-sm space-y-1">
-                                <li>• 认真回答有机会被采纳</li>
-                                <li>• 被采纳可获得悬赏奖励</li>
-                                <li>• 优质回答将获得更多曝光</li>
-                                <li>• 请遵守社区规范，友善交流</li>
-                            </ul>
-                        </div>
-
-                        <!-- 相关问题 -->
-                        <div id="relatedSection" class="bg-white rounded-xl p-6 shadow-sm hidden">
-                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                                <i class="fas fa-link text-sky-500 mr-2"></i>
-                                相关问题
-                            </h2>
-                            <div id="relatedQuestions" class="space-y-3">
-                                <!-- 相关问题将动态插入 -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <!-- 加载更多 -->
+            <div id="loadMore" class="text-center mt-8 hidden">
+                <button onclick="loadMoreQuestions()" class="bg-white border border-gray-200 text-gray-600 px-8 py-3 rounded-full hover:bg-gray-50 transition">
+                    <i class="fas fa-plus mr-2"></i>加载更多
+                </button>
             </div>
         </div>
     </main>
 
-    <!-- 底部固定栏 -->
-    <div id="bottomBar" class="hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40">
-        <div class="container mx-auto flex items-center gap-3">
+    <!-- 底部下载提示 -->
+    <div class="bg-gradient-to-r from-sky-500 to-blue-600 text-white py-8 sm:py-12">
+        <div class="container mx-auto px-4 text-center">
+            <h3 class="text-xl sm:text-2xl font-bold mb-3">有问题想问？下载东瀛游侠APP</h3>
+            <p class="text-white/80 mb-6 text-sm sm:text-base">在APP内提问、回答、获取悬赏奖励</p>
             <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
-               class="flex-1 bg-gradient-to-r from-sky-500 to-blue-600 text-white text-center py-3 rounded-xl font-bold hover:opacity-90 transition">
-                <i class="fab fa-android mr-2"></i> 下载APP回答问题
+               class="inline-block bg-white text-sky-600 px-8 py-3 rounded-xl font-bold hover:bg-sky-50 transition">
+                <i class="fab fa-android mr-2"></i> Android 下载
             </a>
         </div>
     </div>
@@ -206,136 +109,97 @@
         </div>
     </footer>
 
-    <!-- API配置 -->
     <script src="api-config.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const questionId = getUrlParam('id');
+        let currentPage = 1;
+        let isLoading = false;
+        let hasMore = true;
+        const ITEMS_PER_PAGE = 20;
 
-            if (!questionId) {
-                showError();
-                return;
-            }
+        document.addEventListener('DOMContentLoaded', () => {
+            loadQuestions();
+        });
+
+        async function loadQuestions() {
+            if (isLoading || !hasMore) return;
+            isLoading = true;
 
             try {
-                const question = await getQuestionById(questionId);
+                const questions = await getQuestionList(currentPage, ITEMS_PER_PAGE);
 
-                if (!question) {
-                    showError();
+                document.getElementById('loading').classList.add('hidden');
+
+                if (questions.length === 0 && currentPage === 1) {
+                    document.getElementById('empty').classList.remove('hidden');
                     return;
                 }
 
-                renderQuestion(question);
+                document.getElementById('questionList').classList.remove('hidden');
 
-                // 加载回答
-                const answers = await getQuestionAnswers(questionId);
-                renderAnswers(answers);
+                if (currentPage === 1) {
+                    document.getElementById('questionCount').textContent = `共 ${questions.length}+ 个问题`;
+                }
+
+                renderQuestions(questions);
+
+                if (questions.length < ITEMS_PER_PAGE) {
+                    hasMore = false;
+                    document.getElementById('loadMore').classList.add('hidden');
+                } else {
+                    document.getElementById('loadMore').classList.remove('hidden');
+                }
+
+                currentPage++;
 
             } catch (err) {
                 console.error('加载问题失败:', err);
-                showError();
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('empty').classList.remove('hidden');
+            } finally {
+                isLoading = false;
             }
-        });
-
-        function showError() {
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('error').classList.remove('hidden');
         }
 
-        function renderQuestion(question) {
-            // 更新页面标题
-            document.title = `${question.title} - 江湖问答`;
+        function renderQuestions(questions) {
+            const grid = document.getElementById('questionGrid');
 
-            // 问题标题
-            document.getElementById('questionTitle').textContent = question.title;
+            questions.forEach((question, index) => {
+                const card = document.createElement('a');
+                card.href = `question-detail.html?id=${question.id}`;
+                card.className = 'card-hover block bg-white rounded-xl p-5 shadow-sm border border-gray-100 fade-in';
+                card.style.animationDelay = `${index * 0.03}s`;
 
-            // 标签
-            const tagsContainer = document.getElementById('questionTags');
-            const category = question.category || 'other';
-            tagsContainer.innerHTML = `<span class="tag bg-white/20">${getCategoryName(category)}</span>`;
-            if (question.tags && question.tags.length > 0) {
-                tagsContainer.innerHTML += question.tags.map(tag =>
-                    `<span class="tag bg-white/20">${tag}</span>`
-                ).join('');
-            }
+                const hasReward = question.reward && question.reward > 0;
 
-            // 统计数据
-            document.getElementById('answerCount').innerHTML = `<i class="fas fa-comments mr-1"></i>${question.answer_count || 0} 回答`;
-            document.getElementById('viewCount').innerHTML = `<i class="fas fa-eye mr-1"></i>${question.view_count || 0} 浏览`;
-            document.getElementById('postTime').innerHTML = `<i class="fas fa-clock mr-1"></i>${formatDate(question.created_at)}`;
-
-            // 提问者信息
-            if (question.users) {
-                const user = question.users;
-                document.getElementById('askerAvatar').src = user.avatar_url || DEFAULT_AVATAR;
-                document.getElementById('askerName').textContent = user.nickname || '匿名用户';
-                document.getElementById('askerInfo').textContent = `提问于 ${formatDate(question.created_at)}`;
-            }
-
-            // 问题内容
-            document.getElementById('questionContent').textContent = question.content || question.description || '暂无详细描述';
-
-            // 问题图片
-            if (question.images && question.images.length > 0) {
-                const imagesContainer = document.getElementById('questionImages');
-                imagesContainer.classList.remove('hidden');
-                imagesContainer.innerHTML = question.images.map(img => `
-                    <img src="${img}" alt="问题图片"
-                         class="rounded-lg aspect-square object-cover cursor-pointer hover:opacity-90 transition"
-                         onclick="window.open('${img}', '_blank')">
-                `).join('');
-            }
-
-            // 悬赏信息
-            if (question.reward && question.reward > 0) {
-                document.getElementById('rewardSection').classList.remove('hidden');
-                document.getElementById('rewardAmount').textContent = `${question.reward} 游侠币`;
-            }
-
-            // 显示内容
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('content').classList.remove('hidden');
-            document.getElementById('bottomBar').classList.remove('hidden');
-        }
-
-        function renderAnswers(answers) {
-            const answerList = document.getElementById('answerList');
-            document.getElementById('totalAnswers').textContent = `(${answers.length})`;
-
-            if (!answers || answers.length === 0) {
-                document.getElementById('noAnswers').classList.remove('hidden');
-                return;
-            }
-
-            answerList.innerHTML = answers.map((answer, index) => {
-                const isBest = answer.is_accepted || answer.is_best;
-                return `
-                    <div class="answer-card ${isBest ? 'best-answer' : ''} bg-white rounded-xl p-5 shadow-sm">
-                        ${isBest ? `
-                            <div class="flex items-center gap-2 mb-3">
-                                <span class="bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">
-                                    <i class="fas fa-crown mr-1"></i>最佳回答
-                                </span>
+                card.innerHTML = `
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 bg-sky-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-question text-sky-500"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">${getCategoryName(question.category)}</span>
+                                ${hasReward ? `<span class="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs rounded-full"><i class="fas fa-coins mr-1"></i>${question.reward}</span>` : ''}
                             </div>
-                        ` : ''}
-                        <div class="flex items-start gap-3">
-                            <img src="${answer.users?.avatar_url || DEFAULT_AVATAR}" alt="回答者头像"
-                                 class="w-10 h-10 rounded-full object-cover border-2 border-gray-100 flex-shrink-0">
-                            <div class="flex-1">
-                                <div class="flex items-center justify-between mb-2">
-                                    <p class="font-medium text-gray-800">${answer.users?.nickname || '匿名用户'}</p>
-                                    <p class="text-gray-400 text-xs">${formatDate(answer.created_at)}</p>
+                            <h3 class="font-bold text-gray-800 mb-2 line-clamp-2">${question.title}</h3>
+                            <p class="text-gray-500 text-sm line-clamp-2 mb-3">${question.content || question.description || ''}</p>
+                            <div class="flex items-center justify-between text-xs text-gray-400">
+                                <div class="flex items-center gap-3">
+                                    <span><i class="fas fa-comments mr-1"></i>${question.answer_count || 0} 回答</span>
+                                    <span><i class="fas fa-eye mr-1"></i>${question.view_count || 0} 浏览</span>
                                 </div>
-                                <p class="text-gray-700 whitespace-pre-wrap mb-3">${answer.content}</p>
-                                <div class="flex items-center gap-4 text-sm text-gray-500">
-                                    <span><i class="fas fa-thumbs-up mr-1"></i>${answer.like_count || 0}</span>
-                                    <span><i class="fas fa-comment mr-1"></i>${answer.comment_count || 0}</span>
-                                </div>
+                                <span>${formatDate(question.created_at)}</span>
                             </div>
                         </div>
                     </div>
                 `;
-            }).join('');
+
+                grid.appendChild(card);
+            });
+        }
+
+        function loadMoreQuestions() {
+            loadQuestions();
         }
 
         function getCategoryName(category) {
@@ -356,5 +220,4 @@
         }
     </script>
 </body>
-
 </html>
