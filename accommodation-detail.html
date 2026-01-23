@@ -22,6 +22,21 @@
         .facility-tag i { margin-right: 6px; color: #6366F1; }
         .image-slider { scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
         .image-slider > div { scroll-snap-align: start; flex-shrink: 0; }
+        .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #F3F4F6; }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: #6B7280; font-size: 14px; }
+        .info-value { color: #1F2937; font-weight: 500; font-size: 14px; text-align: right; }
+        .section-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 16px; }
+        .section-title { font-size: 16px; font-weight: 700; color: #1F2937; margin-bottom: 16px; display: flex; align-items: center; }
+        .section-title i { margin-right: 8px; }
+        .badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 9999px; font-size: 12px; font-weight: 500; margin-right: 6px; margin-bottom: 6px; }
+        .badge-green { background: #D1FAE5; color: #065F46; }
+        .badge-blue { background: #DBEAFE; color: #1E40AF; }
+        .badge-yellow { background: #FEF3C7; color: #92400E; }
+        .badge-purple { background: #EDE9FE; color: #5B21B6; }
+        .badge-red { background: #FEE2E2; color: #991B1B; }
+        .badge-gray { background: #F3F4F6; color: #4B5563; }
+        .verified-badge { background: linear-gradient(135deg, #10B981, #059669); color: white; }
     </style>
 </head>
 
@@ -72,110 +87,160 @@
 
             <div class="container mx-auto px-4 py-6">
                 <!-- 房源标题区 -->
-                <div class="bg-white rounded-xl p-4 sm:p-6 shadow-sm mb-6">
-                    <div class="flex flex-wrap gap-2 mb-3">
-                        <span id="typeTag" class="px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700"></span>
-                        <span id="statusTag" class="px-3 py-1 rounded-full text-xs font-medium"></span>
+                <div class="section-card">
+                    <div id="badgeContainer" class="flex flex-wrap mb-3">
+                        <!-- 标签将动态插入 -->
                     </div>
                     <h1 id="accommodationTitle" class="text-xl sm:text-2xl font-bold text-gray-900 mb-3"></h1>
-                    <p id="accommodationAddress" class="text-gray-500 text-sm mb-4">
+                    <p id="accommodationLocation" class="text-gray-500 text-sm mb-4">
                         <i class="fas fa-map-marker-alt mr-1"></i>
                     </p>
 
                     <!-- 价格 -->
-                    <div class="flex items-baseline gap-2">
+                    <div class="flex items-baseline gap-2 flex-wrap">
                         <span class="text-3xl sm:text-4xl font-bold text-red-500" id="accommodationPrice"></span>
                         <span class="text-gray-500" id="priceUnit">/月</span>
+                        <span id="originalPrice" class="hidden text-lg text-gray-400 line-through"></span>
+                        <span id="discountBadge" class="hidden badge badge-red"></span>
+                        <span id="negotiableBadge" class="hidden badge badge-yellow">可议价</span>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <!-- 左侧：房源详情 -->
-                    <div class="lg:col-span-2 space-y-6">
-                        <!-- 基本参数 -->
-                        <div class="bg-white rounded-xl p-6 shadow-sm">
-                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                                <i class="fas fa-home text-indigo-500 mr-2"></i>
-                                房屋信息
+                    <div class="lg:col-span-2 space-y-4">
+
+                        <!-- 居住类房屋信息 -->
+                        <div id="livingInfoSection" class="section-card hidden">
+                            <h2 class="section-title">
+                                <i class="fas fa-home text-indigo-500"></i>房屋信息
                             </h2>
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
                                 <div class="text-center p-3 bg-gray-50 rounded-lg">
-                                    <p class="text-gray-500 text-xs mb-1">户型</p>
-                                    <p id="roomLayout" class="font-bold text-gray-800"></p>
+                                    <p class="text-gray-500 text-xs mb-1">户型/间取</p>
+                                    <p id="roomMadori" class="font-bold text-gray-800">-</p>
                                 </div>
                                 <div class="text-center p-3 bg-gray-50 rounded-lg">
                                     <p class="text-gray-500 text-xs mb-1">面积</p>
-                                    <p id="roomArea" class="font-bold text-gray-800"></p>
+                                    <p id="roomArea" class="font-bold text-gray-800">-</p>
                                 </div>
                                 <div class="text-center p-3 bg-gray-50 rounded-lg">
                                     <p class="text-gray-500 text-xs mb-1">楼层</p>
-                                    <p id="roomFloor" class="font-bold text-gray-800"></p>
+                                    <p id="roomFloor" class="font-bold text-gray-800">-</p>
                                 </div>
                                 <div class="text-center p-3 bg-gray-50 rounded-lg">
                                     <p class="text-gray-500 text-xs mb-1">朝向</p>
-                                    <p id="roomDirection" class="font-bold text-gray-800"></p>
+                                    <p id="roomOrientation" class="font-bold text-gray-800">-</p>
                                 </div>
+                            </div>
+                            <div id="livingDetails">
+                                <!-- 详细信息行将动态插入 -->
+                            </div>
+                        </div>
+
+                        <!-- 仓库信息 -->
+                        <div id="warehouseInfoSection" class="section-card hidden">
+                            <h2 class="section-title">
+                                <i class="fas fa-warehouse text-gray-500"></i>仓库信息
+                            </h2>
+                            <div id="warehouseDetails">
+                                <!-- 仓库详细信息将动态插入 -->
+                            </div>
+                        </div>
+
+                        <!-- 土地信息 -->
+                        <div id="landInfoSection" class="section-card hidden">
+                            <h2 class="section-title">
+                                <i class="fas fa-mountain text-green-500"></i>土地信息
+                            </h2>
+                            <div id="landDetails">
+                                <!-- 土地详细信息将动态插入 -->
+                            </div>
+                        </div>
+
+                        <!-- 办公室信息 -->
+                        <div id="officeInfoSection" class="section-card hidden">
+                            <h2 class="section-title">
+                                <i class="fas fa-building text-blue-500"></i>办公室信息
+                            </h2>
+                            <div id="officeDetails">
+                                <!-- 办公室详细信息将动态插入 -->
                             </div>
                         </div>
 
                         <!-- 详细介绍 -->
-                        <div class="bg-white rounded-xl p-6 shadow-sm">
-                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                                <i class="fas fa-info-circle text-blue-500 mr-2"></i>
-                                房源介绍
+                        <div class="section-card">
+                            <h2 class="section-title">
+                                <i class="fas fa-info-circle text-blue-500"></i>房源介绍
                             </h2>
-                            <p id="accommodationDescription" class="text-gray-700 whitespace-pre-wrap"></p>
+                            <p id="accommodationDescription" class="text-gray-700 whitespace-pre-wrap leading-relaxed"></p>
                         </div>
 
                         <!-- 配套设施 -->
-                        <div id="facilitiesSection" class="bg-white rounded-xl p-6 shadow-sm">
-                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                                <i class="fas fa-couch text-purple-500 mr-2"></i>
-                                配套设施
+                        <div id="featuresSection" class="section-card hidden">
+                            <h2 class="section-title">
+                                <i class="fas fa-couch text-purple-500"></i>配套设施
                             </h2>
-                            <div id="facilitiesList" class="flex flex-wrap">
+                            <div id="featuresList" class="flex flex-wrap">
                                 <!-- 设施将动态插入 -->
                             </div>
                         </div>
 
-                        <!-- 费用明细 -->
-                        <div class="bg-white rounded-xl p-6 shadow-sm">
-                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                                <i class="fas fa-yen-sign text-green-500 mr-2"></i>
-                                费用明细
+                        <!-- 入住规则 -->
+                        <div id="rulesSection" class="section-card hidden">
+                            <h2 class="section-title">
+                                <i class="fas fa-clipboard-list text-orange-500"></i>入住规则
                             </h2>
-                            <div class="space-y-3">
-                                <div class="flex justify-between py-2 border-b border-gray-100">
-                                    <span class="text-gray-500">月租金</span>
-                                    <span id="feeRent" class="font-medium text-gray-800"></span>
-                                </div>
-                                <div class="flex justify-between py-2 border-b border-gray-100">
-                                    <span class="text-gray-500">押金/敷金</span>
-                                    <span id="feeDeposit" class="font-medium text-gray-800"></span>
-                                </div>
-                                <div class="flex justify-between py-2 border-b border-gray-100">
-                                    <span class="text-gray-500">礼金</span>
-                                    <span id="feeGift" class="font-medium text-gray-800"></span>
-                                </div>
-                                <div class="flex justify-between py-2 border-b border-gray-100">
-                                    <span class="text-gray-500">管理费</span>
-                                    <span id="feeMaintenance" class="font-medium text-gray-800"></span>
-                                </div>
-                                <div class="flex justify-between py-2">
-                                    <span class="text-gray-500">入住日期</span>
-                                    <span id="moveInDate" class="font-medium text-gray-800"></span>
-                                </div>
+                            <div id="rulesList" class="text-gray-700">
+                                <!-- 规则将动态插入 -->
                             </div>
+                        </div>
+
+                        <!-- 费用明细 -->
+                        <div class="section-card">
+                            <h2 class="section-title">
+                                <i class="fas fa-yen-sign text-green-500"></i>费用明细
+                            </h2>
+                            <div id="feeDetails">
+                                <!-- 费用明细将动态插入 -->
+                            </div>
+                        </div>
+
+                        <!-- 支付方式 -->
+                        <div id="paymentSection" class="section-card hidden">
+                            <h2 class="section-title">
+                                <i class="fas fa-credit-card text-blue-500"></i>支付方式
+                            </h2>
+                            <div id="paymentMethods" class="flex flex-wrap">
+                                <!-- 支付方式将动态插入 -->
+                            </div>
+                        </div>
+
+                        <!-- 附加信息 -->
+                        <div id="additionalSection" class="section-card hidden">
+                            <h2 class="section-title">
+                                <i class="fas fa-plus-circle text-gray-500"></i>附加信息
+                            </h2>
+                            <p id="additionalInfo" class="text-gray-700 whitespace-pre-wrap"></p>
                         </div>
                     </div>
 
                     <!-- 右侧：联系信息 -->
-                    <div class="space-y-6">
+                    <div class="space-y-4">
+                        <!-- 认证信息 -->
+                        <div id="verificationSection" class="section-card hidden">
+                            <h2 class="section-title">
+                                <i class="fas fa-shield-alt text-green-500"></i>认证信息
+                            </h2>
+                            <div id="verificationBadges" class="flex flex-wrap">
+                                <!-- 认证标签将动态插入 -->
+                            </div>
+                        </div>
+
                         <!-- 房东信息 -->
-                        <div class="bg-white rounded-xl p-6 shadow-sm">
-                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                                <i class="fas fa-user text-orange-500 mr-2"></i>
-                                发布者
+                        <div class="section-card">
+                            <h2 class="section-title">
+                                <i class="fas fa-user text-orange-500"></i>发布者
                             </h2>
                             <div class="flex items-center gap-4 mb-4">
                                 <img id="ownerAvatar" src="" alt="头像"
@@ -184,6 +249,9 @@
                                     <h3 id="ownerName" class="font-bold text-gray-800"></h3>
                                     <p id="ownerType" class="text-gray-500 text-sm"></p>
                                 </div>
+                            </div>
+                            <div id="contactInfo" class="text-sm text-gray-600 space-y-2">
+                                <!-- 联系方式将动态插入 -->
                             </div>
                         </div>
 
@@ -217,17 +285,34 @@
                         </div>
 
                         <!-- 位置信息 -->
-                        <div class="bg-white rounded-xl p-6 shadow-sm">
-                            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                                <i class="fas fa-train text-blue-500 mr-2"></i>
-                                交通信息
+                        <div class="section-card">
+                            <h2 class="section-title">
+                                <i class="fas fa-map-marked-alt text-blue-500"></i>位置信息
                             </h2>
-                            <p id="nearStation" class="text-gray-700 mb-2"></p>
-                            <p id="walkTime" class="text-gray-500 text-sm"></p>
+                            <div id="locationDetails" class="space-y-2 text-sm text-gray-600">
+                                <!-- 位置信息将动态插入 -->
+                            </div>
                             <a id="mapLink" href="#" target="_blank"
                                class="block text-center bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition mt-4">
                                 <i class="fas fa-external-link-alt mr-2"></i>在地图中查看
                             </a>
+                        </div>
+
+                        <!-- 统计信息 -->
+                        <div class="section-card">
+                            <h2 class="section-title">
+                                <i class="fas fa-chart-bar text-indigo-500"></i>浏览统计
+                            </h2>
+                            <div class="flex justify-around text-center">
+                                <div>
+                                    <p id="viewCount" class="text-2xl font-bold text-indigo-500">0</p>
+                                    <p class="text-xs text-gray-500">浏览量</p>
+                                </div>
+                                <div>
+                                    <p id="favoriteCount" class="text-2xl font-bold text-pink-500">0</p>
+                                    <p class="text-xs text-gray-500">收藏数</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -239,7 +324,7 @@
     <div id="bottomBar" class="hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40">
         <div class="container mx-auto flex items-center justify-between gap-4">
             <div class="flex-shrink-0">
-                <p class="text-gray-500 text-xs">月租金</p>
+                <p class="text-gray-500 text-xs" id="bottomPriceLabel">月租金</p>
                 <p class="text-red-500 font-bold text-xl" id="bottomPrice"></p>
             </div>
             <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
@@ -292,14 +377,14 @@
             document.getElementById('error').classList.remove('hidden');
         }
 
-        function renderAccommodation(accommodation) {
+        function renderAccommodation(a) {
             // 更新页面标题
-            document.title = `${accommodation.title} - 客栈驿站`;
+            document.title = `${a.title} - 客栈驿站`;
 
             // 处理图片
             accommodationImages = [];
-            if (accommodation.images && accommodation.images.length > 0) {
-                accommodationImages = accommodation.images;
+            if (a.images && a.images.length > 0) {
+                accommodationImages = a.images;
             } else {
                 accommodationImages = [DEFAULT_PRODUCT_IMAGE];
             }
@@ -321,86 +406,146 @@
                 document.getElementById('imageCounter').textContent = `${index + 1} / ${accommodationImages.length}`;
             });
 
-            // 类型标签
-            document.getElementById('typeTag').textContent = getAccommodationType(accommodation.accommodation_type);
+            // 标签区域
+            const badgeContainer = document.getElementById('badgeContainer');
+            let badges = [];
 
-            // 状态标签
-            const statusTag = document.getElementById('statusTag');
-            if (accommodation.status === 'active') {
-                statusTag.textContent = '可租';
-                statusTag.classList.add('bg-green-100', 'text-green-700');
-            } else {
-                statusTag.textContent = '已租出';
-                statusTag.classList.add('bg-gray-100', 'text-gray-700');
+            // 房源类型标签
+            badges.push(`<span class="badge badge-purple">${getAccommodationType(a.accommodation_type)}</span>`);
+
+            // 建筑类型（租房类）
+            if (a.building_type && ['rent', 'sharehouse', 'sale'].includes(a.accommodation_type)) {
+                badges.push(`<span class="badge badge-blue">${getBuildingType(a.building_type)}</span>`);
             }
 
+            // 状态标签
+            if (a.status === 'active') {
+                badges.push(`<span class="badge badge-green">可租/可售</span>`);
+            } else {
+                badges.push(`<span class="badge badge-gray">已租出/已售</span>`);
+            }
+
+            // 认证标签
+            if (a.is_verified) {
+                badges.push(`<span class="badge verified-badge"><i class="fas fa-check-circle mr-1"></i>已认证</span>`);
+            }
+
+            badgeContainer.innerHTML = badges.join('');
+
             // 基本信息
-            document.getElementById('accommodationTitle').textContent = accommodation.title;
-            document.getElementById('accommodationAddress').innerHTML = `<i class="fas fa-map-marker-alt mr-1"></i>${accommodation.address || '详细地址请咨询'}`;
+            document.getElementById('accommodationTitle').textContent = a.title;
+
+            // 位置显示
+            const locationParts = [];
+            if (a.location_prefecture) locationParts.push(a.location_prefecture);
+            if (a.location_city) locationParts.push(a.location_city);
+            if (a.location_region) locationParts.push(a.location_region);
+            if (a.location_detail) locationParts.push(a.location_detail);
+            document.getElementById('accommodationLocation').innerHTML =
+                `<i class="fas fa-map-marker-alt mr-1"></i>${locationParts.join(' ') || '详细地址请咨询'}`;
 
             // 价格
-            const price = accommodation.price || accommodation.rent;
+            const price = a.price;
             document.getElementById('accommodationPrice').textContent = formatPrice(price);
             document.getElementById('bottomPrice').textContent = formatPrice(price);
 
             // 价格单位
-            const priceType = accommodation.price_type || 'monthly';
+            const priceType = a.price_type || 'monthly';
             const priceUnits = {
                 'monthly': '/月',
                 'daily': '/天',
-                'yearly': '/年'
+                'yearly': '/年',
+                'total': '（总价）',
+                'sqm': '/㎡'
             };
-            document.getElementById('priceUnit').textContent = priceUnits[priceType] || '/月';
+            const priceUnit = priceUnits[priceType] || '/月';
+            document.getElementById('priceUnit').textContent = priceUnit;
+            document.getElementById('bottomPriceLabel').textContent = getPriceLabelByType(priceType);
 
-            // 房屋参数
-            document.getElementById('roomLayout').textContent = accommodation.layout || accommodation.room_layout || '-';
-            document.getElementById('roomArea').textContent = accommodation.area ? `${accommodation.area}㎡` : '-';
-            document.getElementById('roomFloor').textContent = accommodation.floor ? `${accommodation.floor}F` : '-';
-            document.getElementById('roomDirection').textContent = accommodation.direction || '-';
+            // 原价和折扣
+            if (a.original_price && a.original_price > price) {
+                document.getElementById('originalPrice').textContent = formatPrice(a.original_price);
+                document.getElementById('originalPrice').classList.remove('hidden');
+                const discount = Math.round((1 - price / a.original_price) * 100);
+                document.getElementById('discountBadge').textContent = `${discount}%OFF`;
+                document.getElementById('discountBadge').classList.remove('hidden');
+            }
+
+            // 可议价
+            if (a.is_negotiable) {
+                document.getElementById('negotiableBadge').classList.remove('hidden');
+            }
+
+            // 根据房源类型显示不同信息板块
+            const type = a.accommodation_type;
+            if (['rent', 'sharehouse', 'homestay', 'sale'].includes(type)) {
+                renderLivingInfo(a);
+            } else if (type === 'warehouse') {
+                renderWarehouseInfo(a);
+            } else if (['land_rent', 'land_sale'].includes(type)) {
+                renderLandInfo(a);
+            } else if (type === 'office') {
+                renderOfficeInfo(a);
+            }
 
             // 详细介绍
-            document.getElementById('accommodationDescription').textContent = accommodation.description || '暂无详细介绍';
+            document.getElementById('accommodationDescription').textContent = a.description || '暂无详细介绍';
 
             // 配套设施
-            const facilitiesList = document.getElementById('facilitiesList');
-            const facilities = accommodation.facilities || accommodation.amenities || [];
-            if (facilities.length > 0) {
-                facilitiesList.innerHTML = facilities.map(facility => `
+            const features = a.features || [];
+            if (features.length > 0) {
+                document.getElementById('featuresSection').classList.remove('hidden');
+                document.getElementById('featuresList').innerHTML = features.map(f => `
                     <span class="facility-tag">
-                        <i class="${getFacilityIcon(facility)}"></i>${facility}
+                        <i class="${getFacilityIcon(f)}"></i>${f}
                     </span>
                 `).join('');
-            } else {
-                document.getElementById('facilitiesSection').classList.add('hidden');
+            }
+
+            // 入住规则
+            if (a.house_rules) {
+                document.getElementById('rulesSection').classList.remove('hidden');
+                document.getElementById('rulesList').innerHTML = `<p class="whitespace-pre-wrap">${a.house_rules}</p>`;
             }
 
             // 费用明细
-            document.getElementById('feeRent').textContent = formatPrice(price);
-            document.getElementById('feeDeposit').textContent = formatPrice(accommodation.deposit) || '无';
-            document.getElementById('feeGift').textContent = formatPrice(accommodation.gift_money) || '无';
-            document.getElementById('feeMaintenance').textContent = formatPrice(accommodation.maintenance_fee) || '无';
-            document.getElementById('moveInDate').textContent = accommodation.move_in_date ? formatDate(accommodation.move_in_date) : '即可入住';
+            renderFeeDetails(a);
+
+            // 支付方式
+            if (a.payment_methods && a.payment_methods.length > 0) {
+                document.getElementById('paymentSection').classList.remove('hidden');
+                document.getElementById('paymentMethods').innerHTML = a.payment_methods.map(m => `
+                    <span class="badge badge-blue"><i class="fas fa-credit-card mr-1"></i>${getPaymentMethod(m)}</span>
+                `).join('');
+            }
+
+            // 附加信息
+            if (a.additional_info) {
+                document.getElementById('additionalSection').classList.remove('hidden');
+                document.getElementById('additionalInfo').textContent = a.additional_info;
+            }
+
+            // 认证信息
+            renderVerificationInfo(a);
 
             // 房东信息
-            if (accommodation.users) {
-                const user = accommodation.users;
+            if (a.users) {
+                const user = a.users;
                 document.getElementById('ownerAvatar').src = user.avatar_url || DEFAULT_AVATAR;
-                document.getElementById('ownerName').textContent = user.nickname || '房东';
-                document.getElementById('ownerType').textContent = accommodation.owner_type === 'agent' ? '房产中介' : '个人房东';
+                document.getElementById('ownerAvatar').onerror = function() { this.src = DEFAULT_AVATAR; };
+                document.getElementById('ownerName').textContent = a.provider_name || user.nickname || '房东';
+                document.getElementById('ownerType').textContent = getHostType(a.host_type);
             }
 
-            // 交通信息
-            document.getElementById('nearStation').textContent = accommodation.nearest_station
-                ? `最近车站: ${accommodation.nearest_station}`
-                : '详情请咨询';
-            document.getElementById('walkTime').textContent = accommodation.walk_time
-                ? `步行约 ${accommodation.walk_time} 分钟`
-                : '';
+            // 联系方式
+            renderContactInfo(a);
 
-            // 地图链接
-            if (accommodation.address) {
-                document.getElementById('mapLink').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(accommodation.address)}`;
-            }
+            // 位置信息
+            renderLocationDetails(a);
+
+            // 统计信息
+            document.getElementById('viewCount').textContent = a.view_count || 0;
+            document.getElementById('favoriteCount').textContent = a.favorite_count || 0;
 
             // 显示内容
             document.getElementById('loading').classList.add('hidden');
@@ -408,26 +553,450 @@
             document.getElementById('bottomBar').classList.remove('hidden');
         }
 
+        // 居住类房源信息
+        function renderLivingInfo(a) {
+            document.getElementById('livingInfoSection').classList.remove('hidden');
+
+            // 基本参数
+            document.getElementById('roomMadori').textContent = a.madori || (a.bedrooms ? `${a.bedrooms}室` : '-');
+            document.getElementById('roomArea').textContent = a.floor_area ? `${a.floor_area}㎡` : '-';
+
+            // 楼层
+            if (a.floor_number && a.total_floors) {
+                document.getElementById('roomFloor').textContent = `${a.floor_number}/${a.total_floors}F`;
+            } else if (a.floor_number) {
+                document.getElementById('roomFloor').textContent = `${a.floor_number}F`;
+            }
+
+            // 朝向
+            document.getElementById('roomOrientation').textContent = getOrientation(a.orientation) || '-';
+
+            // 详细信息
+            const details = [];
+            if (a.bedrooms) details.push({ label: '卧室', value: `${a.bedrooms}间` });
+            if (a.bathrooms) details.push({ label: '卫生间', value: `${a.bathrooms}间` });
+            if (a.toilets) details.push({ label: '厕所', value: `${a.toilets}间` });
+            if (a.max_guests) details.push({ label: '最多入住', value: `${a.max_guests}人` });
+            if (a.building_year) details.push({ label: '建筑年份', value: `${a.building_year}年` });
+            if (a.building_structure) details.push({ label: '建筑结构', value: getBuildingStructure(a.building_structure) });
+            if (a.renovation_status) details.push({ label: '装修状况', value: getRenovationStatus(a.renovation_status) });
+            if (a.parking_type) details.push({ label: '停车位', value: getParkingType(a.parking_type) });
+            if (a.parking_spaces) details.push({ label: '停车位数', value: `${a.parking_spaces}个` });
+            if (a.pet_policy) details.push({ label: '宠物政策', value: getPetPolicy(a.pet_policy) });
+            if (a.min_stay_days) details.push({ label: '最短入住', value: `${a.min_stay_days}天` });
+            if (a.allow_temporary !== undefined) details.push({ label: '允许短租', value: a.allow_temporary ? '是' : '否' });
+
+            if (details.length > 0) {
+                document.getElementById('livingDetails').innerHTML = details.map(d => `
+                    <div class="info-row">
+                        <span class="info-label">${d.label}</span>
+                        <span class="info-value">${d.value}</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // 仓库信息
+        function renderWarehouseInfo(a) {
+            document.getElementById('warehouseInfoSection').classList.remove('hidden');
+
+            const details = [];
+            if (a.floor_area) details.push({ label: '仓库面积', value: `${a.floor_area}㎡` });
+            if (a.warehouse_height) details.push({ label: '仓库高度', value: `${a.warehouse_height}m` });
+            if (a.warehouse_material) details.push({ label: '建筑材料', value: getWarehouseMaterial(a.warehouse_material) });
+            if (a.warehouse_door_width) details.push({ label: '门宽', value: `${a.warehouse_door_width}m` });
+            if (a.warehouse_door_height) details.push({ label: '门高', value: `${a.warehouse_door_height}m` });
+            if (a.warehouse_load_capacity) details.push({ label: '承重能力', value: `${a.warehouse_load_capacity}kg/㎡` });
+            if (a.warehouse_has_loading_dock !== undefined) details.push({ label: '装卸台', value: a.warehouse_has_loading_dock ? '有' : '无' });
+            if (a.warehouse_has_forklift !== undefined) details.push({ label: '叉车', value: a.warehouse_has_forklift ? '有' : '无' });
+            if (a.warehouse_temperature_control) details.push({ label: '温控设施', value: getTemperatureControl(a.warehouse_temperature_control) });
+            if (a.warehouse_security_level) details.push({ label: '安保等级', value: getSecurityLevel(a.warehouse_security_level) });
+            if (a.warehouse_usage_rules) details.push({ label: '使用规则', value: a.warehouse_usage_rules });
+
+            document.getElementById('warehouseDetails').innerHTML = details.map(d => `
+                <div class="info-row">
+                    <span class="info-label">${d.label}</span>
+                    <span class="info-value">${d.value}</span>
+                </div>
+            `).join('');
+        }
+
+        // 土地信息
+        function renderLandInfo(a) {
+            document.getElementById('landInfoSection').classList.remove('hidden');
+
+            const details = [];
+            if (a.land_area) details.push({ label: '土地面积', value: `${a.land_area}㎡` });
+            if (a.land_type) details.push({ label: '土地类型', value: getLandType(a.land_type) });
+            if (a.land_zoning) details.push({ label: '用途地域', value: getLandZoning(a.land_zoning) });
+            if (a.land_building_ratio) details.push({ label: '建蔽率', value: `${a.land_building_ratio}%` });
+            if (a.land_floor_ratio) details.push({ label: '容积率', value: `${a.land_floor_ratio}%` });
+            if (a.land_road_access) details.push({ label: '道路接道', value: getLandRoadAccess(a.land_road_access) });
+            if (a.land_infrastructure) details.push({ label: '基础设施', value: a.land_infrastructure });
+            if (a.land_terrain) details.push({ label: '地形', value: getLandTerrain(a.land_terrain) });
+
+            document.getElementById('landDetails').innerHTML = details.map(d => `
+                <div class="info-row">
+                    <span class="info-label">${d.label}</span>
+                    <span class="info-value">${d.value}</span>
+                </div>
+            `).join('');
+        }
+
+        // 办公室信息
+        function renderOfficeInfo(a) {
+            document.getElementById('officeInfoSection').classList.remove('hidden');
+
+            const details = [];
+            if (a.floor_area) details.push({ label: '办公面积', value: `${a.floor_area}㎡` });
+            if (a.office_type) details.push({ label: '办公室类型', value: getOfficeType(a.office_type) });
+            if (a.workstation_count) details.push({ label: '工位数', value: `${a.workstation_count}个` });
+            if (a.floor_number && a.total_floors) {
+                details.push({ label: '楼层', value: `${a.floor_number}/${a.total_floors}F` });
+            } else if (a.floor_number) {
+                details.push({ label: '楼层', value: `${a.floor_number}F` });
+            }
+            if (a.building_year) details.push({ label: '建筑年份', value: `${a.building_year}年` });
+            if (a.orientation) details.push({ label: '朝向', value: getOrientation(a.orientation) });
+            if (a.parking_type) details.push({ label: '停车位', value: getParkingType(a.parking_type) });
+
+            document.getElementById('officeDetails').innerHTML = details.map(d => `
+                <div class="info-row">
+                    <span class="info-label">${d.label}</span>
+                    <span class="info-value">${d.value}</span>
+                </div>
+            `).join('');
+        }
+
+        // 费用明细
+        function renderFeeDetails(a) {
+            const fees = [];
+            fees.push({ label: '租金/售价', value: formatPrice(a.price) + (a.price_type ? getPriceUnitShort(a.price_type) : '') });
+
+            if (a.has_security_deposit && a.security_deposit_amount) {
+                fees.push({ label: '保证金', value: formatPrice(a.security_deposit_amount) });
+            }
+
+            // 更多费用字段可根据数据库添加
+            document.getElementById('feeDetails').innerHTML = fees.map(f => `
+                <div class="info-row">
+                    <span class="info-label">${f.label}</span>
+                    <span class="info-value">${f.value}</span>
+                </div>
+            `).join('');
+        }
+
+        // 认证信息
+        function renderVerificationInfo(a) {
+            const badges = [];
+
+            if (a.is_verified) {
+                badges.push('<span class="badge verified-badge"><i class="fas fa-check-circle mr-1"></i>平台认证</span>');
+            }
+            if (a.id_verified) {
+                badges.push('<span class="badge badge-green"><i class="fas fa-id-card mr-1"></i>身份认证</span>');
+            }
+            if (a.qualification_verified) {
+                badges.push('<span class="badge badge-green"><i class="fas fa-certificate mr-1"></i>资质认证</span>');
+            }
+            if (a.business_license_verified) {
+                badges.push('<span class="badge badge-blue"><i class="fas fa-building mr-1"></i>营业执照</span>');
+            }
+            if (a.real_estate_license_verified) {
+                badges.push('<span class="badge badge-blue"><i class="fas fa-home mr-1"></i>房产中介资质</span>');
+            }
+            if (a.property_certificate_verified) {
+                badges.push('<span class="badge badge-purple"><i class="fas fa-file-contract mr-1"></i>房产证</span>');
+            }
+            if (a.has_license) {
+                badges.push('<span class="badge badge-yellow"><i class="fas fa-award mr-1"></i>持有许可证</span>');
+            }
+
+            if (badges.length > 0) {
+                document.getElementById('verificationSection').classList.remove('hidden');
+                document.getElementById('verificationBadges').innerHTML = badges.join('');
+            }
+        }
+
+        // 联系方式
+        function renderContactInfo(a) {
+            const contacts = [];
+
+            if (a.contact_phone && !a.contact_phone_hidden) {
+                contacts.push(`<p><i class="fas fa-phone text-green-500 mr-2"></i>${a.contact_phone}</p>`);
+            }
+            if (a.contact_wechat && !a.contact_wechat_hidden) {
+                contacts.push(`<p><i class="fab fa-weixin text-green-500 mr-2"></i>微信: ${a.contact_wechat}</p>`);
+            }
+            if (a.contact_line && !a.contact_line_hidden) {
+                contacts.push(`<p><i class="fab fa-line text-green-500 mr-2"></i>LINE: ${a.contact_line}</p>`);
+            }
+            if (a.contact_email && !a.contact_email_hidden) {
+                contacts.push(`<p><i class="fas fa-envelope text-blue-500 mr-2"></i>${a.contact_email}</p>`);
+            }
+            if (a.contact_whatsapp && !a.contact_whatsapp_hidden) {
+                contacts.push(`<p><i class="fab fa-whatsapp text-green-500 mr-2"></i>WhatsApp: ${a.contact_whatsapp}</p>`);
+            }
+            if (a.contact_telegram && !a.contact_telegram_hidden) {
+                contacts.push(`<p><i class="fab fa-telegram text-blue-500 mr-2"></i>Telegram: ${a.contact_telegram}</p>`);
+            }
+
+            if (contacts.length > 0) {
+                document.getElementById('contactInfo').innerHTML = contacts.join('');
+            } else {
+                document.getElementById('contactInfo').innerHTML = '<p class="text-gray-400">下载APP查看联系方式</p>';
+            }
+        }
+
+        // 位置信息
+        function renderLocationDetails(a) {
+            const locations = [];
+
+            if (a.location_prefecture) locations.push(`<p><i class="fas fa-map mr-2 text-indigo-400"></i>都道府县: ${a.location_prefecture}</p>`);
+            if (a.location_city) locations.push(`<p><i class="fas fa-city mr-2 text-indigo-400"></i>市区町村: ${a.location_city}</p>`);
+            if (a.location_region) locations.push(`<p><i class="fas fa-map-signs mr-2 text-indigo-400"></i>区域: ${a.location_region}</p>`);
+            if (a.location_detail && !a.privacy_address_precise) {
+                locations.push(`<p><i class="fas fa-map-marker-alt mr-2 text-indigo-400"></i>详细地址: ${a.location_detail}</p>`);
+            }
+
+            if (locations.length > 0) {
+                document.getElementById('locationDetails').innerHTML = locations.join('');
+            }
+
+            // 地图链接
+            const addressForMap = a.location_detail || `${a.location_prefecture || ''} ${a.location_city || ''}`;
+            if (addressForMap.trim()) {
+                document.getElementById('mapLink').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addressForMap)}`;
+            } else {
+                document.getElementById('mapLink').classList.add('hidden');
+            }
+        }
+
+        // ========== 辅助函数 ==========
+
         function getAccommodationType(type) {
             const types = {
-                'rent': '整租',
+                'rent': '租房',
                 'sharehouse': '合租',
                 'homestay': '民宿',
                 'sale': '房屋买卖',
                 'office': '办公室',
                 'warehouse': '仓库',
                 'land_rent': '土地租赁',
-                'land_sale': '土地买卖',
-                'apartment': '公寓',
-                'house': '一户建',
-                'mansion': 'マンション'
+                'land_sale': '土地买卖'
             };
             return types[type] || type || '房源';
+        }
+
+        function getBuildingType(type) {
+            const types = {
+                'apartment': 'アパート',
+                'mansion': 'マンション',
+                'house': '一户建',
+                'terrace': 'テラスハウス',
+                'other': '其他'
+            };
+            return types[type] || type || '';
+        }
+
+        function getHostType(type) {
+            const types = {
+                'individual': '个人房东',
+                'agent': '房产中介',
+                'company': '企业/公司',
+                'property_manager': '物业管理'
+            };
+            return types[type] || '房东';
+        }
+
+        function getOrientation(o) {
+            const orientations = {
+                'north': '北',
+                'south': '南',
+                'east': '东',
+                'west': '西',
+                'northeast': '东北',
+                'northwest': '西北',
+                'southeast': '东南',
+                'southwest': '西南'
+            };
+            return orientations[o] || o || '';
+        }
+
+        function getBuildingStructure(s) {
+            const structures = {
+                'wood': '木造',
+                'steel': '钢结构',
+                'rc': 'RC（钢筋混凝土）',
+                'src': 'SRC（钢骨钢筋混凝土）',
+                'light_steel': '轻钢结构',
+                'block': '砖块结构',
+                'other': '其他'
+            };
+            return structures[s] || s || '';
+        }
+
+        function getRenovationStatus(s) {
+            const statuses = {
+                'new': '新建',
+                'renovated': '已装修',
+                'original': '原状',
+                'partial': '部分装修'
+            };
+            return statuses[s] || s || '';
+        }
+
+        function getParkingType(t) {
+            const types = {
+                'none': '无',
+                'included': '含停车位',
+                'optional': '可选（另付费）',
+                'nearby': '附近有停车场'
+            };
+            return types[t] || t || '';
+        }
+
+        function getPetPolicy(p) {
+            const policies = {
+                'allowed': '可养宠物',
+                'negotiable': '可协商',
+                'not_allowed': '不可养宠物',
+                'small_only': '仅限小型宠物'
+            };
+            return policies[p] || p || '';
+        }
+
+        function getWarehouseMaterial(m) {
+            const materials = {
+                'steel': '钢结构',
+                'concrete': '混凝土',
+                'prefab': '预制板',
+                'other': '其他'
+            };
+            return materials[m] || m || '';
+        }
+
+        function getTemperatureControl(t) {
+            const controls = {
+                'none': '无',
+                'air_conditioned': '空调',
+                'refrigerated': '冷藏',
+                'frozen': '冷冻',
+                'heated': '加热'
+            };
+            return controls[t] || t || '';
+        }
+
+        function getSecurityLevel(l) {
+            const levels = {
+                'basic': '基本',
+                'standard': '标准',
+                'high': '高级',
+                'premium': '顶级'
+            };
+            return levels[l] || l || '';
+        }
+
+        function getLandType(t) {
+            const types = {
+                'residential': '住宅用地',
+                'commercial': '商业用地',
+                'industrial': '工业用地',
+                'agricultural': '农业用地',
+                'mixed': '混合用地'
+            };
+            return types[t] || t || '';
+        }
+
+        function getLandZoning(z) {
+            const zonings = {
+                'category_1_low_residential': '第一种低层住居专用地域',
+                'category_2_low_residential': '第二种低层住居专用地域',
+                'category_1_mid_high_residential': '第一种中高层住居专用地域',
+                'category_2_mid_high_residential': '第二种中高层住居专用地域',
+                'category_1_residential': '第一种住居地域',
+                'category_2_residential': '第二种住居地域',
+                'quasi_residential': '准住居地域',
+                'neighborhood_commercial': '近邻商业地域',
+                'commercial': '商业地域',
+                'quasi_industrial': '准工业地域',
+                'industrial': '工业地域',
+                'exclusive_industrial': '工业专用地域'
+            };
+            return zonings[z] || z || '';
+        }
+
+        function getLandRoadAccess(r) {
+            const accesses = {
+                'public_road': '公道',
+                'private_road': '私道',
+                'no_road': '无接道',
+                'two_sides': '两面接道',
+                'corner': '角地'
+            };
+            return accesses[r] || r || '';
+        }
+
+        function getLandTerrain(t) {
+            const terrains = {
+                'flat': '平坦',
+                'slope': '倾斜',
+                'irregular': '不规则',
+                'filled': '填土地'
+            };
+            return terrains[t] || t || '';
+        }
+
+        function getOfficeType(t) {
+            const types = {
+                'private_office': '独立办公室',
+                'shared_office': '共享办公',
+                'coworking': 'Co-working空间',
+                'virtual': '虚拟办公室',
+                'serviced': '服务式办公室'
+            };
+            return types[t] || t || '';
+        }
+
+        function getPaymentMethod(m) {
+            const methods = {
+                'bank_transfer': '银行转账',
+                'credit_card': '信用卡',
+                'cash': '现金',
+                'alipay': '支付宝',
+                'wechat_pay': '微信支付',
+                'paypay': 'PayPay',
+                'convenience_store': '便利店支付'
+            };
+            return methods[m] || m || '';
+        }
+
+        function getPriceUnitShort(priceType) {
+            const units = {
+                'monthly': '/月',
+                'daily': '/天',
+                'yearly': '/年',
+                'total': '',
+                'sqm': '/㎡'
+            };
+            return units[priceType] || '';
+        }
+
+        function getPriceLabelByType(priceType) {
+            const labels = {
+                'monthly': '月租金',
+                'daily': '日租金',
+                'yearly': '年租金',
+                'total': '总价',
+                'sqm': '单价'
+            };
+            return labels[priceType] || '价格';
         }
 
         function getFacilityIcon(facility) {
             const icons = {
                 '空调': 'fas fa-snowflake',
+                '冷气': 'fas fa-snowflake',
                 '洗衣机': 'fas fa-tshirt',
                 '冰箱': 'fas fa-box',
                 'WiFi': 'fas fa-wifi',
@@ -437,10 +1006,21 @@
                 '卫生间': 'fas fa-toilet',
                 '浴室': 'fas fa-bath',
                 '阳台': 'fas fa-sun',
-                '停车位': 'fas fa-parking',
+                '停车': 'fas fa-parking',
                 '电梯': 'fas fa-elevator',
                 '宠物': 'fas fa-paw',
-                '家具': 'fas fa-couch'
+                '家具': 'fas fa-couch',
+                '床': 'fas fa-bed',
+                '暖气': 'fas fa-fire',
+                '地暖': 'fas fa-fire',
+                '燃气': 'fas fa-fire-flame-simple',
+                '监控': 'fas fa-video',
+                '门禁': 'fas fa-door-closed',
+                '保安': 'fas fa-shield-alt',
+                '健身': 'fas fa-dumbbell',
+                '游泳': 'fas fa-swimmer',
+                '储藏': 'fas fa-archive',
+                '晾衣': 'fas fa-shirt'
             };
             for (const [key, icon] of Object.entries(icons)) {
                 if (facility.includes(key)) return icon;

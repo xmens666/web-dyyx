@@ -20,6 +20,13 @@
         .card-hover { transition: all 0.3s ease; }
         .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
         .gradient-header { background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #A855F7 100%); }
+        .type-rent { background: #6366F1; }
+        .type-sharehouse { background: #10B981; }
+        .type-homestay { background: #F59E0B; }
+        .type-sale { background: #EF4444; }
+        .type-office { background: #3B82F6; }
+        .type-warehouse { background: #6B7280; }
+        .type-land { background: #8B5CF6; }
     </style>
 </head>
 
@@ -173,33 +180,89 @@
                     ? item.images[0]
                     : DEFAULT_PRODUCT_IMAGE;
 
-                const price = item.price || item.rent;
+                const price = item.price;
+                const priceType = item.price_type || 'monthly';
+                const priceUnit = getPriceUnit(priceType);
+
+                // 房源类型样式
+                const typeClass = getTypeClass(item.accommodation_type);
+
+                // 状态标签
+                const statusHtml = item.status === 'active'
+                    ? '<span class="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">可租</span>'
+                    : '<span class="absolute top-2 right-2 bg-gray-500 text-white text-xs px-2 py-1 rounded-full">已租</span>';
+
+                // 建筑类型（租房类型的细分）
+                const buildingTypeHtml = item.building_type && item.accommodation_type === 'rent'
+                    ? `<span class="absolute top-10 left-2 bg-white/90 text-indigo-600 text-xs px-2 py-1 rounded-full">${getBuildingType(item.building_type)}</span>`
+                    : '';
+
+                // 房屋参数
+                const roomParams = [];
+                if (item.madori) roomParams.push(item.madori);
+                else if (item.bedrooms) roomParams.push(`${item.bedrooms}室`);
+
+                if (item.floor_area) roomParams.push(`${item.floor_area}㎡`);
+
+                // 楼层信息
+                if (item.floor_number && item.total_floors) {
+                    roomParams.push(`${item.floor_number}/${item.total_floors}F`);
+                } else if (item.floor_number) {
+                    roomParams.push(`${item.floor_number}F`);
+                }
+
+                // 位置信息（优先级：location_detail > location_city > location_prefecture）
+                const location = item.location_detail || item.location_city || item.location_prefecture || '未知';
+
+                // 特色标签
+                const tags = [];
+                if (item.is_negotiable) tags.push('<span class="text-orange-500">可议价</span>');
+                if (item.is_verified) tags.push('<span class="text-green-500">已认证</span>');
+                if (item.pet_policy === 'allowed') tags.push('<span class="text-purple-500">可养宠</span>');
+                if (item.parking_type && item.parking_type !== 'none') tags.push('<span class="text-blue-500">有停车</span>');
+
+                // 原价和折扣
+                let discountHtml = '';
+                if (item.original_price && item.original_price > price) {
+                    const discount = Math.round((1 - price / item.original_price) * 100);
+                    discountHtml = `
+                        <span class="text-xs text-gray-400 line-through ml-1">${formatPrice(item.original_price)}</span>
+                        <span class="text-xs bg-red-100 text-red-500 px-1.5 py-0.5 rounded ml-1">${discount}%OFF</span>
+                    `;
+                }
 
                 card.innerHTML = `
                     <div class="aspect-video bg-gray-100 relative">
                         <img src="${image}" alt="${item.title}"
                              class="w-full h-full object-cover"
                              onerror="this.src='${DEFAULT_PRODUCT_IMAGE}'">
-                        <span class="absolute top-2 left-2 bg-indigo-500 text-white text-xs px-2 py-1 rounded-full">
+                        <span class="absolute top-2 left-2 ${typeClass} text-white text-xs px-2 py-1 rounded-full">
                             ${getAccommodationType(item.accommodation_type)}
                         </span>
-                        ${item.status === 'active'
-                            ? '<span class="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">可租</span>'
-                            : '<span class="absolute top-2 right-2 bg-gray-500 text-white text-xs px-2 py-1 rounded-full">已租</span>'
-                        }
+                        ${buildingTypeHtml}
+                        ${statusHtml}
                     </div>
                     <div class="p-4">
                         <h3 class="font-bold text-gray-800 mb-2 line-clamp-2">${item.title}</h3>
                         <p class="text-gray-500 text-sm line-clamp-1 mb-2">
-                            <i class="fas fa-map-marker-alt mr-1"></i>${item.address || '详询地址'}
+                            <i class="fas fa-map-marker-alt mr-1"></i>${location}
                         </p>
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-red-500 font-bold">${formatPrice(price)}<span class="text-xs text-gray-400">/月</span></span>
+                        <div class="flex items-center flex-wrap mb-2">
+                            <span class="text-red-500 font-bold">${formatPrice(price)}</span>
+                            <span class="text-xs text-gray-400">${priceUnit}</span>
+                            ${discountHtml}
                         </div>
-                        <div class="flex items-center gap-2 text-xs text-gray-400">
-                            ${item.layout || item.room_layout ? `<span>${item.layout || item.room_layout}</span>` : ''}
-                            ${item.area ? `<span>${item.area}㎡</span>` : ''}
-                            ${item.nearest_station ? `<span>${item.nearest_station}</span>` : ''}
+                        <div class="flex items-center gap-2 text-xs text-gray-400 mb-2">
+                            ${roomParams.map(p => `<span class="bg-gray-100 px-1.5 py-0.5 rounded">${p}</span>`).join('')}
+                        </div>
+                        <div class="flex items-center justify-between text-xs">
+                            <div class="flex items-center gap-2">
+                                <span class="text-gray-400"><i class="fas fa-eye mr-1"></i>${item.view_count || 0}</span>
+                                <span class="text-gray-400"><i class="fas fa-heart mr-1"></i>${item.favorite_count || 0}</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                ${tags.slice(0, 2).join('')}
+                            </div>
                         </div>
                     </div>
                 `;
@@ -214,16 +277,52 @@
 
         function getAccommodationType(type) {
             const types = {
-                'rent': '整租',
+                'rent': '租房',
                 'sharehouse': '合租',
                 'homestay': '民宿',
                 'sale': '买卖',
                 'office': '办公室',
                 'warehouse': '仓库',
-                'land_rent': '土地',
-                'land_sale': '土地'
+                'land_rent': '土地租',
+                'land_sale': '土地售'
             };
             return types[type] || type || '房源';
+        }
+
+        function getTypeClass(type) {
+            const classes = {
+                'rent': 'type-rent',
+                'sharehouse': 'type-sharehouse',
+                'homestay': 'type-homestay',
+                'sale': 'type-sale',
+                'office': 'type-office',
+                'warehouse': 'type-warehouse',
+                'land_rent': 'type-land',
+                'land_sale': 'type-land'
+            };
+            return classes[type] || 'bg-indigo-500';
+        }
+
+        function getBuildingType(type) {
+            const types = {
+                'apartment': 'アパート',
+                'mansion': 'マンション',
+                'house': '一户建',
+                'terrace': 'テラスハウス',
+                'other': '其他'
+            };
+            return types[type] || type || '';
+        }
+
+        function getPriceUnit(priceType) {
+            const units = {
+                'monthly': '/月',
+                'daily': '/天',
+                'yearly': '/年',
+                'total': '（总价）',
+                'sqm': '/㎡'
+            };
+            return units[priceType] || '/月';
         }
     </script>
 </body>

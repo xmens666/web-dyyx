@@ -124,8 +124,14 @@ async function getUserRestaurantCount(userId) {
 
 // 获取房源详情
 async function getAccommodationById(accommodationId) {
-    const data = await supabaseQuery('accommodations', `?id=eq.${accommodationId}&select=*,users!accommodations_user_id_fkey(id,nickname,avatar_url)`);
+    const data = await supabaseQuery('accommodations', `?id=eq.${accommodationId}&select=*,users:provider_id(id,nickname,avatar_url)`);
     return data[0] || null;
+}
+
+// 获取用户发布的房源数量
+async function getUserAccommodationCount(userId) {
+    const data = await supabaseQuery('accommodations', `?provider_id=eq.${userId}&status=eq.active&select=id`);
+    return data?.length || 0;
 }
 
 // ==================== 江湖问答 ====================
@@ -191,7 +197,7 @@ async function getRestaurantList(page = 1, limit = 20) {
 // 获取房源列表
 async function getAccommodationList(page = 1, limit = 20) {
     const offset = (page - 1) * limit;
-    return await supabaseQuery('accommodations', `?status=eq.active&select=*,users!accommodations_user_id_fkey(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
+    return await supabaseQuery('accommodations', `?status=eq.active&select=*,users:provider_id(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
 }
 
 // 获取问答列表
