@@ -220,10 +220,10 @@ async function getRestaurantList(page = 1, limit = 20) {
     return await supabaseQuery('restaurants', `?status=eq.active&select=*,users:owner_id(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
 }
 
-// 获取房源列表
+// 获取房源列表（只显示已支付广告费的房源）
 async function getAccommodationList(page = 1, limit = 20) {
     const offset = (page - 1) * limit;
-    return await supabaseQuery('accommodations', `?status=eq.active&select=*,users:provider_id(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
+    return await supabaseQuery('accommodations', `?status=eq.active&publish_payment_status=eq.paid&select=*,users:provider_id(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
 }
 
 // 获取问答列表

@@ -263,7 +263,7 @@
                                 </div>
                                 <h3 class="font-bold text-lg mb-2">联系房东看房</h3>
                                 <p class="text-white/80 text-sm mb-4">下载APP与房东直接沟通，预约看房</p>
-                                <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
+                                <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.5.0.apk/app-release.apk" download
                                    class="block bg-white text-indigo-600 py-3 rounded-xl font-bold hover:bg-indigo-50 transition">
                                     <i class="fab fa-android mr-2"></i> 下载APP联系
                                 </a>
@@ -327,7 +327,7 @@
                 <p class="text-gray-500 text-xs" id="bottomPriceLabel">月租金</p>
                 <p class="text-red-500 font-bold text-xl" id="bottomPrice"></p>
             </div>
-            <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
+            <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.5.0.apk/app-release.apk" download
                class="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-center py-3 rounded-xl font-bold hover:opacity-90 transition">
                 <i class="fab fa-android mr-2"></i> 下载APP看房
             </a>
@@ -456,7 +456,8 @@
                 'daily': '/天',
                 'yearly': '/年',
                 'total': '（总价）',
-                'sqm': '/㎡'
+                'sqm': '/㎡',
+                'sale': '万円'
             };
             const priceUnit = priceUnits[priceType] || '/月';
             document.getElementById('priceUnit').textContent = priceUnit;
@@ -718,34 +719,9 @@
             }
         }
 
-        // 联系方式
+        // 联系方式（网页端不显示，引导下载APP）
         function renderContactInfo(a) {
-            const contacts = [];
-
-            if (a.contact_phone && !a.contact_phone_hidden) {
-                contacts.push(`<p><i class="fas fa-phone text-green-500 mr-2"></i>${a.contact_phone}</p>`);
-            }
-            if (a.contact_wechat && !a.contact_wechat_hidden) {
-                contacts.push(`<p><i class="fab fa-weixin text-green-500 mr-2"></i>微信: ${a.contact_wechat}</p>`);
-            }
-            if (a.contact_line && !a.contact_line_hidden) {
-                contacts.push(`<p><i class="fab fa-line text-green-500 mr-2"></i>LINE: ${a.contact_line}</p>`);
-            }
-            if (a.contact_email && !a.contact_email_hidden) {
-                contacts.push(`<p><i class="fas fa-envelope text-blue-500 mr-2"></i>${a.contact_email}</p>`);
-            }
-            if (a.contact_whatsapp && !a.contact_whatsapp_hidden) {
-                contacts.push(`<p><i class="fab fa-whatsapp text-green-500 mr-2"></i>WhatsApp: ${a.contact_whatsapp}</p>`);
-            }
-            if (a.contact_telegram && !a.contact_telegram_hidden) {
-                contacts.push(`<p><i class="fab fa-telegram text-blue-500 mr-2"></i>Telegram: ${a.contact_telegram}</p>`);
-            }
-
-            if (contacts.length > 0) {
-                document.getElementById('contactInfo').innerHTML = contacts.join('');
-            } else {
-                document.getElementById('contactInfo').innerHTML = '<p class="text-gray-400">下载APP查看联系方式</p>';
-            }
+            document.getElementById('contactInfo').innerHTML = '<p class="text-gray-400"><i class="fas fa-lock mr-1"></i>下载APP查看联系方式</p>';
         }
 
         // 位置信息
@@ -988,7 +964,8 @@
                 'daily': '日租金',
                 'yearly': '年租金',
                 'total': '总价',
-                'sqm': '单价'
+                'sqm': '单价',
+                'sale': '售价'
             };
             return labels[priceType] || '价格';
         }
