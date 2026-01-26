@@ -23,6 +23,9 @@
         .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .entry-card { transition: all 0.3s ease; }
+        .entry-card:hover { transform: scale(1.02); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        .category-icon { width: 48px; height: 48px; }
     </style>
 </head>
 
@@ -47,105 +50,242 @@
                     <i class="fas fa-store text-3xl"></i>
                 </div>
                 <h1 class="text-2xl sm:text-3xl font-bold mb-2">神州宝库</h1>
-                <p class="text-white/80">精选优质店铺，品质好货一站购</p>
-            </div>
-
-            <!-- 搜索切换标签 -->
-            <div class="flex justify-center gap-2 mt-6 mb-4">
-                <button id="tabStore" onclick="switchSearchTab('store')" class="px-4 py-2 rounded-full text-sm font-medium bg-white text-indigo-600 transition">
-                    <i class="fas fa-store mr-1"></i>找店铺
-                </button>
-                <button id="tabProduct" onclick="switchSearchTab('product')" class="px-4 py-2 rounded-full text-sm font-medium bg-white/20 text-white hover:bg-white/30 transition">
-                    <i class="fas fa-box mr-1"></i>找商品
-                </button>
-            </div>
-
-            <!-- 搜索框 -->
-            <div class="max-w-xl mx-auto">
-                <div class="relative">
-                    <input type="text" id="searchInput" placeholder="搜索店铺名称..."
-                           class="w-full px-5 py-3 pl-12 rounded-full border-0 focus:ring-2 focus:ring-white/50 text-gray-800"
-                           onkeypress="if(event.key==='Enter') doSearch()">
-                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    <button onclick="doSearch()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-indigo-500 text-white px-4 py-1.5 rounded-full text-sm hover:bg-indigo-600 transition">
-                        搜索
-                    </button>
-                </div>
+                <p class="text-white/80">汇聚神州精品，尽享华人物产</p>
             </div>
         </div>
     </header>
 
-    <!-- 分类导航 -->
-    <div class="bg-white shadow-sm sticky top-14 z-40">
-        <div class="container mx-auto px-4">
-            <div id="categoryNav" class="flex overflow-x-auto py-3 gap-2 scrollbar-hide">
-                <button onclick="filterByCategory('all')" class="category-btn active flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-indigo-500 text-white transition" data-category="all">
-                    全部
-                </button>
-                <button onclick="filterByCategory('food')" class="category-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 transition" data-category="food">
-                    <i class="fas fa-utensils mr-1"></i>食品
-                </button>
-                <button onclick="filterByCategory('grocery')" class="category-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 transition" data-category="grocery">
-                    <i class="fas fa-shopping-basket mr-1"></i>超市
-                </button>
-                <button onclick="filterByCategory('restaurant')" class="category-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 transition" data-category="restaurant">
-                    <i class="fas fa-hamburger mr-1"></i>餐饮
-                </button>
-                <button onclick="filterByCategory('fashion')" class="category-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 transition" data-category="fashion">
-                    <i class="fas fa-tshirt mr-1"></i>服饰
-                </button>
-                <button onclick="filterByCategory('beauty')" class="category-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 transition" data-category="beauty">
-                    <i class="fas fa-spa mr-1"></i>美容
-                </button>
-                <button onclick="filterByCategory('electronics')" class="category-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 transition" data-category="electronics">
-                    <i class="fas fa-mobile-alt mr-1"></i>数码
-                </button>
-                <button onclick="filterByCategory('home')" class="category-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 transition" data-category="home">
-                    <i class="fas fa-home mr-1"></i>家居
-                </button>
-                <button onclick="filterByCategory('other')" class="category-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 transition" data-category="other">
-                    <i class="fas fa-ellipsis-h mr-1"></i>其他
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- 主内容 -->
     <main class="container mx-auto px-4 py-6 sm:py-8">
-        <!-- 加载状态 -->
-        <div id="loading" class="flex flex-col items-center justify-center py-20">
-            <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full loading-spinner"></div>
-            <p class="mt-4 text-gray-500">正在加载店铺...</p>
+        <!-- 入口卡片区域 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 -mt-12 relative z-10">
+            <!-- 寻找店铺 -->
+            <a href="#storeSection" onclick="switchToStores()" class="entry-card bg-white rounded-2xl p-5 shadow-lg border border-gray-100 flex items-center gap-4">
+                <div class="w-14 h-14 bg-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <span class="text-3xl">🏪</span>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-gray-800 text-lg">寻找店铺</h3>
+                    <p class="text-gray-500 text-sm">浏览物产商家，发现品质好店</p>
+                </div>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+            </a>
+
+            <!-- 寻找商品 -->
+            <a href="#productSection" onclick="switchToProducts()" class="entry-card bg-white rounded-2xl p-5 shadow-lg border border-gray-100 flex items-center gap-4">
+                <div class="w-14 h-14 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <span class="text-3xl">🛒</span>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-gray-800 text-lg">寻找商品</h3>
+                    <p class="text-gray-500 text-sm">按分类浏览商品，精准找货源</p>
+                </div>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+            </a>
         </div>
 
-        <!-- 空状态 -->
-        <div id="empty" class="hidden text-center py-20">
-            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-store-slash text-gray-400 text-3xl"></i>
+        <!-- 统计数据 -->
+        <div class="bg-white rounded-xl p-4 mb-8 shadow-sm border border-gray-100">
+            <div class="flex items-center justify-center gap-6 sm:gap-12 text-center">
+                <div>
+                    <div class="flex items-center justify-center gap-1 text-gray-600">
+                        <i class="fas fa-store text-indigo-500"></i>
+                        <span id="storeCountStat" class="font-bold text-xl">0</span>
+                    </div>
+                    <p class="text-xs text-gray-400">入驻商家</p>
+                </div>
+                <div class="w-px h-8 bg-gray-200"></div>
+                <div>
+                    <div class="flex items-center justify-center gap-1 text-gray-600">
+                        <i class="fas fa-box text-amber-500"></i>
+                        <span id="productCountStat" class="font-bold text-xl">0</span>
+                    </div>
+                    <p class="text-xs text-gray-400">在售商品</p>
+                </div>
+                <div class="w-px h-8 bg-gray-200"></div>
+                <div>
+                    <div class="flex items-center justify-center gap-1 text-gray-600">
+                        <i class="fas fa-shopping-cart text-green-500"></i>
+                        <span id="salesCountStat" class="font-bold text-xl">0</span>
+                    </div>
+                    <p class="text-xs text-gray-400">本月销量</p>
+                </div>
             </div>
-            <h3 class="text-lg font-bold text-gray-700 mb-2">暂无店铺</h3>
-            <p class="text-gray-500 mb-6">店铺正在入驻中，敬请期待</p>
-            <a href="index.html" class="text-indigo-500 hover:text-indigo-600">返回首页</a>
         </div>
 
-        <!-- 店铺列表 -->
-        <div id="storeList" class="hidden">
-            <div class="flex items-center justify-between mb-6">
-                <h2 id="listTitle" class="text-lg font-bold text-gray-800">
-                    <i class="fas fa-fire text-orange-500 mr-2"></i>热门店铺
-                </h2>
-                <span id="storeCount" class="text-sm text-gray-500"></span>
-            </div>
-
-            <div id="storeGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-                <!-- 店铺卡片将动态插入 -->
-            </div>
-
-            <!-- 加载更多 -->
-            <div id="loadMore" class="text-center mt-8 hidden">
-                <button onclick="loadMoreStores()" class="bg-white border border-gray-200 text-gray-600 px-8 py-3 rounded-full hover:bg-gray-50 transition">
-                    <i class="fas fa-plus mr-2"></i>加载更多
+        <!-- 搜索框 -->
+        <div class="mb-6">
+            <div class="relative">
+                <input type="text" id="searchInput" placeholder="搜索店铺或商品..."
+                       class="w-full px-5 py-3 pl-12 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-800"
+                       onkeypress="if(event.key==='Enter') doSearch()">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <button onclick="doSearch()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-indigo-500 text-white px-4 py-1.5 rounded-lg text-sm hover:bg-indigo-600 transition">
+                    搜索
                 </button>
+            </div>
+        </div>
+
+        <!-- 分类标签切换 -->
+        <div class="flex gap-2 mb-6">
+            <button id="tabStores" onclick="switchToStores()" class="flex-1 py-3 rounded-xl font-medium text-white bg-indigo-500 transition">
+                <i class="fas fa-store mr-2"></i>店铺列表
+            </button>
+            <button id="tabProducts" onclick="switchToProducts()" class="flex-1 py-3 rounded-xl font-medium text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 transition">
+                <i class="fas fa-box mr-2"></i>商品分类
+            </button>
+        </div>
+
+        <!-- ==================== 店铺列表区域 ==================== -->
+        <div id="storeSection">
+            <!-- 店铺分类导航 -->
+            <div class="bg-white rounded-xl p-4 mb-6 shadow-sm">
+                <h3 class="font-bold text-gray-800 mb-3 flex items-center">
+                    <i class="fas fa-tags text-indigo-500 mr-2"></i>店铺分类
+                </h3>
+                <div class="flex overflow-x-auto gap-2 pb-2 scrollbar-hide">
+                    <button onclick="filterStoresByCategory('all')" class="store-cat-btn active flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-indigo-500 text-white transition" data-category="all">
+                        全部
+                    </button>
+                    <button onclick="filterStoresByCategory('food')" class="store-cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 transition" data-category="food">
+                        🥬 食品生鲜
+                    </button>
+                    <button onclick="filterStoresByCategory('fashion')" class="store-cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 transition" data-category="fashion">
+                        👗 服装配饰
+                    </button>
+                    <button onclick="filterStoresByCategory('beauty')" class="store-cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 transition" data-category="beauty">
+                        💄 美妆护肤
+                    </button>
+                    <button onclick="filterStoresByCategory('home')" class="store-cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 transition" data-category="home">
+                        🏠 家居日用
+                    </button>
+                    <button onclick="filterStoresByCategory('baby')" class="store-cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 transition" data-category="baby">
+                        👶 母婴用品
+                    </button>
+                    <button onclick="filterStoresByCategory('electronics')" class="store-cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 transition" data-category="electronics">
+                        📱 数码电器
+                    </button>
+                    <button onclick="filterStoresByCategory('other')" class="store-cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 transition" data-category="other">
+                        📦 其他商品
+                    </button>
+                </div>
+            </div>
+
+            <!-- 加载状态 -->
+            <div id="storeLoading" class="flex flex-col items-center justify-center py-20">
+                <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full loading-spinner"></div>
+                <p class="mt-4 text-gray-500">正在加载店铺...</p>
+            </div>
+
+            <!-- 空状态 -->
+            <div id="storeEmpty" class="hidden text-center py-20">
+                <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-store-slash text-gray-400 text-3xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-700 mb-2">暂无店铺</h3>
+                <p class="text-gray-500 mb-6">店铺正在入驻中，敬请期待</p>
+            </div>
+
+            <!-- 店铺列表 -->
+            <div id="storeList" class="hidden">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-bold text-gray-800">
+                        <i class="fas fa-fire text-orange-500 mr-2"></i>热门店铺
+                    </h2>
+                    <span id="storeCount" class="text-sm text-gray-500"></span>
+                </div>
+
+                <div id="storeGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                    <!-- 店铺卡片将动态插入 -->
+                </div>
+
+                <!-- 加载更多 -->
+                <div id="storeLoadMore" class="text-center mt-8 hidden">
+                    <button onclick="loadMoreStores()" class="bg-white border border-gray-200 text-gray-600 px-8 py-3 rounded-full hover:bg-gray-50 transition">
+                        <i class="fas fa-plus mr-2"></i>加载更多
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 商品分类区域 ==================== -->
+        <div id="productSection" class="hidden">
+            <!-- 全部分类 -->
+            <div class="bg-white rounded-xl p-6 mb-6 shadow-sm">
+                <h3 class="font-bold text-gray-800 mb-4">全部分类</h3>
+                <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
+                    <a onclick="filterProductsByCategory('food')" class="cursor-pointer text-center p-3 rounded-xl hover:bg-gray-50 transition">
+                        <div class="text-3xl mb-2">🍚</div>
+                        <p class="text-sm font-medium text-gray-700">饮食·营养</p>
+                    </a>
+                    <a onclick="filterProductsByCategory('fashion')" class="cursor-pointer text-center p-3 rounded-xl hover:bg-gray-50 transition">
+                        <div class="text-3xl mb-2">👗</div>
+                        <p class="text-sm font-medium text-gray-700">服装·穿戴</p>
+                    </a>
+                    <a onclick="filterProductsByCategory('accessories')" class="cursor-pointer text-center p-3 rounded-xl hover:bg-gray-50 transition">
+                        <div class="text-3xl mb-2">💍</div>
+                        <p class="text-sm font-medium text-gray-700">饰品·配件</p>
+                    </a>
+                    <a onclick="filterProductsByCategory('home')" class="cursor-pointer text-center p-3 rounded-xl hover:bg-gray-50 transition">
+                        <div class="text-3xl mb-2">🏠</div>
+                        <p class="text-sm font-medium text-gray-700">居住·空间</p>
+                    </a>
+                    <a onclick="filterProductsByCategory('car')" class="cursor-pointer text-center p-3 rounded-xl hover:bg-gray-50 transition">
+                        <div class="text-3xl mb-2">🚗</div>
+                        <p class="text-sm font-medium text-gray-700">出行·交通</p>
+                    </a>
+                    <a onclick="filterProductsByCategory('pet')" class="cursor-pointer text-center p-3 rounded-xl hover:bg-gray-50 transition">
+                        <div class="text-3xl mb-2">🐶</div>
+                        <p class="text-sm font-medium text-gray-700">宠物星球</p>
+                    </a>
+                    <a onclick="filterProductsByCategory('plant')" class="cursor-pointer text-center p-3 rounded-xl hover:bg-gray-50 transition">
+                        <div class="text-3xl mb-2">🌱</div>
+                        <p class="text-sm font-medium text-gray-700">植物花园</p>
+                    </a>
+                    <a onclick="filterProductsByCategory('daily')" class="cursor-pointer text-center p-3 rounded-xl hover:bg-gray-50 transition">
+                        <div class="text-3xl mb-2">⭐</div>
+                        <p class="text-sm font-medium text-gray-700">生活日常</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 商品列表区域 -->
+            <div id="productListArea">
+                <!-- 加载状态 -->
+                <div id="productLoading" class="flex flex-col items-center justify-center py-20">
+                    <div class="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full loading-spinner"></div>
+                    <p class="mt-4 text-gray-500">正在加载商品...</p>
+                </div>
+
+                <!-- 空状态 -->
+                <div id="productEmpty" class="hidden text-center py-20">
+                    <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-box-open text-gray-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-700 mb-2">暂无商品</h3>
+                    <p class="text-gray-500 mb-6">商品正在上架中，敬请期待</p>
+                </div>
+
+                <!-- 商品列表 -->
+                <div id="productList" class="hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 id="productTitle" class="text-lg font-bold text-gray-800">
+                            <i class="fas fa-box text-amber-500 mr-2"></i>全部商品
+                        </h2>
+                        <span id="productCount" class="text-sm text-gray-500"></span>
+                    </div>
+
+                    <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
+                        <!-- 商品卡片将动态插入 -->
+                    </div>
+
+                    <!-- 加载更多 -->
+                    <div id="productLoadMore" class="text-center mt-8 hidden">
+                        <button onclick="loadMoreProducts()" class="bg-white border border-gray-200 text-gray-600 px-8 py-3 rounded-full hover:bg-gray-50 transition">
+                            <i class="fas fa-plus mr-2"></i>加载更多
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -198,23 +338,6 @@
         </div>
     </div>
 
-    <!-- 头像点击提示弹窗 -->
-    <div id="avatarModal" class="fixed inset-0 bg-black/50 z-[100] hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 transform scale-95 opacity-0 transition-all duration-300" id="avatarModalContent">
-            <div class="text-center">
-                <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-mobile-alt text-indigo-600 text-3xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-3">下载APP体验更多</h3>
-                <p class="text-gray-600 mb-6">用户详情查看/聊天请下载APP，玩转更多功能。</p>
-                <div class="flex flex-col gap-3">
-                    <button onclick="closeAvatarModal();showAndroidModal();" class="bg-indigo-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-600 transition">立即下载APP</button>
-                    <button onclick="closeAvatarModal()" class="border border-gray-300 text-gray-600 px-8 py-3 rounded-xl hover:bg-gray-100 transition">稍后再说</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- 页脚 -->
     <footer class="bg-gray-900 text-white py-8">
         <div class="container mx-auto px-4 text-center">
@@ -225,196 +348,154 @@
 
     <script src="api-config.js"></script>
     <script>
-        let currentPage = 1;
-        let isLoading = false;
-        let hasMore = true;
-        const STORES_PER_PAGE = 20;
+        // ==================== 状态变量 ====================
+        let storeCurrentPage = 1;
+        let storeIsLoading = false;
+        let storeHasMore = true;
+        let storeCurrentCategory = 'all';
+        let storeCurrentKeyword = '';
 
-        // 搜索模式：store 或 product
-        let searchMode = 'store';
-        let currentCategory = 'all';
-        let currentKeyword = '';
+        let productCurrentPage = 1;
+        let productIsLoading = false;
+        let productHasMore = true;
+        let productCurrentCategory = '';
+
+        const ITEMS_PER_PAGE = 20;
+        let currentTab = 'stores'; // stores or products
 
         document.addEventListener('DOMContentLoaded', () => {
             loadStores();
+            loadStats();
         });
 
-        // 切换搜索标签
-        function switchSearchTab(mode) {
-            searchMode = mode;
-            const tabStore = document.getElementById('tabStore');
-            const tabProduct = document.getElementById('tabProduct');
-            const searchInput = document.getElementById('searchInput');
+        // ==================== 加载统计数据 ====================
+        async function loadStats() {
+            try {
+                // 获取店铺数量
+                const stores = await supabaseQuery('stores', '?status=eq.active&select=id');
+                document.getElementById('storeCountStat').textContent = stores.length;
 
-            if (mode === 'store') {
-                tabStore.className = 'px-4 py-2 rounded-full text-sm font-medium bg-white text-indigo-600 transition';
-                tabProduct.className = 'px-4 py-2 rounded-full text-sm font-medium bg-white/20 text-white hover:bg-white/30 transition';
-                searchInput.placeholder = '搜索店铺名称...';
-            } else {
-                tabStore.className = 'px-4 py-2 rounded-full text-sm font-medium bg-white/20 text-white hover:bg-white/30 transition';
-                tabProduct.className = 'px-4 py-2 rounded-full text-sm font-medium bg-white text-indigo-600 transition';
-                searchInput.placeholder = '搜索商品名称...';
+                // 获取商品数量
+                const products = await supabaseQuery('store_products', '?status=eq.active&select=id');
+                document.getElementById('productCountStat').textContent = products.length;
+
+                // 获取本月销量（假设从月销字段汇总）
+                const storesWithSales = await supabaseQuery('stores', '?status=eq.active&select=monthly_orders');
+                const totalSales = storesWithSales.reduce((sum, s) => sum + (s.monthly_orders || 0), 0);
+                document.getElementById('salesCountStat').textContent = totalSales.toLocaleString();
+            } catch (err) {
+                console.error('加载统计失败:', err);
             }
         }
 
-        // 执行搜索
-        function doSearch() {
-            currentKeyword = document.getElementById('searchInput').value.trim();
-            resetAndLoad();
+        // ==================== 标签切换 ====================
+        function switchToStores() {
+            currentTab = 'stores';
+            document.getElementById('tabStores').className = 'flex-1 py-3 rounded-xl font-medium text-white bg-indigo-500 transition';
+            document.getElementById('tabProducts').className = 'flex-1 py-3 rounded-xl font-medium text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 transition';
+            document.getElementById('storeSection').classList.remove('hidden');
+            document.getElementById('productSection').classList.add('hidden');
         }
 
-        // 按分类筛选
-        function filterByCategory(category) {
-            currentCategory = category;
+        function switchToProducts() {
+            currentTab = 'products';
+            document.getElementById('tabStores').className = 'flex-1 py-3 rounded-xl font-medium text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 transition';
+            document.getElementById('tabProducts').className = 'flex-1 py-3 rounded-xl font-medium text-white bg-amber-500 transition';
+            document.getElementById('storeSection').classList.add('hidden');
+            document.getElementById('productSection').classList.remove('hidden');
 
-            // 更新按钮样式
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                if (btn.dataset.category === category) {
-                    btn.className = 'category-btn active flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-indigo-500 text-white transition';
-                } else {
-                    btn.className = 'category-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 transition';
-                }
-            });
-
-            resetAndLoad();
-        }
-
-        // 重置并加载
-        function resetAndLoad() {
-            currentPage = 1;
-            hasMore = true;
-            document.getElementById('storeGrid').innerHTML = '';
-            document.getElementById('loading').classList.remove('hidden');
-            document.getElementById('storeList').classList.add('hidden');
-            document.getElementById('empty').classList.add('hidden');
-
-            if (searchMode === 'store') {
-                loadStores();
-            } else {
+            // 首次切换时加载商品
+            if (document.getElementById('productGrid').children.length === 0) {
                 loadProducts();
             }
         }
 
+        // ==================== 搜索功能 ====================
+        function doSearch() {
+            const keyword = document.getElementById('searchInput').value.trim();
+            if (currentTab === 'stores') {
+                storeCurrentKeyword = keyword;
+                resetStoresAndLoad();
+            } else {
+                // 商品搜索
+                productCurrentCategory = '';
+                resetProductsAndLoad(keyword);
+            }
+        }
+
+        // ==================== 店铺相关 ====================
+        function filterStoresByCategory(category) {
+            storeCurrentCategory = category;
+
+            // 更新按钮样式
+            document.querySelectorAll('.store-cat-btn').forEach(btn => {
+                if (btn.dataset.category === category) {
+                    btn.className = 'store-cat-btn active flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-indigo-500 text-white transition';
+                } else {
+                    btn.className = 'store-cat-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 transition';
+                }
+            });
+
+            resetStoresAndLoad();
+        }
+
+        function resetStoresAndLoad() {
+            storeCurrentPage = 1;
+            storeHasMore = true;
+            document.getElementById('storeGrid').innerHTML = '';
+            document.getElementById('storeLoading').classList.remove('hidden');
+            document.getElementById('storeList').classList.add('hidden');
+            document.getElementById('storeEmpty').classList.add('hidden');
+            loadStores();
+        }
+
         async function loadStores() {
-            if (isLoading || !hasMore) return;
-            isLoading = true;
+            if (storeIsLoading || !storeHasMore) return;
+            storeIsLoading = true;
 
             try {
                 const options = {};
-                if (currentCategory !== 'all') options.category = currentCategory;
-                if (currentKeyword) options.keyword = currentKeyword;
+                if (storeCurrentCategory !== 'all') options.category = storeCurrentCategory;
+                if (storeCurrentKeyword) options.keyword = storeCurrentKeyword;
 
-                const stores = await getStoreList(currentPage, STORES_PER_PAGE, options);
+                const stores = await getStoreList(storeCurrentPage, ITEMS_PER_PAGE, options);
 
-                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('storeLoading').classList.add('hidden');
 
-                if (stores.length === 0 && currentPage === 1) {
-                    document.getElementById('empty').classList.remove('hidden');
-                    document.querySelector('#empty h3').textContent = currentKeyword ? '未找到相关店铺' : '暂无店铺';
-                    document.querySelector('#empty p').textContent = currentKeyword ? '换个关键词试试吧' : '店铺正在入驻中，敬请期待';
+                if (stores.length === 0 && storeCurrentPage === 1) {
+                    document.getElementById('storeEmpty').classList.remove('hidden');
                     return;
                 }
 
                 document.getElementById('storeList').classList.remove('hidden');
 
-                if (currentPage === 1) {
-                    const countText = currentKeyword ? `搜索"${currentKeyword}"` : '';
+                if (storeCurrentPage === 1) {
+                    const countText = storeCurrentKeyword ? `搜索"${storeCurrentKeyword}"` : '';
                     document.getElementById('storeCount').textContent = `${countText} 共 ${stores.length}+ 家店铺`;
                 }
 
                 renderStores(stores);
 
-                if (stores.length < STORES_PER_PAGE) {
-                    hasMore = false;
-                    document.getElementById('loadMore').classList.add('hidden');
+                if (stores.length < ITEMS_PER_PAGE) {
+                    storeHasMore = false;
+                    document.getElementById('storeLoadMore').classList.add('hidden');
                 } else {
-                    document.getElementById('loadMore').classList.remove('hidden');
+                    document.getElementById('storeLoadMore').classList.remove('hidden');
                 }
 
-                currentPage++;
+                storeCurrentPage++;
 
             } catch (err) {
                 console.error('加载店铺失败:', err);
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('empty').classList.remove('hidden');
+                document.getElementById('storeLoading').classList.add('hidden');
+                document.getElementById('storeEmpty').classList.remove('hidden');
             } finally {
-                isLoading = false;
+                storeIsLoading = false;
             }
         }
 
-        async function loadProducts() {
-            if (isLoading || !hasMore) return;
-            isLoading = true;
-
-            try {
-                const products = await searchStoreProducts(currentKeyword, currentPage, STORES_PER_PAGE);
-
-                document.getElementById('loading').classList.add('hidden');
-
-                if (products.length === 0 && currentPage === 1) {
-                    document.getElementById('empty').classList.remove('hidden');
-                    document.querySelector('#empty h3').textContent = currentKeyword ? '未找到相关商品' : '暂无商品';
-                    document.querySelector('#empty p').textContent = currentKeyword ? '换个关键词试试吧' : '商品正在上架中，敬请期待';
-                    return;
-                }
-
-                document.getElementById('storeList').classList.remove('hidden');
-
-                if (currentPage === 1) {
-                    document.getElementById('storeCount').textContent = `搜索"${currentKeyword || '全部'}" 共 ${products.length}+ 件商品`;
-                }
-
-                renderProducts(products);
-
-                if (products.length < STORES_PER_PAGE) {
-                    hasMore = false;
-                    document.getElementById('loadMore').classList.add('hidden');
-                } else {
-                    document.getElementById('loadMore').classList.remove('hidden');
-                }
-
-                currentPage++;
-
-            } catch (err) {
-                console.error('加载商品失败:', err);
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('empty').classList.remove('hidden');
-            } finally {
-                isLoading = false;
-            }
-        }
-
-        function renderProducts(products) {
-            const grid = document.getElementById('storeGrid');
-
-            products.forEach((product, index) => {
-                const card = document.createElement('div');
-                card.className = 'card-hover bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 fade-in';
-                card.style.animationDelay = `${index * 0.05}s`;
-
-                const image = product.images && product.images.length > 0 ? product.images[0] : DEFAULT_PRODUCT_IMAGE;
-                const storeName = product.stores?.name || '店铺';
-
-                card.innerHTML = `
-                    <div class="aspect-square bg-gray-100 relative">
-                        <img src="${image}" alt="${product.name}"
-                             class="w-full h-full object-cover"
-                             onerror="this.src='${DEFAULT_PRODUCT_IMAGE}'">
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-bold text-gray-800 text-sm mb-2 line-clamp-2">${product.name}</h3>
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-red-500 font-bold">${formatPrice(product.price)}</span>
-                            <span class="text-xs text-gray-400">/${product.unit || '件'}</span>
-                        </div>
-                        <div class="text-xs text-gray-500 flex items-center">
-                            <i class="fas fa-store mr-1"></i>${storeName}
-                        </div>
-                    </div>
-                `;
-
-                grid.appendChild(card);
-            });
+        function loadMoreStores() {
+            loadStores();
         }
 
         function renderStores(stores) {
@@ -426,26 +507,16 @@
                 card.className = 'card-hover bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 fade-in';
                 card.style.animationDelay = `${index * 0.05}s`;
 
-                // 封面图：优先使用 cover_image，其次 images 数组第一张，最后 logo
                 const coverImage = store.cover_image || (store.images && store.images.length > 0 ? store.images[0] : null) || store.logo_url || DEFAULT_STORE_LOGO;
                 const ownerName = store.users?.nickname || '店主';
                 const ownerAvatar = store.users?.avatar_url || DEFAULT_AVATAR;
-
-                // 评分和数据
                 const rating = store.rating ? parseFloat(store.rating).toFixed(1) : '5.0';
                 const monthlyOrders = store.monthly_orders || 0;
                 const reviewCount = store.review_count || 0;
-
-                // 营业状态
                 const isOpen = store.open_status === 'open';
                 const openStatusText = isOpen ? '营业中' : '休息中';
                 const openStatusClass = isOpen ? 'bg-green-500' : 'bg-gray-500';
-
-                // 认证标签
                 const verifiedBadge = store.verified ? '<span class="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full"><i class="fas fa-check-circle mr-1"></i>认证</span>' : '';
-                const businessLicenseBadge = store.business_license_verified ? '<span class="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full"><i class="fas fa-certificate mr-1"></i>营业执照</span>' : '';
-
-                // 地区显示
                 const location = store.prefecture || store.city || store.region || '';
 
                 card.innerHTML = `
@@ -453,7 +524,6 @@
                         <img src="${coverImage}" alt="${store.name}"
                              class="w-full h-full object-cover"
                              onerror="this.src='${DEFAULT_STORE_LOGO}'">
-                        <!-- 营业状态 -->
                         <span class="absolute top-2 right-2 ${openStatusClass} text-white px-2 py-1 rounded-full text-xs font-medium">
                             ${openStatusText}
                         </span>
@@ -468,18 +538,10 @@
                             </div>
                         </div>
                         <p class="text-gray-500 text-sm line-clamp-2 mb-3 min-h-[40px]">${store.description || '暂无简介'}</p>
-
-                        <!-- 认证标签 -->
-                        <div class="flex flex-wrap gap-1 mb-3 min-h-[24px]">
-                            ${businessLicenseBadge}
-                        </div>
-
-                        <!-- 数据统计 -->
                         <div class="flex items-center text-xs text-gray-400 mb-3 gap-3">
                             <span><i class="fas fa-shopping-cart mr-1"></i>月销 ${monthlyOrders}</span>
                             <span><i class="fas fa-comment mr-1"></i>评价 ${reviewCount}</span>
                         </div>
-
                         <div class="flex items-center justify-between border-t border-gray-100 pt-3">
                             <div class="flex items-center">
                                 <img src="${ownerAvatar}" alt="${ownerName}"
@@ -498,8 +560,135 @@
             });
         }
 
-        function loadMoreStores() {
-            loadStores();
+        // ==================== 商品相关 ====================
+        function filterProductsByCategory(category) {
+            productCurrentCategory = category;
+            document.getElementById('productTitle').innerHTML = `<i class="fas fa-box text-amber-500 mr-2"></i>${getCategoryName(category)}`;
+            resetProductsAndLoad();
+        }
+
+        function resetProductsAndLoad(keyword = '') {
+            productCurrentPage = 1;
+            productHasMore = true;
+            document.getElementById('productGrid').innerHTML = '';
+            document.getElementById('productLoading').classList.remove('hidden');
+            document.getElementById('productList').classList.add('hidden');
+            document.getElementById('productEmpty').classList.add('hidden');
+            loadProducts(keyword);
+        }
+
+        async function loadProducts(keyword = '') {
+            if (productIsLoading || !productHasMore) return;
+            productIsLoading = true;
+
+            try {
+                let products;
+                if (keyword) {
+                    products = await searchStoreProducts(keyword, productCurrentPage, ITEMS_PER_PAGE);
+                } else {
+                    products = await getProductList(productCurrentPage, ITEMS_PER_PAGE);
+                }
+
+                document.getElementById('productLoading').classList.add('hidden');
+
+                if (products.length === 0 && productCurrentPage === 1) {
+                    document.getElementById('productEmpty').classList.remove('hidden');
+                    return;
+                }
+
+                document.getElementById('productList').classList.remove('hidden');
+
+                if (productCurrentPage === 1) {
+                    document.getElementById('productCount').textContent = `共 ${products.length}+ 件商品`;
+                }
+
+                renderProducts(products);
+
+                if (products.length < ITEMS_PER_PAGE) {
+                    productHasMore = false;
+                    document.getElementById('productLoadMore').classList.add('hidden');
+                } else {
+                    document.getElementById('productLoadMore').classList.remove('hidden');
+                }
+
+                productCurrentPage++;
+
+            } catch (err) {
+                console.error('加载商品失败:', err);
+                document.getElementById('productLoading').classList.add('hidden');
+                document.getElementById('productEmpty').classList.remove('hidden');
+            } finally {
+                productIsLoading = false;
+            }
+        }
+
+        function loadMoreProducts() {
+            loadProducts();
+        }
+
+        function renderProducts(products) {
+            const grid = document.getElementById('productGrid');
+
+            products.forEach((product, index) => {
+                const card = document.createElement('div');
+                card.className = 'card-hover bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 fade-in';
+                card.style.animationDelay = `${index * 0.03}s`;
+
+                const image = product.images && product.images.length > 0 ? product.images[0] : DEFAULT_PRODUCT_IMAGE;
+                const storeName = product.stores?.name || '店铺';
+
+                // 标签
+                let badge = '';
+                if (product.is_limited) {
+                    badge = '<span class="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded">限时</span>';
+                } else if (product.is_featured) {
+                    badge = '<span class="absolute top-2 left-2 bg-amber-500 text-white text-xs px-2 py-0.5 rounded">热销</span>';
+                } else if (product.is_new) {
+                    badge = '<span class="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-0.5 rounded">新品</span>';
+                }
+
+                // 原价
+                let originalPriceHtml = '';
+                if (product.original_price && product.original_price > product.price) {
+                    originalPriceHtml = `<span class="text-xs text-gray-400 line-through ml-1">¥${product.original_price}</span>`;
+                }
+
+                card.innerHTML = `
+                    <div class="aspect-square bg-gray-100 relative">
+                        <img src="${image}" alt="${product.name}"
+                             class="w-full h-full object-cover"
+                             onerror="this.src='${DEFAULT_PRODUCT_IMAGE}'">
+                        ${badge}
+                    </div>
+                    <div class="p-3">
+                        <h3 class="font-medium text-gray-800 text-sm mb-2 line-clamp-2">${product.name}</h3>
+                        <div class="flex items-center mb-1">
+                            <span class="text-red-500 font-bold">${formatPrice(product.price)}</span>
+                            ${originalPriceHtml}
+                        </div>
+                        <div class="text-xs text-gray-400 flex items-center justify-between">
+                            <span>${storeName}</span>
+                            <span>/${product.unit || '件'}</span>
+                        </div>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        function getCategoryName(category) {
+            const names = {
+                'food': '饮食·营养',
+                'fashion': '服装·穿戴',
+                'accessories': '饰品·配件',
+                'home': '居住·空间',
+                'car': '出行·交通',
+                'pet': '宠物星球',
+                'plant': '植物花园',
+                'daily': '生活日常'
+            };
+            return names[category] || '全部商品';
         }
 
         // ==================== 弹窗控制 ====================
@@ -531,26 +720,11 @@
             content.classList.add('scale-95', 'opacity-0');
             setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
         }
-        function showAvatarModal() {
-            const modal = document.getElementById('avatarModal');
-            const content = document.getElementById('avatarModalContent');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            setTimeout(() => { content.classList.remove('scale-95', 'opacity-0'); content.classList.add('scale-100', 'opacity-100'); }, 10);
-        }
-        function closeAvatarModal() {
-            const modal = document.getElementById('avatarModal');
-            const content = document.getElementById('avatarModalContent');
-            content.classList.remove('scale-100', 'opacity-100');
-            content.classList.add('scale-95', 'opacity-0');
-            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 300);
-        }
-        ['iosModal', 'androidModal', 'avatarModal'].forEach(id => {
+        ['iosModal', 'androidModal'].forEach(id => {
             document.getElementById(id)?.addEventListener('click', function(e) {
                 if (e.target === this) {
                     if (id === 'iosModal') closeIosModal();
                     else if (id === 'androidModal') closeAndroidModal();
-                    else if (id === 'avatarModal') closeAvatarModal();
                 }
             });
         });
