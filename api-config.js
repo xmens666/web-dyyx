@@ -188,16 +188,51 @@ async function getHometownById(hometownId) {
     return data[0] || null;
 }
 
+// ==================== 店铺分类查询（store_shop_categories表）====================
+
+// 获取所有店铺分类
+async function getStoreShopCategories() {
+    return await supabaseQuery('store_shop_categories', `?status=eq.active&select=*&order=sort_order.asc`);
+}
+
+// 获取店铺主分类列表（parent_id=null）
+async function getStoreShopMainCategories() {
+    return await supabaseQuery('store_shop_categories', `?status=eq.active&parent_id=is.null&select=*&order=sort_order.asc`);
+}
+
+// ==================== 商品分类查询（store_categories表）====================
+
+// 获取所有商品分类（主分类+子分类）
+async function getStoreCategories() {
+    return await supabaseQuery('store_categories', `?status=eq.active&select=*&order=sort_order.asc`);
+}
+
+// 获取商品主分类列表（parent_id=null）
+async function getMainCategories() {
+    return await supabaseQuery('store_categories', `?status=eq.active&parent_id=is.null&select=*&order=sort_order.asc`);
+}
+
+// 获取某个主分类下的子分类
+async function getSubCategories(parentId) {
+    return await supabaseQuery('store_categories', `?status=eq.active&parent_id=eq.${parentId}&select=*&order=sort_order.asc`);
+}
+
+// 获取分类详情
+async function getCategoryById(categoryId) {
+    const data = await supabaseQuery('store_categories', `?id=eq.${categoryId}&select=*`);
+    return data[0] || null;
+}
+
 // ==================== 列表查询函数 ====================
 
 // 获取店铺列表（支持分类和搜索）
 async function getStoreList(page = 1, limit = 20, options = {}) {
     const offset = (page - 1) * limit;
-    let query = `?status=eq.active&select=*,users!stores_owner_id_fkey(id,nickname,avatar_url)`;
+    let query = `?status=eq.active&select=*,users:owner_id(id,nickname,avatar_url),store_shop_categories(id,name,icon)`;
 
-    // 分类筛选
-    if (options.category && options.category !== 'all') {
-        query += `&category=eq.${options.category}`;
+    // 基于shop_category_id分类筛选
+    if (options.categoryId && options.categoryId !== 'all') {
+        query += `&shop_category_id=eq.${options.categoryId}`;
     }
 
     // 搜索关键词（搜索店铺名和描述）
@@ -205,27 +240,45 @@ async function getStoreList(page = 1, limit = 20, options = {}) {
         query += `&or=(name.ilike.*${encodeURIComponent(options.keyword)}*,description.ilike.*${encodeURIComponent(options.keyword)}*)`;
     }
 
-    query += `&order=created_at.desc&limit=${limit}&offset=${offset}`;
+    query += `&order=monthly_orders.desc,created_at.desc&limit=${limit}&offset=${offset}`;
     return await supabaseQuery('stores', query);
 }
 
 // 搜索店铺商品
-async function searchStoreProducts(keyword, page = 1, limit = 20) {
+async function searchStoreProducts(keyword, page = 1, limit = 20, options = {}) {
     const offset = (page - 1) * limit;
-    let query = `?status=eq.active&select=*,stores(id,name,logo_url)`;
+    let query = `?status=eq.active&select=*,stores(id,name,logo_url),store_categories(id,name,icon)`;
+
+    // 基于category_id分类筛选
+    if (options.categoryId && options.categoryId !== 'all') {
+        query += `&category_id=eq.${options.categoryId}`;
+    }
 
     if (keyword) {
         query += `&or=(name.ilike.*${encodeURIComponent(keyword)}*,description.ilike.*${encodeURIComponent(keyword)}*)`;
     }
 
-    query += `&order=created_at.desc&limit=${limit}&offset=${offset}`;
+    query += `&order=monthly_sales.desc,created_at.desc&limit=${limit}&offset=${offset}`;
     return await supabaseQuery('store_products', query);
 }
 
-// 获取商品列表
-async function getProductList(page = 1, limit = 20) {
+// 获取商品列表（支持分类筛选）
+async function getProductList(page = 1, limit = 20, options = {}) {
     const offset = (page - 1) * limit;
-    return await supabaseQuery('store_products', `?status=eq.active&select=*,stores(id,name,logo_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
+    let query = `?status=eq.active&select=*,stores(id,name,logo_url),store_categories(id,name,icon)`;
+
+    // 基于category_id分类筛选
+    if (options.categoryId && options.categoryId !== 'all') {
+        query += `&category_id=eq.${options.categoryId}`;
+    }
+
+    // 搜索关键词
+    if (options.keyword) {
+        query += `&or=(name.ilike.*${encodeURIComponent(options.keyword)}*,description.ilike.*${encodeURIComponent(options.keyword)}*)`;
+    }
+
+    query += `&order=monthly_sales.desc,created_at.desc&limit=${limit}&offset=${offset}`;
+    return await supabaseQuery('store_products', query);
 }
 
 // 获取二手商品列表（支持分类和搜索）
