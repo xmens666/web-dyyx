@@ -264,6 +264,71 @@
 
     <script src="api-config.js"></script>
     <script>
+        // 解析营业时间并判断当前是否在营业
+        function isStoreCurrentlyOpen(store) {
+            // 如果 open_status 是 closed，直接返回 false
+            if (store.open_status === 'closed') {
+                return false;
+            }
+
+            // 如果没有营业时间信息，根据 open_status 判断
+            if (!store.business_hours) {
+                return store.open_status === 'open';
+            }
+
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentTime = currentHour * 60 + currentMinute; // 转换为分钟
+            const dayOfWeek = now.getDay(); // 0=周日, 1=周一, ..., 6=周六
+
+            const businessHours = store.business_hours;
+
+            // 检查是否是定休日
+            const closedDayPatterns = [
+                { pattern: /周一定休|周一休|月曜定休/i, day: 1 },
+                { pattern: /周二定休|周二休|火曜定休/i, day: 2 },
+                { pattern: /周三定休|周三休|水曜定休/i, day: 3 },
+                { pattern: /周四定休|周四休|木曜定休/i, day: 4 },
+                { pattern: /周五定休|周五休|金曜定休/i, day: 5 },
+                { pattern: /周六定休|周六休|土曜定休/i, day: 6 },
+                { pattern: /周日定休|周日休|日曜定休/i, day: 0 },
+            ];
+
+            for (const { pattern, day } of closedDayPatterns) {
+                if (pattern.test(businessHours) && dayOfWeek === day) {
+                    return false;
+                }
+            }
+
+            // 解析营业时间范围 (支持格式: 10:00-20:00, 10:00~20:00, 10:00～20:00)
+            const timeMatch = businessHours.match(/(\d{1,2}):(\d{2})\s*[-~～]\s*(\d{1,2}):(\d{2})/);
+            if (timeMatch) {
+                const openHour = parseInt(timeMatch[1], 10);
+                const openMinute = parseInt(timeMatch[2], 10);
+                const closeHour = parseInt(timeMatch[3], 10);
+                const closeMinute = parseInt(timeMatch[4], 10);
+
+                const openTime = openHour * 60 + openMinute;
+                const closeTime = closeHour * 60 + closeMinute;
+
+                // 处理跨夜营业 (例如 22:00-02:00)
+                if (closeTime < openTime) {
+                    return currentTime >= openTime || currentTime < closeTime;
+                }
+
+                return currentTime >= openTime && currentTime < closeTime;
+            }
+
+            // 如果无法解析时间，根据 open_status 判断
+            return store.open_status === 'open';
+        }
+
+        // 判断店铺是否已认证
+        function isStoreVerified(store) {
+            return store.verified === true || store.credential_status === 'approved';
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             const storeId = getUrlParam('id');
 
@@ -309,14 +374,14 @@
             document.getElementById('storeName').textContent = store.name;
             document.getElementById('storeDescription').textContent = store.description || '暂无简介';
 
-            // 营业状态
-            const isOpen = store.open_status === 'open';
+            // 营业状态 - 使用实时计算
+            const isOpen = isStoreCurrentlyOpen(store);
             const openStatusEl = document.getElementById('openStatus');
             openStatusEl.textContent = isOpen ? '营业中' : '休息中';
             openStatusEl.className = `absolute -bottom-2 left-1/2 transform -translate-x-1/2 px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${isOpen ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-600'}`;
 
-            // 认证徽章
-            if (store.verified) {
+            // 认证徽章 - 检查 verified 和 credential_status 两个字段
+            if (isStoreVerified(store)) {
                 document.getElementById('verifiedBadge').classList.remove('hidden');
             }
 

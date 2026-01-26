@@ -65,35 +65,8 @@
 
     <!-- 主内容 -->
     <main class="container mx-auto px-4 py-6 sm:py-8">
-        <!-- 入口卡片区域 -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 -mt-12 relative z-10">
-            <!-- 寻找店铺 -->
-            <a href="#storeSection" onclick="switchToStores()" class="entry-card bg-white rounded-2xl p-5 shadow-lg border border-gray-100 flex items-center gap-4">
-                <div class="w-14 h-14 bg-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <span class="text-3xl">🏪</span>
-                </div>
-                <div class="flex-1">
-                    <h3 class="font-bold text-gray-800 text-lg">寻找店铺</h3>
-                    <p class="text-gray-500 text-sm">浏览物产商家，发现品质好店</p>
-                </div>
-                <i class="fas fa-chevron-right text-gray-400"></i>
-            </a>
-
-            <!-- 寻找商品 -->
-            <a href="#productSection" onclick="switchToProducts()" class="entry-card bg-white rounded-2xl p-5 shadow-lg border border-gray-100 flex items-center gap-4">
-                <div class="w-14 h-14 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <span class="text-3xl">🛒</span>
-                </div>
-                <div class="flex-1">
-                    <h3 class="font-bold text-gray-800 text-lg">寻找商品</h3>
-                    <p class="text-gray-500 text-sm">按分类浏览商品，精准找货源</p>
-                </div>
-                <i class="fas fa-chevron-right text-gray-400"></i>
-            </a>
-        </div>
-
         <!-- 统计数据 -->
-        <div class="bg-white rounded-xl p-4 mb-8 shadow-sm border border-gray-100">
+        <div class="bg-white rounded-xl p-4 mb-6 shadow-sm border border-gray-100 -mt-8 relative z-10">
             <div class="flex items-center justify-center gap-6 sm:gap-12 text-center">
                 <div>
                     <div class="flex items-center justify-center gap-1 text-gray-600">
@@ -375,13 +348,14 @@
                 // 分离商品主分类和子分类
                 productMainCategories = productCategories.filter(c => c.parent_id === null);
 
-                // 构建商品子分类映射
+                // 构建商品子分类映射（使用字符串ID作为key）
                 productCategories.forEach(c => {
                     if (c.parent_id) {
-                        if (!productSubCategoriesMap[c.parent_id]) {
-                            productSubCategoriesMap[c.parent_id] = [];
+                        const parentKey = String(c.parent_id);
+                        if (!productSubCategoriesMap[parentKey]) {
+                            productSubCategoriesMap[parentKey] = [];
                         }
-                        productSubCategoriesMap[c.parent_id].push(c);
+                        productSubCategoriesMap[parentKey].push(c);
                     }
                 });
 
@@ -491,11 +465,12 @@
 
         // ==================== 店铺分类筛选（使用shop_category_id）====================
         function filterStoresByCategory(categoryId) {
-            storeCurrentCategoryId = categoryId;
+            // 确保categoryId是字符串
+            storeCurrentCategoryId = String(categoryId);
 
             // 更新分类按钮样式
             document.querySelectorAll('#mainCategoryGrid .category-item').forEach(item => {
-                if (item.dataset.category === categoryId) {
+                if (String(item.dataset.category) === storeCurrentCategoryId) {
                     item.classList.add('active');
                 } else {
                     item.classList.remove('active');
@@ -506,12 +481,12 @@
             document.getElementById('subCategorySection').classList.add('hidden');
 
             // 更新标题
-            if (categoryId === 'all') {
+            if (storeCurrentCategoryId === 'all') {
                 document.getElementById('storeListTitle').innerHTML = '<i class="fas fa-fire text-orange-500 mr-2"></i>热门店铺';
             } else {
-                const cat = storeShopCategories.find(c => c.id === categoryId);
+                const cat = storeShopCategories.find(c => String(c.id) === storeCurrentCategoryId);
                 if (cat) {
-                    document.getElementById('storeListTitle').innerHTML = `<i class="fas fa-store text-indigo-500 mr-2"></i>${cat.icon} ${cat.name}`;
+                    document.getElementById('storeListTitle').innerHTML = `<i class="fas fa-store text-indigo-500 mr-2"></i>${cat.icon || ''} ${cat.name}`;
                 }
             }
 
@@ -579,6 +554,72 @@
             loadStores();
         }
 
+        // 解析营业时间并判断当前是否在营业
+        function isStoreCurrentlyOpen(store) {
+            // 如果店铺手动设置为关闭，直接返回false
+            if (store.open_status === 'closed') return false;
+
+            // 如果没有营业时间信息，默认按open_status判断
+            if (!store.business_hours) {
+                return store.open_status === 'open';
+            }
+
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentTime = currentHour * 60 + currentMinute; // 转换为分钟数
+            const dayOfWeek = now.getDay(); // 0=周日, 1=周一, ...
+
+            const businessHours = store.business_hours;
+
+            // 检查是否是定休日
+            const closedDayPatterns = [
+                { pattern: /周一定休|周一休/i, day: 1 },
+                { pattern: /周二定休|周二休/i, day: 2 },
+                { pattern: /周三定休|周三休/i, day: 3 },
+                { pattern: /周四定休|周四休/i, day: 4 },
+                { pattern: /周五定休|周五休/i, day: 5 },
+                { pattern: /周六定休|周六休/i, day: 6 },
+                { pattern: /周日定休|周日休|日曜定休/i, day: 0 }
+            ];
+
+            for (const { pattern, day } of closedDayPatterns) {
+                if (pattern.test(businessHours) && dayOfWeek === day) {
+                    return false;
+                }
+            }
+
+            // 解析营业时间，支持格式如 "10:00-20:00" 或 "09:00-20:00（周二定休）"
+            const timeMatch = businessHours.match(/(\d{1,2}):(\d{2})\s*[-~～]\s*(\d{1,2}):(\d{2})/);
+            if (timeMatch) {
+                const openHour = parseInt(timeMatch[1]);
+                const openMinute = parseInt(timeMatch[2]);
+                const closeHour = parseInt(timeMatch[3]);
+                const closeMinute = parseInt(timeMatch[4]);
+
+                const openTime = openHour * 60 + openMinute;
+                const closeTime = closeHour * 60 + closeMinute;
+
+                // 判断当前时间是否在营业时间范围内
+                if (closeTime > openTime) {
+                    // 正常情况：如 10:00-20:00
+                    return currentTime >= openTime && currentTime < closeTime;
+                } else {
+                    // 跨夜情况：如 18:00-02:00
+                    return currentTime >= openTime || currentTime < closeTime;
+                }
+            }
+
+            // 如果无法解析，默认按open_status判断
+            return store.open_status === 'open';
+        }
+
+        // 判断店铺是否已认证
+        function isStoreVerified(store) {
+            // credential_status为approved或verified字段为true都算认证
+            return store.verified === true || store.credential_status === 'approved';
+        }
+
         function renderStores(stores) {
             const grid = document.getElementById('storeGrid');
 
@@ -594,10 +635,16 @@
                 const rating = store.rating ? parseFloat(store.rating).toFixed(1) : '5.0';
                 const monthlyOrders = store.monthly_orders || 0;
                 const reviewCount = store.review_count || 0;
-                const isOpen = store.open_status === 'open';
+
+                // 根据营业时间计算是否在营业
+                const isOpen = isStoreCurrentlyOpen(store);
                 const openStatusText = isOpen ? '营业中' : '休息中';
                 const openStatusClass = isOpen ? 'bg-green-500' : 'bg-gray-500';
-                const verifiedBadge = store.verified ? '<span class="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full"><i class="fas fa-check-circle mr-1"></i>认证</span>' : '';
+
+                // 根据认证状态显示徽章
+                const verified = isStoreVerified(store);
+                const verifiedBadge = verified ? '<span class="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full"><i class="fas fa-check-circle mr-1"></i>认证</span>' : '';
+
                 const location = store.prefecture || store.city || store.region || '';
                 const categoryName = store.store_shop_categories?.name || '';
                 const categoryIcon = store.store_shop_categories?.icon || '';
@@ -646,12 +693,13 @@
 
         // ==================== 商品分类筛选（使用store_categories的category_id）====================
         function filterProductsByCategory(categoryId) {
-            productCurrentCategoryId = categoryId;
+            // 确保categoryId是字符串
+            productCurrentCategoryId = String(categoryId);
             productCurrentSubCategoryId = null;
 
             // 更新主分类按钮样式
             document.querySelectorAll('#productMainCategoryGrid .category-item').forEach(item => {
-                if (item.dataset.category === categoryId) {
+                if (String(item.dataset.category) === productCurrentCategoryId) {
                     item.classList.add('active');
                 } else {
                     item.classList.remove('active');
@@ -659,26 +707,27 @@
             });
 
             // 显示/隐藏子分类（使用productSubCategoriesMap）
-            if (productSubCategoriesMap[categoryId] && productSubCategoriesMap[categoryId].length > 0) {
-                renderProductSubCategories(categoryId);
+            if (productSubCategoriesMap[productCurrentCategoryId] && productSubCategoriesMap[productCurrentCategoryId].length > 0) {
+                renderProductSubCategories(productCurrentCategoryId);
                 document.getElementById('productSubCategorySection').classList.remove('hidden');
             } else {
                 document.getElementById('productSubCategorySection').classList.add('hidden');
             }
 
             // 更新标题（使用productMainCategories）
-            const cat = productMainCategories.find(c => c.id === categoryId);
+            const cat = productMainCategories.find(c => String(c.id) === productCurrentCategoryId);
             if (cat) {
-                document.getElementById('productTitle').innerHTML = `<i class="fas fa-box text-amber-500 mr-2"></i>${cat.icon} ${cat.name}`;
+                document.getElementById('productTitle').innerHTML = `<i class="fas fa-box text-amber-500 mr-2"></i>${cat.icon || ''} ${cat.name}`;
             }
 
             resetProductsAndLoad();
         }
 
         function renderProductSubCategories(parentId) {
-            const subs = productSubCategoriesMap[parentId] || [];
+            const parentKey = String(parentId);
+            const subs = productSubCategoriesMap[parentKey] || [];
             const container = document.getElementById('productSubCategoryList');
-            const parent = productMainCategories.find(c => c.id === parentId);
+            const parent = productMainCategories.find(c => String(c.id) === parentKey);
 
             document.getElementById('productSubCategoryTitle').innerHTML = `<i class="fas fa-filter text-amber-500 mr-2"></i>${parent?.name || ''} - 子分类`;
 
@@ -700,12 +749,12 @@
         }
 
         function filterProductsBySubCategory(subCategoryId) {
-            productCurrentSubCategoryId = subCategoryId;
+            productCurrentSubCategoryId = subCategoryId ? String(subCategoryId) : null;
 
             // 更新子分类按钮样式
             document.querySelectorAll('#productSubCategoryList .sub-category-item').forEach(btn => {
                 const btnSub = btn.dataset.sub;
-                if ((subCategoryId === null && !btnSub) || btnSub === subCategoryId) {
+                if ((productCurrentSubCategoryId === null && !btnSub) || btnSub === productCurrentSubCategoryId) {
                     btn.className = 'sub-category-item active px-3 py-1.5 rounded-full text-sm bg-amber-500 text-white';
                 } else {
                     btn.className = 'sub-category-item px-3 py-1.5 rounded-full text-sm bg-gray-100 text-gray-600';
