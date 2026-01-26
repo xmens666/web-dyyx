@@ -23,6 +23,8 @@
         .status-available { background: #10B981; }
         .status-sold { background: #6B7280; }
         .status-reserved { background: #F59E0B; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 
@@ -49,8 +51,59 @@
                 <h1 class="text-2xl sm:text-3xl font-bold mb-2">侠客市集</h1>
                 <p class="text-white/80">淘宝贝、捡漏、高质二手好物</p>
             </div>
+
+            <!-- 搜索框 -->
+            <div class="max-w-xl mx-auto mt-6">
+                <div class="relative">
+                    <input type="text" id="searchInput" placeholder="搜索二手好物..."
+                           class="w-full px-5 py-3 pl-12 rounded-full border-0 focus:ring-2 focus:ring-white/50 text-gray-800"
+                           onkeypress="if(event.key==='Enter') doSearch()">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <button onclick="doSearch()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-pink-500 text-white px-4 py-1.5 rounded-full text-sm hover:bg-pink-600 transition">
+                        搜索
+                    </button>
+                </div>
+            </div>
         </div>
     </header>
+
+    <!-- 分类导航 -->
+    <div class="bg-white shadow-sm sticky top-14 z-40">
+        <div class="container mx-auto px-4">
+            <div id="categoryNav" class="flex overflow-x-auto py-3 gap-2 scrollbar-hide">
+                <button onclick="filterByCategory('all')" class="category-btn active flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-pink-500 text-white transition" data-category="all">
+                    全部
+                </button>
+                <button onclick="filterByCategory('electronics')" class="category-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-pink-100 hover:text-pink-600 transition" data-category="electronics">
+                    <i class="fas fa-laptop mr-1"></i>数码电器
+                </button>
+                <button onclick="filterByCategory('fashion')" class="category-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-pink-100 hover:text-pink-600 transition" data-category="fashion">
+                    <i class="fas fa-tshirt mr-1"></i>服饰鞋包
+                </button>
+                <button onclick="filterByCategory('home')" class="category-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-pink-100 hover:text-pink-600 transition" data-category="home">
+                    <i class="fas fa-couch mr-1"></i>家居用品
+                </button>
+                <button onclick="filterByCategory('baby')" class="category-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-pink-100 hover:text-pink-600 transition" data-category="baby">
+                    <i class="fas fa-baby mr-1"></i>母婴用品
+                </button>
+                <button onclick="filterByCategory('sports')" class="category-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-pink-100 hover:text-pink-600 transition" data-category="sports">
+                    <i class="fas fa-futbol mr-1"></i>运动户外
+                </button>
+                <button onclick="filterByCategory('books')" class="category-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-pink-100 hover:text-pink-600 transition" data-category="books">
+                    <i class="fas fa-book mr-1"></i>图书影音
+                </button>
+                <button onclick="filterByCategory('beauty')" class="category-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-pink-100 hover:text-pink-600 transition" data-category="beauty">
+                    <i class="fas fa-magic mr-1"></i>美妆护肤
+                </button>
+                <button onclick="filterByCategory('car')" class="category-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-pink-100 hover:text-pink-600 transition" data-category="car">
+                    <i class="fas fa-car mr-1"></i>汽车用品
+                </button>
+                <button onclick="filterByCategory('other')" class="category-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-pink-100 hover:text-pink-600 transition" data-category="other">
+                    <i class="fas fa-ellipsis-h mr-1"></i>其他
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- 主内容 -->
     <main class="container mx-auto px-4 py-6 sm:py-8">
@@ -133,7 +186,7 @@
                 <p class="text-gray-600 mb-4">安卓手机请先在设置中开启「允许安装未知来源应用」权限，然后再进行下载安装。</p>
                 <p class="text-xs text-gray-400 mb-6">设置路径：设置 → 安全 → 允许未知来源</p>
                 <div class="flex flex-col gap-3">
-                    <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download onclick="closeAndroidModal()" class="bg-green-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-green-600 transition flex items-center justify-center"><i class="fas fa-download mr-2"></i> 开始下载</a>
+                    <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.5.0.apk/app-release.apk" download onclick="closeAndroidModal()" class="bg-green-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-green-600 transition flex items-center justify-center"><i class="fas fa-download mr-2"></i> 开始下载</a>
                     <button onclick="closeAndroidModal()" class="border border-gray-300 text-gray-600 px-8 py-3 rounded-xl hover:bg-gray-100 transition">取消</button>
                 </div>
             </div>
@@ -172,28 +225,71 @@
         let hasMore = true;
         const ITEMS_PER_PAGE = 20;
 
+        let currentCategory = 'all';
+        let currentKeyword = '';
+
         document.addEventListener('DOMContentLoaded', () => {
             loadItems();
         });
+
+        // 执行搜索
+        function doSearch() {
+            currentKeyword = document.getElementById('searchInput').value.trim();
+            resetAndLoad();
+        }
+
+        // 按分类筛选
+        function filterByCategory(category) {
+            currentCategory = category;
+
+            // 更新按钮样式
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                if (btn.dataset.category === category) {
+                    btn.className = 'category-btn active flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-pink-500 text-white transition';
+                } else {
+                    btn.className = 'category-btn flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-pink-100 hover:text-pink-600 transition';
+                }
+            });
+
+            resetAndLoad();
+        }
+
+        // 重置并加载
+        function resetAndLoad() {
+            currentPage = 1;
+            hasMore = true;
+            document.getElementById('itemGrid').innerHTML = '';
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('itemList').classList.add('hidden');
+            document.getElementById('empty').classList.add('hidden');
+            loadItems();
+        }
 
         async function loadItems() {
             if (isLoading || !hasMore) return;
             isLoading = true;
 
             try {
-                const items = await getMarketplaceList(currentPage, ITEMS_PER_PAGE);
+                const options = {};
+                if (currentCategory !== 'all') options.category = currentCategory;
+                if (currentKeyword) options.keyword = currentKeyword;
+
+                const items = await getMarketplaceList(currentPage, ITEMS_PER_PAGE, options);
 
                 document.getElementById('loading').classList.add('hidden');
 
                 if (items.length === 0 && currentPage === 1) {
                     document.getElementById('empty').classList.remove('hidden');
+                    document.querySelector('#empty h3').textContent = currentKeyword ? '未找到相关商品' : '暂无商品';
+                    document.querySelector('#empty p').textContent = currentKeyword ? '换个关键词试试吧' : '快来发布你的闲置物品吧';
                     return;
                 }
 
                 document.getElementById('itemList').classList.remove('hidden');
 
                 if (currentPage === 1) {
-                    document.getElementById('itemCount').textContent = `共 ${items.length}+ 件商品`;
+                    const countText = currentKeyword ? `搜索"${currentKeyword}"` : '';
+                    document.getElementById('itemCount').textContent = `${countText} 共 ${items.length}+ 件商品`;
                 }
 
                 renderItems(items);

@@ -198,15 +198,14 @@
                             </a>
                         </div>
 
-                        <!-- 联系方式 -->
+                        <!-- 联系方式（隐藏，引导下载APP） -->
                         <div class="bg-white rounded-xl p-6 shadow-sm">
                             <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
                                 <i class="fas fa-phone-alt text-green-500 mr-2"></i>
                                 联系方式
                             </h2>
-                            <div class="space-y-3">
-                                <p id="restaurantPhone" class="text-gray-700"></p>
-                                <div id="socialLinks" class="space-y-2"></div>
+                            <div class="text-gray-400 text-sm flex items-center">
+                                <i class="fas fa-lock mr-2"></i>下载APP查看联系方式
                             </div>
                         </div>
 
@@ -242,7 +241,7 @@
                                 </div>
                                 <h3 class="font-bold text-lg mb-2">更多餐厅推荐</h3>
                                 <p class="text-white/80 text-sm mb-4">下载APP发现更多美食，查看真实点评</p>
-                                <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
+                                <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.5.0.apk/app-release.apk" download
                                    class="block bg-white text-orange-600 py-3 rounded-xl font-bold hover:bg-orange-50 transition">
                                     <i class="fab fa-android mr-2"></i> 下载APP
                                 </a>
@@ -266,17 +265,13 @@
     <!-- 底部固定栏 -->
     <div id="bottomBar" class="hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40">
         <div class="container mx-auto flex items-center justify-between gap-3">
-            <a href="" id="callButton" class="flex flex-col items-center text-gray-600 hover:text-orange-600 px-3">
-                <i class="fas fa-phone text-lg"></i>
-                <span class="text-xs mt-1">电话</span>
-            </a>
             <a href="" id="navigateButton" class="flex flex-col items-center text-gray-600 hover:text-orange-600 px-3">
                 <i class="fas fa-location-arrow text-lg"></i>
                 <span class="text-xs mt-1">导航</span>
             </a>
-            <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
+            <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.5.0.apk/app-release.apk" download
                class="flex-1 bg-gradient-to-r from-orange-500 to-red-600 text-white text-center py-3 rounded-xl font-bold hover:opacity-90 transition">
-                <i class="fab fa-android mr-2"></i> 下载APP查看更多
+                <i class="fab fa-android mr-2"></i> 下载APP查看联系方式
             </a>
         </div>
     </div>
@@ -423,20 +418,7 @@
                 document.getElementById('navigateButton').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.address)}`;
             }
 
-            // 电话
-            const phone = restaurant.phone;
-            document.getElementById('restaurantPhone').innerHTML = phone
-                ? `<i class="fas fa-phone mr-2 text-gray-400"></i><a href="tel:${phone}" class="text-blue-600">${phone}</a>`
-                : '<i class="fas fa-phone mr-2 text-gray-400"></i>暂无电话';
-            document.getElementById('callButton').href = phone ? `tel:${phone}` : '#';
-
-            // 社交链接
-            const socialLinks = document.getElementById('socialLinks');
-            let socialHtml = '';
-            if (restaurant.wechat) {
-                socialHtml += `<p class="text-gray-700"><i class="fab fa-weixin mr-2 text-green-600"></i>微信: ${restaurant.wechat}</p>`;
-            }
-            socialLinks.innerHTML = socialHtml || '<p class="text-gray-400 text-sm">暂无社交账号</p>';
+            // 联系方式已隐藏，引导用户下载APP
 
             // 设施服务
             renderFacilities(restaurant);

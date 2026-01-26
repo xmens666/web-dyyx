@@ -190,10 +190,36 @@ async function getHometownById(hometownId) {
 
 // ==================== 列表查询函数 ====================
 
-// 获取店铺列表
-async function getStoreList(page = 1, limit = 20) {
+// 获取店铺列表（支持分类和搜索）
+async function getStoreList(page = 1, limit = 20, options = {}) {
     const offset = (page - 1) * limit;
-    return await supabaseQuery('stores', `?status=eq.active&select=*,users!stores_owner_id_fkey(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
+    let query = `?status=eq.active&select=*,users!stores_owner_id_fkey(id,nickname,avatar_url)`;
+
+    // 分类筛选
+    if (options.category && options.category !== 'all') {
+        query += `&category=eq.${options.category}`;
+    }
+
+    // 搜索关键词（搜索店铺名和描述）
+    if (options.keyword) {
+        query += `&or=(name.ilike.*${encodeURIComponent(options.keyword)}*,description.ilike.*${encodeURIComponent(options.keyword)}*)`;
+    }
+
+    query += `&order=created_at.desc&limit=${limit}&offset=${offset}`;
+    return await supabaseQuery('stores', query);
+}
+
+// 搜索店铺商品
+async function searchStoreProducts(keyword, page = 1, limit = 20) {
+    const offset = (page - 1) * limit;
+    let query = `?status=eq.active&select=*,stores(id,name,logo_url)`;
+
+    if (keyword) {
+        query += `&or=(name.ilike.*${encodeURIComponent(keyword)}*,description.ilike.*${encodeURIComponent(keyword)}*)`;
+    }
+
+    query += `&order=created_at.desc&limit=${limit}&offset=${offset}`;
+    return await supabaseQuery('store_products', query);
 }
 
 // 获取商品列表
@@ -202,10 +228,33 @@ async function getProductList(page = 1, limit = 20) {
     return await supabaseQuery('store_products', `?status=eq.active&select=*,stores(id,name,logo_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
 }
 
-// 获取二手商品列表
-async function getMarketplaceList(page = 1, limit = 20) {
+// 获取二手商品列表（支持分类和搜索）
+async function getMarketplaceList(page = 1, limit = 20, options = {}) {
     const offset = (page - 1) * limit;
-    return await supabaseQuery('marketplace_items', `?status=eq.available&select=*,users:seller_id(id,nickname,avatar_url)&order=created_at.desc&limit=${limit}&offset=${offset}`);
+    let query = `?status=eq.available&select=*,users:seller_id(id,nickname,avatar_url)`;
+
+    // 主分类筛选
+    if (options.mainCategory && options.mainCategory !== 'all') {
+        query += `&main_category=eq.${options.mainCategory}`;
+    }
+
+    // 子分类筛选
+    if (options.subCategory) {
+        query += `&sub_category=eq.${options.subCategory}`;
+    }
+
+    // 旧版分类筛选（兼容）
+    if (options.category && options.category !== 'all') {
+        query += `&category=eq.${options.category}`;
+    }
+
+    // 搜索关键词
+    if (options.keyword) {
+        query += `&or=(title.ilike.*${encodeURIComponent(options.keyword)}*,description.ilike.*${encodeURIComponent(options.keyword)}*)`;
+    }
+
+    query += `&order=created_at.desc&limit=${limit}&offset=${offset}`;
+    return await supabaseQuery('marketplace_items', query);
 }
 
 // 获取服务列表

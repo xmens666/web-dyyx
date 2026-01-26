@@ -123,7 +123,9 @@
                                     <p id="recruiterCompany" class="text-gray-500 text-sm"></p>
                                 </div>
                             </div>
-                            <div id="contactInfo" class="text-sm text-gray-600 space-y-2"></div>
+                            <div class="text-sm text-gray-400 flex items-center">
+                                <i class="fas fa-lock mr-2"></i>下载APP查看联系方式
+                            </div>
                         </div>
 
                         <!-- 下载APP -->
@@ -134,7 +136,7 @@
                                 </div>
                                 <h3 class="font-bold text-lg mb-2">立即投递简历</h3>
                                 <p class="text-white/80 text-sm mb-4">下载APP直接联系招聘方</p>
-                                <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
+                                <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.5.0.apk/app-release.apk" download
                                    class="block bg-white text-amber-600 py-3 rounded-xl font-bold hover:bg-amber-50 transition">
                                     <i class="fab fa-android mr-2"></i> 下载APP投递
                                 </a>
@@ -208,7 +210,7 @@
                                 </div>
                                 <h3 class="font-bold text-lg mb-2">联系求职者</h3>
                                 <p class="text-white/80 text-sm mb-4">下载APP直接联系沟通</p>
-                                <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
+                                <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.5.0.apk/app-release.apk" download
                                    class="block bg-white text-blue-600 py-3 rounded-xl font-bold hover:bg-blue-50 transition">
                                     <i class="fab fa-android mr-2"></i> 下载APP联系
                                 </a>
@@ -238,7 +240,7 @@
                 <p class="text-gray-500 text-xs" id="bottomLabel"></p>
                 <p class="text-amber-600 font-bold text-xl" id="bottomValue"></p>
             </div>
-            <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.4.5_test.apk" download
+            <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/dongyingyouxia_v1.5.0.apk/app-release.apk" download
                class="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-center py-3 rounded-xl font-bold hover:opacity-90 transition">
                 <i class="fab fa-android mr-2"></i> <span id="bottomAction">下载APP</span>
             </a>
@@ -352,15 +354,7 @@
             document.getElementById('recruiterName').textContent = job.contact_person || job.users?.nickname || '招聘方';
             document.getElementById('recruiterCompany').textContent = job.company_name;
 
-            // 联系方式
-            const contacts = [];
-            if (job.contact_phone) contacts.push(`<p><i class="fas fa-phone text-green-500 mr-2"></i>${job.contact_phone}</p>`);
-            if (job.contact_email) contacts.push(`<p><i class="fas fa-envelope text-blue-500 mr-2"></i>${job.contact_email}</p>`);
-            if (job.contact_wechat) contacts.push(`<p><i class="fab fa-weixin text-green-500 mr-2"></i>微信: ${job.contact_wechat}</p>`);
-
-            document.getElementById('contactInfo').innerHTML = contacts.length > 0
-                ? contacts.join('')
-                : '<p class="text-gray-400">下载APP查看联系方式</p>';
+            // 联系方式已隐藏，引导用户下载APP
 
             // 底部栏
             document.getElementById('bottomLabel').textContent = '薪资待遇';
