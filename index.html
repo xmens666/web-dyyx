@@ -14,7 +14,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- 字体 -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
 
     <!-- Tailwind Config -->
     <script>
@@ -56,13 +57,28 @@
             animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        .delay-200 { animation-delay: 0.2s; }
-        .delay-400 { animation-delay: 0.4s; }
-        .delay-600 { animation-delay: 0.6s; }
+        .delay-200 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-400 {
+            animation-delay: 0.4s;
+        }
+
+        .delay-600 {
+            animation-delay: 0.6s;
+        }
 
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .scroll-reveal {
@@ -70,6 +86,7 @@
             transform: translateY(30px);
             transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
         .scroll-reveal.visible {
             opacity: 1;
             transform: translateY(0);
@@ -91,7 +108,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
             transition: all 0.4s ease;
         }
-        
+
         .glass-card:hover {
             transform: translateY(-5px);
             background: rgba(255, 255, 255, 0.9);
@@ -121,6 +138,7 @@
             position: fixed;
             overflow: hidden;
         }
+
         .mobile-menu.open {
             transform: translateX(0);
         }
@@ -128,8 +146,8 @@
         /* 背景网格 */
         .bg-grid {
             background-size: 40px 40px;
-            background-image: linear-gradient(to right, rgba(0,0,0,0.03) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(0,0,0,0.03) 1px, transparent 1px);
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
         }
 
         /* 扫描效果 */
@@ -146,35 +164,50 @@
         }
 
         @keyframes scan {
-            0% { top: 0; opacity: 0; }
-            5% { opacity: 1; }
-            95% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
+            0% {
+                top: 0;
+                opacity: 0;
+            }
+
+            5% {
+                opacity: 1;
+            }
+
+            95% {
+                opacity: 1;
+            }
+
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
         }
 
         /* 下载二维码容器悬停 */
         .qr-container {
             transition: all 0.3s ease;
         }
+
         .qr-wrapper:hover .qr-container {
             transform: scale(1.1) translateY(-10px);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
-
     </style>
 </head>
 
 <body class="bg-gray-50 text-gray-800 font-sans antialiased selection:bg-brand-500 selection:text-white">
 
     <!-- 导航栏 -->
-    <nav class="fixed w-full bg-white/80 backdrop-blur-xl border-b border-gray-100 z-50 transition-all duration-300" id="navbar">
+    <nav class="fixed w-full bg-white/80 backdrop-blur-xl border-b border-gray-100 z-50 transition-all duration-300"
+        id="navbar">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <!-- Logo区 -->
             <div class="flex items-center gap-3">
                 <img src="icon-192.png" alt="Logo" class="w-10 h-10 rounded-xl shadow-sm">
                 <div class="font-bold tracking-tight text-gray-900 leading-tight">
                     <div class="text-xl">东瀛游侠</div>
-                    <div class="text-[10px] text-gray-400 font-normal uppercase tracking-widest hidden sm:block">Digital Life in Japan</div>
+                    <div class="text-[10px] text-gray-400 font-normal uppercase tracking-widest hidden sm:block">Digital
+                        Life in Japan</div>
                 </div>
             </div>
 
@@ -188,7 +221,8 @@
 
             <!-- 右侧操作区 -->
             <div class="hidden md:flex items-center gap-4">
-                <a href="javascript:void(0)" onclick="openMerchantModal()" class="text-sm font-medium text-gray-500 hover:text-gray-900 transition">商家入驻</a>
+                <a href="javascript:void(0)" onclick="openMerchantModal()"
+                    class="text-sm font-medium text-gray-500 hover:text-gray-900 transition">商家入驻</a>
                 <a href="#download"
                     class="bg-gray-900 text-white px-6 py-2.5 rounded-full shadow-lg hover:shadow-xl hover:bg-brand-600 transition duration-300 text-sm font-medium btn-press flex items-center gap-2">
                     <i class="fas fa-download"></i> 获取 APP
@@ -212,59 +246,76 @@
                 </button>
             </div>
             <div class="space-y-2 flex-grow">
-                <a href="#home" class="block text-base font-medium text-gray-700 hover:text-brand-500 hover:bg-brand-50 p-3 rounded-xl transition">首 页</a>
-                <a href="#web-app" class="block text-base font-medium text-gray-700 hover:text-brand-500 hover:bg-brand-50 p-3 rounded-xl transition">探索频道</a>
-                <a href="#features" class="block text-base font-medium text-gray-700 hover:text-brand-500 hover:bg-brand-50 p-3 rounded-xl transition">APP特权</a>
-                <a href="#official-store" class="block text-base font-medium text-gray-700 hover:text-brand-500 hover:bg-brand-50 p-3 rounded-xl transition">官方选品</a>
-                <a href="javascript:void(0)" onclick="openMerchantModal()" class="block text-base font-medium text-gray-700 hover:text-brand-500 hover:bg-brand-50 p-3 rounded-xl transition">商家入驻</a>
+                <a href="#home"
+                    class="block text-base font-medium text-gray-700 hover:text-brand-500 hover:bg-brand-50 p-3 rounded-xl transition">首
+                    页</a>
+                <a href="#web-app"
+                    class="block text-base font-medium text-gray-700 hover:text-brand-500 hover:bg-brand-50 p-3 rounded-xl transition">探索频道</a>
+                <a href="#features"
+                    class="block text-base font-medium text-gray-700 hover:text-brand-500 hover:bg-brand-50 p-3 rounded-xl transition">APP特权</a>
+                <a href="#official-store"
+                    class="block text-base font-medium text-gray-700 hover:text-brand-500 hover:bg-brand-50 p-3 rounded-xl transition">官方选品</a>
+                <a href="javascript:void(0)" onclick="openMerchantModal()"
+                    class="block text-base font-medium text-gray-700 hover:text-brand-500 hover:bg-brand-50 p-3 rounded-xl transition">商家入驻</a>
             </div>
             <div class="mt-auto pt-6 border-t border-gray-100">
-                <a href="#download" class="block w-full bg-brand-500 text-white text-center py-3.5 rounded-xl font-medium shadow-lg">立即下载 APP</a>
+                <a href="#download"
+                    class="block w-full bg-brand-500 text-white text-center py-3.5 rounded-xl font-medium shadow-lg">立即下载
+                    APP</a>
             </div>
         </div>
     </div>
-    <div id="menuOverlay" class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[90] hidden md:hidden transition-opacity"></div>
+    <div id="menuOverlay"
+        class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[90] hidden md:hidden transition-opacity"></div>
 
     <!-- 黄金首屏 Hero Section -->
-    <header id="home" class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-white">
+    <header id="home" class="relative pt-24 pb-20 lg:pt-32 lg:pb-32 overflow-hidden bg-white">
         <!-- 背景装饰 -->
         <div class="absolute inset-0 bg-grid opacity-50 z-0"></div>
-        <div class="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-brand-200 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-pulse-slow z-0 pointer-events-none"></div>
-        <div class="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-100 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 z-0 pointer-events-none"></div>
+        <div
+            class="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-brand-200 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-pulse-slow z-0 pointer-events-none">
+        </div>
+        <div
+            class="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-100 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 z-0 pointer-events-none">
+        </div>
 
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-8">
-                
+            <div class="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16">
+
                 <!-- 左侧内容区 -->
-                <div class="w-full lg:w-1/2 text-center lg:text-left">
-                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-50 border border-brand-100 text-brand-600 text-xs font-semibold tracking-wide uppercase mb-6 fade-in-up">
+                <div class="w-full lg:w-5/12 text-center lg:text-left">
+                    <div
+                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-50 border border-brand-100 text-brand-600 text-xs font-semibold tracking-wide uppercase mb-6 fade-in-up">
                         <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
                         V2.0 更新发布
                     </div>
-                    
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-gray-900 leading-[1.15] mb-6 fade-in-up delay-200">
-                        在日华人<br class="hidden lg:block">
-                        <span class="gradient-text">全能数字生活</span><br>
-                        新枢纽.
+
+                    <h1
+                        class="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-gray-900 leading-[1.15] mb-6 fade-in-up delay-200">
+                        专为在日华人打造的<br class="hidden lg:block">
+                        <span class="gradient-text">全能生活帮手</span>
                     </h1>
-                    
-                    <p class="text-base sm:text-lg text-gray-500 leading-relaxed max-w-2xl mx-auto lg:mx-0 mb-8 fade-in-up delay-400">
-                        打通 Web 与 APP 的数字生态屏障。<br class="hidden sm:block">
-                        海量二手交易、真实房源租赁、同城找工作、高质量老乡圈... <br>
-                        <span class="font-medium text-gray-700">现在，网页端也能实时探索全量数据。</span>
+
+                    <p
+                        class="text-base sm:text-lg text-gray-500 leading-relaxed max-w-2xl mx-auto lg:mx-0 mb-8 fade-in-up delay-400">
+                        在这里，找二手、租房子、找工作、混日本老乡圈... 一切需求轻松搞定。<br class="hidden sm:block">
+                        <span class="font-medium text-gray-700">免下载直接在网页浏览，安装 APP 体验更流畅！</span>
                     </p>
 
                     <!-- 下载 CTA 组 -->
-                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 fade-in-up delay-600">
-                        <button onclick="showIosModal()" class="w-full sm:w-auto flex items-center justify-center gap-3 bg-gray-900 text-white px-8 py-4 rounded-2xl hover:bg-gray-800 transition shadow-xl hover:shadow-2xl btn-press group">
+                    <div
+                        class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 fade-in-up delay-600">
+                        <button onclick="showIosModal()"
+                            class="w-full sm:w-auto flex items-center justify-center gap-3 bg-gray-900 text-white px-8 py-4 rounded-2xl hover:bg-gray-800 transition shadow-xl hover:shadow-2xl btn-press group">
                             <i class="fab fa-apple text-2xl group-hover:scale-110 transition"></i>
                             <div class="text-left">
                                 <div class="text-[10px] text-gray-400 leading-none">Download on the</div>
                                 <div class="text-lg font-semibold leading-tight">App Store</div>
                             </div>
                         </button>
-                        
-                        <button onclick="showAndroidModal()" class="w-full sm:w-auto flex items-center justify-center gap-3 bg-brand-500 text-white px-8 py-4 rounded-2xl hover:bg-brand-600 transition shadow-xl hover:shadow-2xl hover:shadow-brand-500/30 btn-press group">
+
+                        <button onclick="showAndroidModal()"
+                            class="w-full sm:w-auto flex items-center justify-center gap-3 bg-brand-500 text-white px-8 py-4 rounded-2xl hover:bg-brand-600 transition shadow-xl hover:shadow-2xl hover:shadow-brand-500/30 btn-press group">
                             <i class="fab fa-android text-2xl group-hover:scale-110 transition"></i>
                             <div class="text-left">
                                 <div class="text-[10px] text-brand-100 leading-none">GET IT ON</div>
@@ -273,9 +324,12 @@
                         </button>
 
                         <!-- 二维码扫码区域 (仅桌面端显示) -->
-                        <div class="hidden xl:flex items-center gap-3 ml-4 qr-wrapper cursor-pointer" onclick="document.getElementById('download').scrollIntoView({behavior:'smooth'})">
-                            <div class="w-12 h-12 bg-white rounded-xl shadow-md border border-gray-100 flex items-center justify-center p-1.5 qr-container">
-                                <img src="img/appdl.png" alt="扫码" class="w-full h-full object-contain filter grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition duration-300">
+                        <div class="hidden xl:flex items-center gap-3 ml-4 qr-wrapper cursor-pointer"
+                            onclick="document.getElementById('download').scrollIntoView({behavior:'smooth'})">
+                            <div
+                                class="w-12 h-12 bg-white rounded-xl shadow-md border border-gray-100 flex items-center justify-center p-1.5 qr-container">
+                                <img src="img/appdl.png" alt="扫码"
+                                    class="w-full h-full object-contain filter grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition duration-300">
                             </div>
                             <div class="text-xs text-gray-400 font-medium tracking-wide">
                                 扫码直接下载
@@ -283,7 +337,8 @@
                         </div>
                     </div>
 
-                    <div class="mt-6 text-xs text-gray-400 flex items-center justify-center lg:justify-start gap-2 fade-in-up delay-600">
+                    <div
+                        class="mt-6 text-xs text-gray-400 flex items-center justify-center lg:justify-start gap-2 fade-in-up delay-600">
                         <i class="fas fa-check-circle text-brand-500"></i> 数据实时同步
                         <span class="mx-2 text-gray-300">|</span>
                         <i class="fas fa-shield-alt text-brand-500"></i> 实名认证保障
@@ -291,33 +346,33 @@
                 </div>
 
                 <!-- 右侧 APP 展示图 Mockup -->
-                <div class="w-full lg:w-1/2 flex justify-center lg:justify-end fade-in-up delay-400 relative">
-                    <!-- 手机外框 Mockup -->
-                    <div class="relative w-[280px] sm:w-[320px] lg:w-[360px] animate-float">
-                        <div class="absolute inset-0 bg-gradient-to-tr from-brand-500/20 to-blue-500/20 rounded-[3rem] blur-2xl transform -translate-x-4 translate-y-4"></div>
-                        <div class="relative bg-black rounded-[3rem] p-2 sm:p-3 shadow-2xl border-4 sm:border-8 border-gray-900 ring-1 ring-white/10">
-                            <!-- 刘海/打孔 -->
-                            <div class="absolute top-0 inset-x-0 h-6 flex justify-center pt-2 z-20">
-                                <div class="w-20 h-5 bg-black rounded-b-3xl"></div>
-                            </div>
-                            <!-- 屏幕内容 -->
-                            <div class="relative rounded-[2.25rem] overflow-hidden bg-white aspect-[9/19.5]">
-                                <img src="img/app-1.png" alt="APP主屏" class="w-full h-full object-cover">
-                                <div class="scan-line"></div>
-                            </div>
+                <div class="w-full lg:w-5/12 flex justify-center lg:justify-start fade-in-up delay-400 relative">
+                    <!-- 手机图片展示 -->
+                    <div class="relative w-[280px] sm:w-[320px] lg:w-[400px] animate-float">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-tr from-brand-500/20 to-blue-500/20 rounded-[3rem] blur-2xl transform -translate-x-4 translate-y-4 z-0">
                         </div>
-                        
+                        <div class="relative z-10">
+                            <img src="img/app-1.png" alt="APP主屏" class="w-full h-auto drop-shadow-2xl">
+                        </div>
+
                         <!-- 悬浮小卡片装饰 -->
-                        <div class="absolute -left-12 sm:-left-20 top-1/4 glass-card p-3 rounded-2xl flex items-center gap-3 animate-float" style="animation-delay: -2s;">
-                            <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-500 text-lg">🛍️</div>
+                        <div class="absolute -left-12 sm:-left-20 top-1/4 glass-card p-3 rounded-2xl flex items-center gap-3 animate-float"
+                            style="animation-delay: -2s;">
+                            <div
+                                class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-500 text-lg">
+                                🛍️</div>
                             <div>
                                 <div class="text-[10px] text-gray-400">最新挂出</div>
                                 <div class="text-sm font-bold text-gray-800">九成新 Switch</div>
                             </div>
                         </div>
-                        
-                        <div class="absolute -right-8 sm:-right-16 bottom-1/4 glass-card p-3 rounded-2xl flex items-center gap-3 animate-float" style="animation-delay: -4s;">
-                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 text-lg">💼</div>
+
+                        <div class="absolute -right-8 sm:-right-16 bottom-1/4 glass-card p-3 rounded-2xl flex items-center gap-3 animate-float"
+                            style="animation-delay: -4s;">
+                            <div
+                                class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 text-lg">
+                                💼</div>
                             <div>
                                 <div class="text-[10px] text-gray-400">职位推荐</div>
                                 <div class="text-sm font-bold text-gray-800">IT 运维 (月给35W)</div>
@@ -335,18 +390,22 @@
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-16 scroll-reveal">
                 <h2 class="text-brand-500 font-bold tracking-widest text-sm uppercase mb-3">Explore Web Channels</h2>
-                <h3 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">无需下载，即刻在网页端探索</h3>
-                <p class="text-gray-500 text-base">网站与 APP 底层数据库已完全打通。您可以直接在这里浏览最新的闲置物品、房源信息、同城动态与优质店铺，体验无缝互联。</p>
+                <h3 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">免下载，直接看最新信息</h3>
+                <p class="text-gray-500 text-base">无需繁琐注册，所有同城闲置、找房找工作、以及周边热门商家发布的内容，在这里统统能直接浏览。</p>
             </div>
 
             <!-- 数据卡片网格 -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                
+
                 <!-- 神州宝库 -->
-                <a href="store.html" class="glass-card bg-white p-6 rounded-3xl group scroll-reveal relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-purple-50 rounded-bl-full -z-10 transition group-hover:scale-110"></div>
+                <a href="store.html"
+                    class="glass-card bg-white p-6 rounded-3xl group scroll-reveal relative overflow-hidden">
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-purple-50 rounded-bl-full -z-10 transition group-hover:scale-110">
+                    </div>
                     <div class="flex justify-between items-start mb-6">
-                        <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl group-hover:-translate-y-1 transition duration-300">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl group-hover:-translate-y-1 transition duration-300">
                             <i class="fas fa-store"></i>
                         </div>
                         <div class="text-right">
@@ -364,10 +423,15 @@
                 </a>
 
                 <!-- 侠客市集 -->
-                <a href="marketplace.html" class="glass-card bg-white p-6 rounded-3xl group scroll-reveal relative overflow-hidden" style="transition-delay: 100ms;">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-orange-50 rounded-bl-full -z-10 transition group-hover:scale-110"></div>
+                <a href="marketplace.html"
+                    class="glass-card bg-white p-6 rounded-3xl group scroll-reveal relative overflow-hidden"
+                    style="transition-delay: 100ms;">
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-orange-50 rounded-bl-full -z-10 transition group-hover:scale-110">
+                    </div>
                     <div class="flex justify-between items-start mb-6">
-                        <div class="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center text-xl group-hover:-translate-y-1 transition duration-300">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center text-xl group-hover:-translate-y-1 transition duration-300">
                             <i class="fas fa-shopping-bag"></i>
                         </div>
                         <div class="text-right">
@@ -385,10 +449,15 @@
                 </a>
 
                 <!-- 客栈驿站 -->
-                <a href="accommodation.html" class="glass-card bg-white p-6 rounded-3xl group scroll-reveal relative overflow-hidden" style="transition-delay: 200ms;">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -z-10 transition group-hover:scale-110"></div>
+                <a href="accommodation.html"
+                    class="glass-card bg-white p-6 rounded-3xl group scroll-reveal relative overflow-hidden"
+                    style="transition-delay: 200ms;">
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -z-10 transition group-hover:scale-110">
+                    </div>
                     <div class="flex justify-between items-start mb-6">
-                        <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl group-hover:-translate-y-1 transition duration-300">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl group-hover:-translate-y-1 transition duration-300">
                             <i class="fas fa-home"></i>
                         </div>
                         <div class="text-right">
@@ -406,10 +475,15 @@
                 </a>
 
                 <!-- 英雄结义 -->
-                <a href="community.html?type=club" class="glass-card bg-white p-6 rounded-3xl group scroll-reveal relative overflow-hidden" style="transition-delay: 300ms;">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-pink-50 rounded-bl-full -z-10 transition group-hover:scale-110"></div>
+                <a href="community.html?type=club"
+                    class="glass-card bg-white p-6 rounded-3xl group scroll-reveal relative overflow-hidden"
+                    style="transition-delay: 300ms;">
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-pink-50 rounded-bl-full -z-10 transition group-hover:scale-110">
+                    </div>
                     <div class="flex justify-between items-start mb-6">
-                        <div class="w-12 h-12 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center text-xl group-hover:-translate-y-1 transition duration-300">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center text-xl group-hover:-translate-y-1 transition duration-300">
                             <i class="fas fa-users"></i>
                         </div>
                         <div class="text-right">
@@ -429,29 +503,37 @@
 
             <!-- 次要入口（紧凑型） -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-                <a href="service.html" class="glass-card bg-white p-4 rounded-2xl flex items-center gap-4 group scroll-reveal">
-                    <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center"><i class="fas fa-hands-helping"></i></div>
+                <a href="service.html"
+                    class="glass-card bg-white p-4 rounded-2xl flex items-center gap-4 group scroll-reveal">
+                    <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                        <i class="fas fa-hands-helping"></i></div>
                     <div>
                         <div class="font-bold text-gray-900 text-sm">镖局快马</div>
                         <div class="text-[10px] text-gray-400">生活服务 / 跑腿</div>
                     </div>
                 </a>
-                <a href="restaurant.html" class="glass-card bg-white p-4 rounded-2xl flex items-center gap-4 group scroll-reveal">
-                    <div class="w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center"><i class="fas fa-utensils"></i></div>
+                <a href="restaurant.html"
+                    class="glass-card bg-white p-4 rounded-2xl flex items-center gap-4 group scroll-reveal">
+                    <div class="w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center"><i
+                            class="fas fa-utensils"></i></div>
                     <div>
                         <div class="font-bold text-gray-900 text-sm">江湖食肆</div>
                         <div class="text-[10px] text-gray-400">美食探店推荐</div>
                     </div>
                 </a>
-                <a href="bounty.html" class="glass-card bg-white p-4 rounded-2xl flex items-center gap-4 group scroll-reveal">
-                    <div class="w-10 h-10 rounded-full bg-yellow-50 text-yellow-600 flex items-center justify-center"><i class="fas fa-scroll"></i></div>
+                <a href="bounty.html"
+                    class="glass-card bg-white p-4 rounded-2xl flex items-center gap-4 group scroll-reveal">
+                    <div class="w-10 h-10 rounded-full bg-yellow-50 text-yellow-600 flex items-center justify-center"><i
+                            class="fas fa-scroll"></i></div>
                     <div>
                         <div class="font-bold text-gray-900 text-sm">江湖揭榜</div>
                         <div class="text-[10px] text-gray-400">求职招聘接单</div>
                     </div>
                 </a>
-                <a href="question.html" class="glass-card bg-white p-4 rounded-2xl flex items-center gap-4 group scroll-reveal">
-                    <div class="w-10 h-10 rounded-full bg-sky-50 text-sky-500 flex items-center justify-center"><i class="fas fa-question-circle"></i></div>
+                <a href="question.html"
+                    class="glass-card bg-white p-4 rounded-2xl flex items-center gap-4 group scroll-reveal">
+                    <div class="w-10 h-10 rounded-full bg-sky-50 text-sky-500 flex items-center justify-center"><i
+                            class="fas fa-question-circle"></i></div>
                     <div>
                         <div class="font-bold text-gray-900 text-sm">江湖问答</div>
                         <div class="text-[10px] text-gray-400">互助与经验分享</div>
@@ -464,12 +546,14 @@
     <!-- Why APP? 核心特权区 -->
     <section id="features" class="py-24 bg-gray-900 text-white relative overflow-hidden">
         <!-- 背景修饰 -->
-        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvc3ZnPg==')] opacity-50 z-0"></div>
+        <div
+            class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvc3ZnPg==')] opacity-50 z-0">
+        </div>
         <div class="absolute top-0 right-0 w-full h-1/2 bg-gradient-to-b from-gray-800/50 to-transparent z-0"></div>
 
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="flex flex-col lg:flex-row items-center gap-16">
-                
+
                 <!-- 左侧文案区 -->
                 <div class="lg:w-5/12 scroll-reveal">
                     <h2 class="text-brand-400 font-bold tracking-widest text-sm uppercase mb-3">Download to Unlock</h2>
@@ -480,7 +564,8 @@
 
                     <ul class="space-y-6">
                         <li class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xl shrink-0 mt-1">
+                            <div
+                                class="w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xl shrink-0 mt-1">
                                 <i class="fas fa-comment-dots"></i>
                             </div>
                             <div>
@@ -489,7 +574,8 @@
                             </div>
                         </li>
                         <li class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center text-xl shrink-0 mt-1">
+                            <div
+                                class="w-12 h-12 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center text-xl shrink-0 mt-1">
                                 <i class="fas fa-map-marker-alt"></i>
                             </div>
                             <div>
@@ -498,7 +584,8 @@
                             </div>
                         </li>
                         <li class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center text-xl shrink-0 mt-1">
+                            <div
+                                class="w-12 h-12 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center text-xl shrink-0 mt-1">
                                 <i class="fas fa-coins"></i>
                             </div>
                             <div>
@@ -507,7 +594,8 @@
                             </div>
                         </li>
                         <li class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-xl shrink-0 mt-1">
+                            <div
+                                class="w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-xl shrink-0 mt-1">
                                 <i class="fas fa-camera"></i>
                             </div>
                             <div>
@@ -521,16 +609,22 @@
                 <!-- 右侧界面拼图 -->
                 <div class="lg:w-7/12 relative min-h-[500px] w-full hidden sm:block scroll-reveal">
                     <!-- 居中主图 (聊天界面) -->
-                    <div class="absolute top-[10%] left-[25%] w-[45%] z-20 transform hover:-translate-y-4 transition duration-500 drop-shadow-2xl">
-                        <img src="img/app-3.png" alt="APP聊天功能" class="w-full rounded-[2rem] border-4 border-gray-800 shadow-[0_0_40px_rgba(0,0,0,0.5)]">
+                    <div
+                        class="absolute top-[10%] left-[25%] w-[45%] z-20 transform hover:-translate-y-4 transition duration-500 drop-shadow-2xl">
+                        <img src="img/app-3.png" alt="APP聊天功能"
+                            class="w-full rounded-[2rem] border-4 border-gray-800 shadow-[0_0_40px_rgba(0,0,0,0.5)]">
                     </div>
                     <!-- 左下图 (商城/服务界面) -->
-                    <div class="absolute bottom-[5%] left-0 w-[40%] z-10 transform -rotate-6 hover:rotate-0 hover:z-30 transition duration-500 drop-shadow-2xl opacity-80 hover:opacity-100">
-                        <img src="img/app-2.png" alt="APP发现页" class="w-full rounded-[2rem] border-4 border-gray-800 shadow-[0_0_40px_rgba(0,0,0,0.5)]">
+                    <div
+                        class="absolute bottom-[5%] left-0 w-[40%] z-10 transform -rotate-6 hover:rotate-0 hover:z-30 transition duration-500 drop-shadow-2xl opacity-80 hover:opacity-100">
+                        <img src="img/app-2.png" alt="APP发现页"
+                            class="w-full rounded-[2rem] border-4 border-gray-800 shadow-[0_0_40px_rgba(0,0,0,0.5)]">
                     </div>
                     <!-- 右上图 (个人中心/积分界面) -->
-                    <div class="absolute top-0 right-[5%] w-[40%] z-10 transform rotate-6 hover:rotate-0 hover:z-30 transition duration-500 drop-shadow-2xl opacity-80 hover:opacity-100">
-                        <img src="img/app-5.png" alt="APP个人中心" class="w-full rounded-[2rem] border-4 border-gray-800 shadow-[0_0_40px_rgba(0,0,0,0.5)]">
+                    <div
+                        class="absolute top-0 right-[5%] w-[40%] z-10 transform rotate-6 hover:rotate-0 hover:z-30 transition duration-500 drop-shadow-2xl opacity-80 hover:opacity-100">
+                        <img src="img/app-5.png" alt="APP个人中心"
+                            class="w-full rounded-[2rem] border-4 border-gray-800 shadow-[0_0_40px_rgba(0,0,0,0.5)]">
                     </div>
                 </div>
 
@@ -544,10 +638,12 @@
             <div class="relative rounded-3xl overflow-hidden bg-gray-900 shadow-2xl flex flex-col md:flex-row group">
                 <!-- 背景图片 -->
                 <div class="absolute inset-0 md:w-1/2 overflow-hidden right-0 ml-auto hidden md:block z-0">
-                    <div class="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900/80 to-transparent z-10"></div>
-                    <img src="img/linjiashengxian.png" alt="林家生鲜屋" class="w-full h-full object-cover object-center transform group-hover:scale-105 transition duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900/80 to-transparent z-10">
+                    </div>
+                    <img src="img/linjiashengxian.png" alt="林家生鲜屋"
+                        class="w-full h-full object-cover object-center transform group-hover:scale-105 transition duration-700">
                 </div>
-                
+
                 <!-- 移动端背景 -->
                 <div class="h-64 md:hidden w-full relative">
                     <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent z-10"></div>
@@ -557,24 +653,28 @@
                 <!-- 内容区 -->
                 <div class="relative z-20 p-8 sm:p-12 md:p-16 lg:w-[60%] flex flex-col justify-center">
                     <div class="inline-flex items-center gap-2 mb-4">
-                        <span class="bg-yellow-500 text-gray-900 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"><i class="fas fa-crown mr-1"></i> 平台官方推介</span>
+                        <span
+                            class="bg-yellow-500 text-gray-900 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"><i
+                                class="fas fa-crown mr-1"></i> 平台官方推介</span>
                         <span class="text-gray-400 text-sm">实体自营示范店</span>
                     </div>
-                    
+
                     <h3 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
                         船桥 <span class="text-brand-400">林家生鲜屋</span>
                     </h3>
-                    
+
                     <p class="text-gray-300 text-base sm:text-lg mb-8 max-w-xl leading-relaxed">
-                        作为东瀛游侠平台的 O2O 实体生态纽带。船桥市林家生鲜屋为您提供最新鲜的蔬菜水果与最地道的全品类中华调料。<br class="hidden sm:block">
-                        <span class="text-white font-medium mt-2 block">现已支持在东瀛游侠 APP及网页端直接浏览商品与线上下单。</span>
+                        人气顶尖的官方推荐实体商超。船桥市林家生鲜屋为您带来最新鲜的蔬菜水果，以及最地道的全品类中华调料。<br class="hidden sm:block">
+                        <span class="text-white font-medium mt-2 block">不下楼也能买菜好物！点此直接进入线上店铺，一键下单送货上门。</span>
                     </p>
 
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="store.html" class="inline-flex justify-center items-center bg-brand-500 text-white font-medium px-6 py-3 rounded-xl hover:bg-brand-600 transition shadow-lg btn-press">
+                        <a href="store.html"
+                            class="inline-flex justify-center items-center bg-brand-500 text-white font-medium px-6 py-3 rounded-xl hover:bg-brand-600 transition shadow-lg btn-press">
                             <i class="fas fa-store mr-2"></i> 浏览线上店铺
                         </a>
-                        <a href="https://maps.google.com/maps?q=林家生鲜屋+船橋市夏見" target="_blank" class="inline-flex justify-center items-center bg-transparent border border-gray-600 text-gray-300 font-medium px-6 py-3 rounded-xl hover:bg-white hover:text-gray-900 transition btn-press">
+                        <a href="https://maps.google.com/maps?q=林家生鲜屋+船橋市夏見" target="_blank"
+                            class="inline-flex justify-center items-center bg-transparent border border-gray-600 text-gray-300 font-medium px-6 py-3 rounded-xl hover:bg-white hover:text-gray-900 transition btn-press">
                             <i class="fas fa-location-arrow mr-2"></i> 线下门店导航
                         </a>
                     </div>
@@ -586,12 +686,12 @@
     <!-- 下载引流聚合及 Footer -->
     <footer id="download" class="bg-gray-50 pt-20 pb-10 border-t border-gray-200">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            
+
             <!-- 大字号号召区 -->
             <div class="text-center max-w-2xl mx-auto mb-20 scroll-reveal">
                 <h3 class="text-3xl font-bold text-gray-900 mb-6">加入在日华人互联新时代</h3>
                 <p class="text-gray-500 mb-10">一个真正懂在日生活痛点的超级APP，让租房、二手、找工作、交朋友化繁为简。</p>
-                
+
                 <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
                     <div class="bg-white p-4 rounded-2xl shadow-xl border border-gray-100 flex flex-col items-center">
                         <img src="img/appdl.png" alt="下载二维码" class="w-32 h-32 object-contain mb-3">
@@ -600,10 +700,12 @@
                     </div>
 
                     <div class="flex flex-col gap-4">
-                        <button onclick="showIosModal()" class="w-48 flex items-center justify-center gap-3 bg-gray-900 text-white px-6 py-3 rounded-xl hover:bg-gray-800 transition shadow-md btn-press group">
+                        <button onclick="showIosModal()"
+                            class="w-48 flex items-center justify-center gap-3 bg-gray-900 text-white px-6 py-3 rounded-xl hover:bg-gray-800 transition shadow-md btn-press group">
                             <i class="fab fa-apple text-xl group-hover:-translate-y-1 transition"></i> iOS 测试版
                         </button>
-                        <button onclick="showAndroidModal()" class="w-48 flex items-center justify-center gap-3 bg-brand-500 text-white px-6 py-3 rounded-xl hover:bg-brand-600 transition shadow-md btn-press group">
+                        <button onclick="showAndroidModal()"
+                            class="w-48 flex items-center justify-center gap-3 bg-brand-500 text-white px-6 py-3 rounded-xl hover:bg-brand-600 transition shadow-md btn-press group">
                             <i class="fab fa-android text-xl group-hover:-translate-y-1 transition"></i> 安卓正式版
                         </button>
                     </div>
@@ -644,7 +746,8 @@
                         <li><a href="#home" class="hover:text-brand-500 transition">回到页首</a></li>
                         <li><a href="store.html" class="hover:text-brand-500 transition">浏览神州宝库商城</a></li>
                         <li><a href="marketplace.html" class="hover:text-brand-500 transition">二手商品大厅</a></li>
-                        <li><a href="javascript:void(0)" onclick="openMerchantModal()" class="hover:text-brand-500 transition font-medium text-gray-700">我要入驻平台</a></li>
+                        <li><a href="javascript:void(0)" onclick="openMerchantModal()"
+                                class="hover:text-brand-500 transition font-medium text-gray-700">我要入驻平台</a></li>
                     </ul>
                 </div>
 
@@ -669,10 +772,13 @@
     <!-- 弹窗组件 (保持原有逻辑，优化外观) -->
 
     <!-- 商家入驻弹窗 -->
-    <div id="merchantModal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[110] hidden items-center justify-center p-4 transition-opacity duration-300">
-        <div class="bg-white rounded-[2rem] shadow-2xl max-w-md w-full p-8 transform scale-95 opacity-0 transition-all duration-300" id="merchantModalContent">
+    <div id="merchantModal"
+        class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[110] hidden items-center justify-center p-4 transition-opacity duration-300">
+        <div class="bg-white rounded-[2rem] shadow-2xl max-w-md w-full p-8 transform scale-95 opacity-0 transition-all duration-300"
+            id="merchantModalContent">
             <div class="text-center">
-                <div class="w-20 h-20 bg-brand-50 rounded-2xl flex items-center justify-center mx-auto mb-6 transform -translate-y-4 shadow-lg">
+                <div
+                    class="w-20 h-20 bg-brand-50 rounded-2xl flex items-center justify-center mx-auto mb-6 transform -translate-y-4 shadow-lg">
                     <i class="fas fa-store text-brand-500 text-3xl"></i>
                 </div>
                 <h3 class="text-2xl font-bold text-gray-900 mb-3">商家免费入驻</h3>
@@ -680,11 +786,13 @@
                     成为东瀛游侠平台商家，获取专属展示页面与站内流量扶持。请下载 APP，在「我的」-「商家中心」内极速完成资质申请。
                 </p>
                 <div class="flex flex-col gap-3">
-                    <button onclick="closeMerchantModal();document.getElementById('download').scrollIntoView({behavior:'smooth'});"
-                       class="w-full bg-gray-900 text-white font-medium px-6 py-3.5 rounded-xl hover:bg-gray-800 transition flex items-center justify-center btn-press">
+                    <button
+                        onclick="closeMerchantModal();document.getElementById('download').scrollIntoView({behavior:'smooth'});"
+                        class="w-full bg-gray-900 text-white font-medium px-6 py-3.5 rounded-xl hover:bg-gray-800 transition flex items-center justify-center btn-press">
                         前往下载 APP
                     </button>
-                    <button onclick="closeMerchantModal()" class="w-full bg-gray-100 text-gray-600 font-medium px-6 py-3.5 rounded-xl hover:bg-gray-200 transition btn-press">
+                    <button onclick="closeMerchantModal()"
+                        class="w-full bg-gray-100 text-gray-600 font-medium px-6 py-3.5 rounded-xl hover:bg-gray-200 transition btn-press">
                         稍后再说
                     </button>
                 </div>
@@ -693,35 +801,46 @@
     </div>
 
     <!-- iOS弹窗 -->
-    <div id="iosModal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[110] hidden items-center justify-center p-4 transition-opacity duration-300">
-        <div class="bg-white rounded-[2rem] shadow-2xl max-w-sm w-full p-8 transform scale-95 opacity-0 transition-all duration-300" id="iosModalContent">
+    <div id="iosModal"
+        class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[110] hidden items-center justify-center p-4 transition-opacity duration-300">
+        <div class="bg-white rounded-[2rem] shadow-2xl max-w-sm w-full p-8 transform scale-95 opacity-0 transition-all duration-300"
+            id="iosModalContent">
             <div class="text-center">
-                <div class="w-20 h-20 bg-gray-50 border border-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <div
+                    class="w-20 h-20 bg-gray-50 border border-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
                     <i class="fab fa-apple text-gray-900 text-4xl"></i>
                 </div>
                 <h3 class="text-2xl font-bold text-gray-900 mb-3">iOS 审核中</h3>
                 <p class="text-gray-500 mb-8 text-sm">由于苹果 App Store 政策，目前 iOS 版本正在加急审核中。网页端已打通全部数据，您可暂且在此体验！</p>
-                <button onclick="closeIosModal()" class="w-full bg-gray-900 text-white font-medium px-6 py-3.5 rounded-xl hover:bg-gray-800 transition btn-press">我知道了</button>
+                <button onclick="closeIosModal()"
+                    class="w-full bg-gray-900 text-white font-medium px-6 py-3.5 rounded-xl hover:bg-gray-800 transition btn-press">我知道了</button>
             </div>
         </div>
     </div>
 
     <!-- Android弹窗 -->
-    <div id="androidModal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[110] hidden items-center justify-center p-4 transition-opacity duration-300">
-        <div class="bg-white rounded-[2rem] shadow-2xl max-w-sm w-full p-8 transform scale-95 opacity-0 transition-all duration-300" id="androidModalContent">
+    <div id="androidModal"
+        class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[110] hidden items-center justify-center p-4 transition-opacity duration-300">
+        <div class="bg-white rounded-[2rem] shadow-2xl max-w-sm w-full p-8 transform scale-95 opacity-0 transition-all duration-300"
+            id="androidModalContent">
             <div class="text-center">
-                <div class="w-20 h-20 bg-brand-50 border border-brand-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <div
+                    class="w-20 h-20 bg-brand-50 border border-brand-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
                     <i class="fab fa-android text-brand-500 text-4xl"></i>
                 </div>
                 <h3 class="text-2xl font-bold text-gray-900 mb-3">安装提示</h3>
                 <div class="bg-yellow-50 text-yellow-800 text-xs p-3 rounded-lg text-left mb-6">
-                    <i class="fas fa-exclamation-triangle mr-1 text-yellow-600"></i> 下载 APK 后，如遇安装拦截，请在手机「设置 → 安全」中开启允许安装<b>未知来源应用</b>。
+                    <i class="fas fa-exclamation-triangle mr-1 text-yellow-600"></i> 下载 APK 后，如遇安装拦截，请在手机「设置 →
+                    安全」中开启允许安装<b>未知来源应用</b>。
                 </div>
                 <div class="flex flex-col gap-3">
-                    <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/APK/dongyingyouxia_v2.0.0.apk" download onclick="closeAndroidModal()" class="w-full bg-brand-500 text-white font-medium px-6 py-3.5 rounded-xl hover:bg-brand-600 transition flex items-center justify-center btn-press shadow-md shadow-brand-500/20">
+                    <a href="https://pub-3e154ce6d5c8487f833628106145e7a2.r2.dev/APK/dongyingyouxia_v2.0.0.apk" download
+                        onclick="closeAndroidModal()"
+                        class="w-full bg-brand-500 text-white font-medium px-6 py-3.5 rounded-xl hover:bg-brand-600 transition flex items-center justify-center btn-press shadow-md shadow-brand-500/20">
                         <i class="fas fa-download mr-2"></i> 确认下载包 (.apk)
                     </a>
-                    <button onclick="closeAndroidModal()" class="w-full bg-gray-100 text-gray-600 font-medium px-6 py-3.5 rounded-xl hover:bg-gray-200 transition btn-press">取消操作</button>
+                    <button onclick="closeAndroidModal()"
+                        class="w-full bg-gray-100 text-gray-600 font-medium px-6 py-3.5 rounded-xl hover:bg-gray-200 transition btn-press">取消操作</button>
                 </div>
             </div>
         </div>
@@ -731,7 +850,7 @@
     <!-- 核心逻辑脚本 -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            
+
             // 滚动显现动画
             const scrollElements = document.querySelectorAll('.scroll-reveal');
             const observer = new IntersectionObserver((entries) => {
@@ -778,7 +897,7 @@
             closeMenu.addEventListener('click', closeMenuFn);
             menuOverlay.addEventListener('click', closeMenuFn);
             menuLinks.forEach(link => link.addEventListener('click', closeMenuFn));
-            
+
             // 数据获取逻辑 (保留后端通信与计数展示)
             fetchModuleCounts();
         });
@@ -817,7 +936,7 @@
         // 点击背景遮罩关闭弹窗
         ['merchantModal', 'iosModal', 'androidModal'].forEach(id => {
             const modal = document.getElementById(id);
-            if(modal){
+            if (modal) {
                 modal.addEventListener('click', (e) => {
                     if (e.target === modal) toggleModal(id, false);
                 });
@@ -848,14 +967,14 @@
                 const clubsRes = await fetch(`${SUPABASE_URL}/rest/v1/clubs?status=eq.active&select=id`, { method: 'HEAD', headers });
                 const clubsCount = clubsRes.headers.get('content-range');
                 if (clubsCount && clubsCount.split('/')[1] !== '*') communityTotal += parseInt(clubsCount.split('/')[1]);
-                
+
                 const htRes = await fetch(`${SUPABASE_URL}/rest/v1/hometown_associations?status=eq.active&select=id`, { method: 'HEAD', headers });
                 const htCount = htRes.headers.get('content-range');
                 if (htCount && htCount.split('/')[1] !== '*') communityTotal += parseInt(htCount.split('/')[1]);
-                
+
                 const commEl = document.getElementById('count-community');
-                if(commEl) commEl.textContent = communityTotal;
-            } catch(e) { console.warn("Community count failed"); }
+                if (commEl) commEl.textContent = communityTotal;
+            } catch (e) { console.warn("Community count failed"); }
 
             // 其他单表统计
             for (const mod of modules) {
@@ -874,4 +993,5 @@
         }
     </script>
 </body>
+
 </html>
